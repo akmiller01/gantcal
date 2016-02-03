@@ -15,7 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from cal import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^calendar/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/$', views.month, name='month'),
 ]
