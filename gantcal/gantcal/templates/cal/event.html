@@ -15,6 +15,8 @@
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+  
+  <script type="text/javascript" src='{% static 'moment/min/moment.min.js' %}'></script>
 
   <script src="{% static "cal/gantt/libs/jquery.livequery.min.js" %}"></script>
   <script src="{% static "cal/gantt/libs/jquery.timers.js" %}"></script>
@@ -141,33 +143,34 @@ $(function() {
 });
 
 
-function loadGanttFromServer(taskId, callback) {
-
-  //this is a simulation: load data from the local storage if you have already played with the demo or a textarea with starting demo data
-  loadFromLocalStorage();
-
-  //this is the real implementation
-  /*
-  //var taskId = $("#taskSelector").val();
-  var prof = new Profiler("loadServerSide");
-  prof.reset();
-
-  $.getJSON("ganttAjaxController.jsp", {CM:"LOADPROJECT",taskId:taskId}, function(response) {
-    //console.debug(response);
-    if (response.ok) {
-      prof.stop();
-
-      ge.loadProject(response.project);
-      ge.checkpoint(); //empty the undo stack
-
-      if (typeof(callback)=="function") {
-        callback(response);
-      }
-    } else {
-      jsonErrorHandling(response);
-    }
-  });
-  */
+function loadGanttFromServer() {
+  rawTasks = {{tasks|safe}}
+  roles = {{roles|safe}}
+  rawAssignees = {{assignees|safe}}
+  resources = {{resources|safe}}
+  tasks = [];
+  for(var i = 0; i < rawTasks.length; i++){
+      var fields = rawTasks[i].fields;
+      fields.id = rawTasks[i].pk;
+      var assignees = [];
+      for(var j = 0; j < fields.assignee.length; j++){
+        var assignee_id = "pk_"+fields.assignee[j].toString(),
+        assignee = rawAssignees[assignee_id];
+        assignees.push(assignee);
+      };
+      fields.assigs = assignees;
+      delete fields.assignee;
+      fields.start = moment(fields.start,"YYYY-MM-DD").valueOf();
+      fields.end = moment(fields.end,"YYYY-MM-DD").valueOf();
+      tasks.push(fields);
+  };
+  data = {"tasks":tasks,"resources":resources,"roles":roles,
+    "canWrite":true,
+    "canWriteOnParent":true,
+    "selectedRow":0,
+    "deletedTaskIds":[],}
+    //loadFromLocalStorage();
+  ge.loadProject(data)
 }
 
 

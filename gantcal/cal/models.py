@@ -76,19 +76,15 @@ class Event(models.Model):
     end = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
-    holder = models.ForeignKey(User, null=True, blank=True,editable=True)
     tag = models.ManyToManyField(Tag, related_name="events", related_query_name="event",blank=True)
     process = models.ManyToManyField(Process, related_name="events", related_query_name="event",blank=True)
     priority = models.IntegerField(blank=True,null=True)
-    LEVEL_CHOICES = (
+    FOCUS_CHOICES = (
         ('BG','Background'),
         ('LC','Localized'),
         ('PT','Participating'),
     )
-    level = models.CharField(max_length=2,choices=LEVEL_CHOICES,default='BG')
-    lead = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
-    follow = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
-    
+    focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='BG')    
     
     class Meta:
         ordering = ['start','title']
@@ -109,17 +105,46 @@ class Event(models.Model):
         self.url = reverse("cal.views.event",args=[self.slug])
         super(Event, self).save(*args, **kwargs)
         
-class Activity(models.Model):
-    title = models.CharField(max_length=255,unique=True)
-    start = models.DateField(auto_now=False, auto_now_add=False)
-    description = models.TextField(null=True,blank=True)
-    end = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
-    holder = models.ForeignKey(User, null=True, blank=True,editable=True)
-    event = models.ForeignKey(Event,related_name="activities",related_query_name="activity",blank=True,null=True)
-    
-    class Meta:
-        ordering = ['start','title']
-        verbose_name_plural = "activities"
+class Role(models.Model):
+    name = models.CharField(max_length=255,unique=True)
     
     def __str__(self):
-        return self.title
+        return self.name
+
+class Assignee(models.Model):
+    resource = models.ForeignKey(User)
+    role = models.ForeignKey(Role,blank=True,null=True)
+    effort = models.BigIntegerField(blank=True,null=True)
+    
+    def __str__(self):
+        return self.resource.get_full_name()+" as "+self.role.name
+
+class Task(models.Model):
+    name = models.CharField(max_length=255,blank=True,null=True)
+    code = models.CharField(max_length=255,blank=True,null=True)
+    level = models.IntegerField(blank=True,null=True)
+    STATUS_LEVELS = (
+        ("STATUS_ACTIVE","STATUS_ACTIVE"),
+        ("STATUS_DONE","STATUS_DONE"),
+        ("STATUS_FAILED","STATUS_FAILED"),
+        ("STATUS_SUSPENDED","STATUS_SUSPENDED"),
+        ("STATUS_UNDEFINED","STATUS_UNDEFINED"),
+    )
+    status = models.CharField(max_length=255,choices=STATUS_LEVELS,default="STATUS_UNDEFINED")
+    start = models.DateField(auto_now=False, auto_now_add=False)
+    duration = models.IntegerField(blank=True,null=True)
+    end = models.DateField(auto_now=False, auto_now_add=False)
+    startIsMilestone = models.BooleanField(default=False)
+    endIsMilestone = models.BooleanField(default=False)
+    assignee = models.ManyToManyField(Assignee, related_name="tasks", related_query_name="task",blank=True)
+    depends = models.CharField(max_length=255,blank=True,null=True)
+    description = models.TextField(null=True,blank=True)
+    progress = models.IntegerField(blank=True,null=True)
+    event = models.ForeignKey(Event, related_name="tasks", related_query_name="task",blank=True)
+    
+    class Meta:
+        ordering = ['start','name']
+    
+    def __str__(self):
+        return self.name
+    
