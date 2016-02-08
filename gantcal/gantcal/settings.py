@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djangobower',
     'cal'
 ]
 
@@ -126,5 +127,15 @@ STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
     )
 
+MEDIA_URL = '/res/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'res')
+
+# For django-bower
+BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
+BOWER_INSTALLED_APPS = ('fullcalendar#2.6.0',
+                        'jquery#2.2.0',
+                        'moment#2.11.2',
+                        )

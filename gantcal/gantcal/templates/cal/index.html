@@ -1,8 +1,76 @@
 {% extends 'cal/base.html' %}
 
     {% block title %} Calendar {% endblock %}
+    {% block head %}
+        <script>
+            //Get and Set Params functions
+            function getParams() {
+                var paramArr = window.location.search.substr(1).split("&")[0] == "" ? [] : window.location.search.substr(1).split("&");
+                var params = {};
+                for (var i = 0; i < paramArr.length; i++) {
+                    var param = paramArr[i];
+                    params[param.split("=")[0]] = param.split("=")[1]
+                };
+                return params
+            };
+            function setParams(params) {
+                if (params === undefined) {
+                    params = {}
+                }
+                var i = 1,
+                    locationSearch = "",
+                    len = Object.keys(params).length;
+                for (var param in params) {
+                    if (i == 1) {
+                        locationSearch += "?"
+                    }
+                    locationSearch += param
+                    locationSearch += "="
+                    locationSearch += params[param]
+                    if (i < len) {
+                        locationSearch += "&"
+                    }
+                    i += 1
+                };
+                window.history.pushState({}, "", "/calendar/" + locationSearch);
+            };
+            function setDateParam(view,element){
+                var startDate = view.start,
+                date = startDate.add(15,'days'),
+                y = date.year(),
+                m = date.month()+1,
+                q = {"y":y.toString(),"m":m.toString()};
+                var o = getParams();
+                setParams(q);
+                if((o.y != q.y) || (o.m != q.m)){location.reload();}
+                };
+            $(document).ready(function(){
+                var now = moment(),
+                rawEvents = {{events|safe}}
+                events = [];
+                for(var i = 0; i < rawEvents.length; i++){
+                    var fields = rawEvents[i].fields;
+                    events.push(fields);
+                }
+                $('#calendar').fullCalendar({
+                    weekends: false,
+                    events: events,
+                    header: {
+                        left:   'title',
+                        center: '',
+                        right:  'today prevYear,prev,next,nextYear'
+                    },
+                    viewRender: setDateParam,
+                    {% if year and month %}
+                    defaultDate: moment("{{year}}"+"/"+"{{month}}"+"/01","YYYY/MM/DD"),
+                    {% else %}
+                    defaultDate: now,
+                    {% endif %}
+                });
+            });
+        </script>
+    {% endblock %}    
     {% block content %}
     <div id="calendar">
-    {{ calendar }}
     </div>
     {% endblock %}

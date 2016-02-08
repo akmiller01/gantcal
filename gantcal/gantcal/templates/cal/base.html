@@ -13,9 +13,20 @@
             
             {% load staticfiles %}            
             <link rel="shortcut icon" type="image/png" href="{% static "gantcal/favicon.ico" %}"/>
-            <link href="{% static "cal/css/calendar.css" %}" rel="stylesheet">
+            
+            <link href="{% static "fullcalendar/dist/fullcalendar.min.css" %}" rel="stylesheet">
             <style>
             </style>
+            
+            <script type="text/javascript" src='{% static 'jquery/dist/jquery.min.js' %}'></script>
+            <script type="text/javascript" src='{% static 'moment/min/moment.min.js' %}'></script>
+            <script type="text/javascript" src='{% static 'fullcalendar/dist/fullcalendar.min.js' %}'></script>
+
+            {% block head %}
+            {% endblock %}
+            <script>
+            </script>
+            
             </head>
         <body>
             {% block content %}
