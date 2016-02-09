@@ -5,22 +5,24 @@
                 {% block title %}{% endblock %}
             </title>
             
-            <meta charset="utf-8">
-            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE"/>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta name="description" content="">
             <meta name="author" content="">
             
             {% load staticfiles %}            
             <link rel="shortcut icon" type="image/png" href="{% static "gantcal/favicon.ico" %}"/>
-            
-            <link href="{% static "fullcalendar/dist/fullcalendar.min.css" %}" rel="stylesheet">
+            <link rel=stylesheet href="{% static "cal/gantt/platform.css" %}" type="text/css">
             <style>
+                div#nav{width:100%;font-weight:bold;padding-bottom:20px;}
+                div#user-tools{text-align:right;width:50%;float:left;padding:5px;}
+                div#home{width:50%;float:left;padding:5px;}
+                div#meta-content{width:100%}
             </style>
             
             <script type="text/javascript" src='{% static 'jquery/dist/jquery.min.js' %}'></script>
             <script type="text/javascript" src='{% static 'moment/min/moment.min.js' %}'></script>
-            <script type="text/javascript" src='{% static 'fullcalendar/dist/fullcalendar.min.js' %}'></script>
 
             {% block head %}
             {% endblock %}
@@ -28,8 +30,32 @@
             </script>
             
             </head>
-        <body>
+        <body style="background-color: #fff;">
+            <!-- Header -->
+    <div id="nav">
+        <div id="home">
+            <a href="{% url 'cal.views.dashboard' %}">Home</a>
+        </div>
+        {% if user.is_authenticated %}
+        <div id="user-tools">
+            {% block welcome-msg %}
+                Welcome,
+                <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+            {% endblock %}
+            <a href="{% url 'cal.views.month' %}">Calendar</a> /
+            {% block userlinks %}
+                {% if user.has_usable_password %}
+                <a href="{% url 'admin:password_change' %}">Change password</a> /
+                {% endif %}
+                <a href="{% url 'cal.views.login_user' %}">Log out</a>
+            {% endblock %}
+        </div>
+        {% endif %}
+    </div>
+    <!-- END Header -->
+    <div id="meta-content">
             {% block content %}
             {% endblock %}
+    </div>
         </body>
     </html>

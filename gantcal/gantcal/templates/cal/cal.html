@@ -2,6 +2,12 @@
 
     {% block title %} Calendar {% endblock %}
     {% block head %}
+        <style>
+            div#calendar{padding:5px;}
+        </style>
+        {% load staticfiles %}
+        <script type="text/javascript" src='{% static 'fullcalendar/dist/fullcalendar.min.js' %}'></script>
+        <link href="{% static "fullcalendar/dist/fullcalendar.min.css" %}" rel="stylesheet">
         <script>
             //Get and Set Params functions
             function getParams() {
@@ -44,6 +50,9 @@
                 setParams(q);
                 if((o.y != q.y) || (o.m != q.m)){location.reload();}
                 };
+            function dayClick(date,jsEvent,view){
+                window.alert(date);
+            };
             $(document).ready(function(){
                 var now = moment(),
                 rawEvents = {{events|safe}}
@@ -55,6 +64,7 @@
                 $('#calendar').fullCalendar({
                     weekends: false,
                     events: events,
+                    dayClick:dayClick,
                     header: {
                         left:   'title',
                         center: '',

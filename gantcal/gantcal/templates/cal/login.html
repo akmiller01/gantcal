@@ -1,0 +1,39 @@
+{% extends "cal/base.html" %}
+{% block head %}
+    {% load staticfiles %}    
+    <link rel=stylesheet href="{% static "cal/css/login.css" %}" type="text/css">
+{% endblock %}
+{% block content %}
+    <div id="container">
+        <div id="header">
+            <h1><a href="{% url 'cal.views.login_user' %}">
+                Staff login
+            </a></h1>
+        </div>
+        <div id="content">
+            <form class="form-horizontal" name="LoginForm" action="/login/" method="post">
+            {% csrf_token %}
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" />
+            {% endif %}
+            <div class="form-row">
+                <label class="control-label" for="username">Username:</label>
+                <div class="controls">
+                    <input type="text" id="id_username" name="username"  placeholder="Username">
+                </div>
+            </div>
+            <div class="form-row">
+                <label class="control-label" for="password">Password:</label>
+                <div class="controls">
+                    <input type="password" name="password" id="id_password" placeholder="Password">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="submit-row">
+                    <label>&nbsp;</label><input type="submit" value="Log in" />
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

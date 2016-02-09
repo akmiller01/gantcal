@@ -19,7 +19,9 @@ from django.conf import settings
 from cal import views
 
 urlpatterns = [
+    url(r'^$', views.dashboard, name='dashboard'),
     url(r'^admin/', admin.site.urls),
+    url(r'^login', views.login_user, name='login'),
     url(r'^calendar/$', views.month, name='month'),
     url(r'^(?P<slug>[\w\-]+)/$', views.event,name='event'),
     url(r'^([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),

@@ -1,0 +1,43 @@
+{% extends 'cal/base.html' %}
+
+    {% block title %} Dashboard {% endblock %}
+    {% block head %}
+        <style>
+            div#dashboard{padding:5px;}
+        </style>
+    {% endblock %}    
+    {% block content %}
+    <div id="dashboard">
+        <b>Your tasks</b>
+        <table>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Progress</th>
+            <th>Event</th>
+            {% for task in tasks%}
+                <tr>
+                    <td>
+                        {{task.name}}
+                    </td>
+                    <td>
+                        {{task.status}}
+                    </td>
+                    <td>
+                        {{task.start}}
+                    </td>
+                    <td>
+                        {{task.end}}
+                    </td>
+                    <td>
+                        {{task.progress}}
+                    </td>
+                    <td>
+                        <a href="{{task.event.get_absolute_url}}">{{task.event}}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endblock %}
