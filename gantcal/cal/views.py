@@ -1,3 +1,4 @@
+from datetime import timedelta
 from datetime import datetime
 import json
 from django.core import serializers
@@ -35,11 +36,21 @@ def login_user(request):
 
 @login_required
 def dashboard(request):
+  now = datetime.now()
   user = request.user
-  tasks = Task.objects.order_by('start').filter(
+  userTasks = Task.objects.order_by('start').filter(
     assignee__resource=user
   )
-  return render_to_response('cal/dashboard.html', {"user":user,"tasks":tasks})
+  userEvents = Event.objects.order_by('start').filter(
+    attendee=user
+  )
+  tasks = Task.objects.order_by('start').filter(
+    start__gt=now, start__lt=now+timedelta(14)
+  )
+  events = Event.objects.order_by('start').filter(
+    start__gt=now, start__lt=now+timedelta(14)
+  )
+  return render_to_response('cal/dashboard.html', {"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks})
 
 @login_required
 def month(request):
