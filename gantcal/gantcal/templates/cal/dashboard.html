@@ -16,6 +16,7 @@
             <th>End</th>
             <th>Progress</th>
             <th>Event</th>
+            <th>Gantt chart</th>
             {% for task in tasks%}
                 <tr>
                     <td>
@@ -34,7 +35,10 @@
                         {{task.progress}}
                     </td>
                     <td>
-                        <a href="{{task.event.get_absolute_url}}">{{task.event}}</a>
+                        <a href="{{task.event.get_event_url}}">{{task.event}}</a>
+                    </td>
+                    <td>
+                        <a href="{{task.event.get_gantt_url}}">Click here</a>
                     </td>
                 </tr>
             {% endfor %}
