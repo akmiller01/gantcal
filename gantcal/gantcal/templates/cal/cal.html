@@ -53,18 +53,49 @@
             function dayClick(date,jsEvent,view){
                 window.alert(date);
             };
+            //Default filter settings
+            displayTasks = false
+            displayEvents = true
+            function eventFilter(event,element) {
+                var metaBool = true,
+                isTask = event.type=="task",
+                isEvent = event.type=="event";
+                if(!displayTasks){
+                    metaBool = metaBool && !isTask;
+                };
+                if(!displayEvents){
+                    metaBool = metaBool && !isEvent;
+                };
+                return metaBool;
+            };
             $(document).ready(function(){
                 var now = moment(),
-                rawEvents = {{events|safe}}
-                events = [];
-                for(var i = 0; i < rawEvents.length; i++){
-                    var fields = rawEvents[i].fields;
-                    events.push(fields);
-                }
+                events = [
+                    {% for event in events %}
+                        {
+                            "title": "{{event.title}}",
+                            "start": "{{event.start|date:"Y-m-d"}}",
+                            "end": "{{event.end|date:"Y-m-d"}}",
+                            "url": "{{event.get_event_url}}",
+                            "type": "event"
+                        },
+                    {% endfor %}
+                    {% for task in tasks %}
+                        {
+                            "title": "{{task.event.title}} task - {{task.name}}",
+                            "start": "{{task.start|date:"Y-m-d"}}",
+                            "end": "{{task.end|date:"Y-m-d"}}",
+                            "color": "forestgreen",
+                            "url": "{{task.event.get_gantt_url}}",
+                            "type": "task"
+                        },
+                    {% endfor %}
+                ];
                 $('#calendar').fullCalendar({
                     weekends: false,
                     events: events,
-                    dayClick:dayClick,
+                    //dayClick:dayClick,
+                    eventRender:eventFilter,
                     header: {
                         left:   'title',
                         center: '',
@@ -78,6 +109,14 @@
                     {% endif %}
                 });
             });
+            function taskOn() {
+                displayTasks = true;
+                $('#calendar').fullCalendar('rerenderEvents')
+            };
+            function taskOff() {
+                displayTasks = false;
+                $('#calendar').fullCalendar('rerenderEvents')
+            };
         </script>
     {% endblock %}    
     {% block content %}

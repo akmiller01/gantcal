@@ -1,6 +1,6 @@
 {% extends 'cal/base.html' %}
 
-    {% block title %} {{event.title}} {% endblock %}
+    {% block title %} {{object.title}} {% endblock %}
     {% block head %}
         <style>
           div#event{padding:5px;}
@@ -8,6 +8,6 @@
     {% endblock %}    
     {% block content %}
     <div id="event">
-        <a href="{{event.get_gantt_url}}">{{event.title}}</a>
+        <a href="{{event.get_gantt_url}}">{{event.title}} Gantt Chart</a>
     </div>
     {% endblock %}

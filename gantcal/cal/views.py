@@ -53,7 +53,10 @@ def month(request):
   events = Event.objects.order_by('start').filter(
     start__year=year, start__month=month
   )
-  return render_to_response('cal/cal.html', {'events': serializers.serialize('json',events),'year': year,'month':month,"user":user})
+  tasks = Task.objects.order_by('start').filter(
+    start__year=year, start__month=month
+  )
+  return render_to_response('cal/cal.html', {'events': events,'tasks': tasks,'year': year,'month':month,"user":user})
 
 @login_required
 def event(request,slug):

@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-import datetime
+from datetime import datetime
 from django.utils.text import slugify
 
 class Theme(models.Model):
@@ -73,7 +73,6 @@ class Event(models.Model):
     attendee = models.ManyToManyField(User,related_name="events",related_query_name="event",blank=True)
     location = models.CharField(max_length=255,null=True,blank=True)
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True,editable=False)
-    url = models.URLField(unique=True,max_length=255, null=True, blank=True,editable=False)
     start = models.DateField(auto_now=False, auto_now_add=False)
     end = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
@@ -108,7 +107,18 @@ class Event(models.Model):
             self.slug = '%s-%i%i%i%i' % (
                 slugify(self.title), date.year, date.month, date.day, self.id
             )
-        self.url = reverse("cal.views.event",args=[self.slug])
+        if len(self.tasks.all())==0:
+            self.tasks.create(
+                name = "Attend "+self.title,
+                description = self.description,
+                code = "MEET",
+                level = 1,
+                order = 999,
+                status = "STATUS_SUSPENDED",
+                start = self.start,
+                end = self.end,
+                endIsMilestone = True
+            )
         super(Event, self).save(*args, **kwargs)
         
 class Role(models.Model):

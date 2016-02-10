@@ -59,6 +59,10 @@
     font-size: 28px;
     margin-left: 10px;
   }
+  
+  .ganttButtonBar h2{
+    margin-left:10px;
+  }
 
 </style>
 <script type="text/javascript">
@@ -299,6 +303,7 @@ function editResources(){
   <div class="__template__" type="GANTBUTTONS"><!--
   <div class="ganttButtonBar noprint">
     <h1>{{event.title}}</h1>
+    <h2>{{event.start}} {% if event.end %} to {{event.end}}{% endif %}{% if event.location %} - {{event.location}}{% endif %}</h2>
     <div class="buttons">
     <button onclick="$('#workSpace').trigger('undo.gantt');" class="button textual" title="undo"><span class="teamworkIcon">&#39;</span></button>
     <button onclick="$('#workSpace').trigger('redo.gantt');" class="button textual" title="redo"><span class="teamworkIcon">&middot;</span></button>
