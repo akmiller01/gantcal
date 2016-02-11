@@ -9,6 +9,7 @@ from cal.models import Event
 from cal.models import Task
 from cal.models import Assignee
 from cal.models import Role
+from cal.models import Process
 from django.contrib.auth.models import User
 from cal.utils import uni
 from django.contrib.auth.decorators import login_required
@@ -16,6 +17,7 @@ from django.http import *
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic.edit import CreateView
+from itertools import chain
 
 def login_user(request):
     logout(request)
@@ -47,12 +49,15 @@ def dashboard(request):
     attendee=user
   )
   tasks = Task.objects.order_by('start').filter(
-    start__gt=now, start__lt=now+timedelta(14)
+    start__gte=now, start__lte=now+timedelta(14)
   )
   events = Event.objects.order_by('start').filter(
-    start__gt=now, start__lt=now+timedelta(14)
+    start__gte=now, start__lte=now+timedelta(14)
   )
-  return render_to_response('cal/dashboard.html', {"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks})
+  processes = Process.objects.order_by('start').filter(
+    end__gte=now
+  )
+  return render_to_response('cal/dashboard.html', {"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks,"processes":processes})
 
 @login_required
 def month(request):
@@ -63,12 +68,8 @@ def month(request):
   if year is None or month is None:
     year = now.year
     month = now.month
-  events = Event.objects.order_by('start').filter(
-    start__year=year, start__month=month
-  )
-  tasks = Task.objects.order_by('start').filter(
-    start__year=year, start__month=month
-  )
+  events = Event.objects.order_by('start').all()
+  tasks = Task.objects.order_by('start').all()
   return render_to_response('cal/cal.html', {'events': events,'tasks': tasks,'year': year,'month':month,"user":user})
 
 @login_required
@@ -76,6 +77,15 @@ def event(request,slug):
   user = request.user
   event = get_object_or_404(Event,slug=slug)
   return render_to_response('cal/event.html',{'event':event,"user":user})
+
+# @login_required
+# def eventList(request):
+#   user = request.user
+#   now = datetime.now()
+#   events = Event.objects.order_by('start').filter(
+#     start__gt=now
+#   )
+#   return render_to_response('cal/list.html',{'events':events,"user":user})
 
 @login_required
 def gantt(request,slug):
@@ -91,6 +101,25 @@ def gantt(request,slug):
   users = User.objects.all()
   resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
   return render_to_response('cal/gantt.html',{'event':metaEvent,'tasks':serializers.serialize('json',tasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+
+# @login_required
+# def processGantt(request,slug):
+#   authUser = request.user
+#   process = get_object_or_404(Process,slug=slug)
+#   metaTasks = []
+#   for event in process.events.all():
+#     tasks = event.tasks.order_by('order')
+#     metaTasks.append(tasks)
+#   metaTasks = [item for sublist in metaTasks for item in sublist]
+#   print(metaTasks)
+#   assignees = Assignee.objects.all()
+#   assigneeDict = {"pk_"+str(assignee.id):{"id":"pk_"+str(assignee.id),"resourceId":"pk_"+str(assignee.resource.id),"roleId":"pk_"+str(assignee.role.id),"effort":assignee.effort} for assignee in assignees}
+#   roles = Role.objects.all()
+#   roleDict = [{"name":uni(role.name),"id":"pk_"+str(role.id)} for role in roles]
+#   users = User.objects.all()
+#   resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
+#   return render_to_response('cal/gantt.html',{'event':process,'tasks':serializers.serialize('json',metaTasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+# 
 
 def ganttAjax(request,slug):
   project = json.loads(request.POST['prj'])

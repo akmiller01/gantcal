@@ -30,7 +30,7 @@ class Process(models.Model):
     slug = models.SlugField(max_length=255,unique=True,editable=False)
     description = models.TextField(null=True,blank=True)
     start = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
-    end = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
+    end = models.DateField(auto_now=False, auto_now_add=False)
     theme = models.ManyToManyField(Theme, related_name="processes", related_query_name="process",blank=True)
     
     class Meta:
@@ -39,6 +39,9 @@ class Process(models.Model):
     
     def __str__(self):
         return self.title
+    
+    # def get_absolute_url(self):
+    #     return reverse("cal.views.processGantt",args=[self.slug])
     
     def save(self, *args, **kwargs):
         super(Process, self).save(*args, **kwargs)
@@ -74,12 +77,13 @@ class Event(models.Model):
     location = models.CharField(max_length=255,null=True,blank=True)
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True,editable=False)
     start = models.DateField(auto_now=False, auto_now_add=False)
-    end = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
+    end = models.DateField(auto_now=False, auto_now_add=False)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
     tag = models.ManyToManyField(Tag, related_name="events", related_query_name="event",blank=True)
     process = models.ManyToManyField(Process, related_name="events", related_query_name="event",blank=True)
-    priority = models.IntegerField(blank=True,null=True)
+    PRIORITY_CHOICES = zip( range(1,4), range(1,4) )
+    priority = models.IntegerField(choices=PRIORITY_CHOICES,blank=True,null=True)
     estimated_cost = models.IntegerField(blank=True,null=True)
     FOCUS_CHOICES = (
         ('BG','Background'),

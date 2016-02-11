@@ -57,13 +57,14 @@ class TagAdmin(admin.ModelAdmin):
 
 class EventAdmin(admin.ModelAdmin):
     #fields display on change list
-    list_display = ['title','description','start','end']
+    list_display = ['title','start','location','priority','focus']
     #fields to filter the change list with
-    list_filter = ['created']
+    list_filter = ['created','priority','focus','start','tag','process','process__theme','attendee','location']
     #fields to search in change list
-    search_fields = ['title','description','content']
+    search_fields = ['title','description','attendee','tag','process']
     #enable the date drill down on change list
     date_hierarchy = 'start'
+    prepopulated_fields = {"end":("start",)}
     #enable the save buttons on top of change form
     save_on_top = True
     

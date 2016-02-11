@@ -4,6 +4,42 @@
     {% block head %}
         <style>
             div#calendar{padding:5px;}
+            div#filterPane{
+                padding:10px;
+                margin-right:5px;
+                display:none;
+                position:absolute;
+                right:0;
+                top:60px;
+                z-index: 999;
+                border:solid 1px black;
+                border-radius: 5px;
+                background-color: #FFFFFF;
+            }
+            label {
+                display: block;
+                padding-left: 15px;
+                text-indent: -15px;
+            }
+            input {
+                width: 13px;
+                height: 13px;
+                padding: 0;
+                margin:0;
+                vertical-align: bottom;
+                position: relative;
+                top: -1px;
+                *overflow: hidden;
+            }
+            table.filter {
+                width:auto !important;
+                border:none !important;
+                float:left;
+                margin:5px;
+            }
+            table.filter td{
+                border-style:none !important;
+            }
         </style>
         {% load staticfiles %}
         <script type="text/javascript" src='{% static 'fullcalendar/dist/fullcalendar.min.js' %}'></script>
@@ -48,7 +84,7 @@
                 q = {"y":y.toString(),"m":m.toString()};
                 var o = getParams();
                 setParams(q);
-                if((o.y != q.y) || (o.m != q.m)){location.reload();}
+                //if((o.y != q.y) || (o.m != q.m)){location.reload();}
                 };
             function dayClick(date,jsEvent,view){
                 window.alert(date);
@@ -56,17 +92,55 @@
             //Default filter settings
             displayTasks = false
             displayEvents = true
+            displayBG = true
+            displayLC = true
+            displayPT = true
+            displayP1 = true
+            displayP2 = true
+            displayP3 = true
+            displayPN = true
             function eventFilter(event,element) {
                 var metaBool = true,
                 isTask = event.type=="task",
                 isEvent = event.type=="event";
+                isBG = event.focus=="BG";
+                isLC = event.focus=="LC";
+                isPT = event.focus=="PT";
+                isP1 = event.priority==1;
+                isP2 = event.priority==2;
+                isP3 = event.priority==3;
+                isPN = event.priority=="None";
                 if(!displayTasks){
                     metaBool = metaBool && !isTask;
                 };
                 if(!displayEvents){
                     metaBool = metaBool && !isEvent;
                 };
+                if(!displayBG){
+                    metaBool = metaBool && !isBG;
+                };
+                if(!displayLC){
+                    metaBool = metaBool && !isLC;
+                };
+                if(!displayPT){
+                    metaBool = metaBool && !isPT;
+                };
+                if(!displayP1){
+                    metaBool = metaBool && !isP1;
+                };
+                if(!displayP2){
+                    metaBool = metaBool && !isP2;
+                };
+                if(!displayP3){
+                    metaBool = metaBool && !isP3;
+                };
+                if(!displayPN){
+                    metaBool = metaBool && !isPN;
+                };
                 return metaBool;
+            };
+            function openFilters(){
+                $('#filterPane').slideToggle();
             };
             $(document).ready(function(){
                 var now = moment(),
@@ -77,7 +151,9 @@
                             "start": "{{event.start|date:"Y-m-d"}}",
                             "end": "{{event.end|date:"Y-m-d"}}",
                             "url": "{{event.get_event_url}}",
-                            "type": "event"
+                            "type": "event",
+                            "focus": "{{event.focus}}",
+                            "priority": "{{event.priority}}",
                         },
                     {% endfor %}
                     {% for task in tasks %}
@@ -87,7 +163,9 @@
                             "end": "{{task.end|date:"Y-m-d"}}",
                             "color": "forestgreen",
                             "url": "{{task.event.get_gantt_url}}",
-                            "type": "task"
+                            "type": "task",
+                            "focus": "{{task.event.focus}}",
+                            "priority": "{{task.event.priority}}",
                         },
                     {% endfor %}
                 ];
@@ -99,7 +177,7 @@
                     header: {
                         left:   'title',
                         center: '',
-                        right:  'today prevYear,prev,next,nextYear addEvent'
+                        right:  'today prevYear,prev,next,nextYear addEvent openFilters'
                     },
                     customButtons: {
                         addEvent: {
@@ -107,7 +185,11 @@
                             click: function() {
                                 window.location.href = "{% url 'admin:cal_event_add' %}";
                             }
-                        }
+                        },
+                        openFilters: {
+                            text: 'filters',
+                            click: openFilters
+                        },
                     },
                     viewRender: setDateParam,
                     {% if year and month %}
@@ -116,18 +198,109 @@
                     defaultDate: now,
                     {% endif %}
                 });
+                $('#taskBox').change(function() {
+                    if($(this).is(":checked")) {
+                        displayTasks = true;
+                    }else{
+                        displayTasks = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
+                $('#eventBox').change(function() {
+                    if($(this).is(":checked")) {
+                        displayEvents = true;
+                    }else{
+                        displayEvents = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
+                $('#bgBox').change(function() {
+                    if($(this).is(":checked")) {
+                        displayBG = true;
+                        
+                    }else{
+                        displayBG = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
+                $('#lcBox').change(function() {
+                    if($(this).is(":checked")) {
+                        displayLC = true;
+                        
+                    }else{
+                        displayLC = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
+                $('#ptBox').change(function() {
+                    if($(this).is(":checked")) {
+                        displayPT = true;
+                        
+                    }else{
+                        displayPT = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
+                $('#p1Box').change(function() {
+                    if($(this).is(":checked")) {
+                        displayP1 = true;
+                        
+                    }else{
+                        displayP1 = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
+                $('#p2Box').change(function() {
+                    if($(this).is(":checked")) {
+                        displayP2 = true;
+                        
+                    }else{
+                        displayP2 = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
+                $('#p3Box').change(function() {
+                    if($(this).is(":checked")) {
+                        displayP3 = true;
+                        
+                    }else{
+                        displayP3 = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
+                $('#pnBox').change(function() {
+                    if($(this).is(":checked")) {
+                        displayPN = true;
+                        
+                    }else{
+                        displayPN = false;
+                    };
+                    $('#calendar').fullCalendar('rerenderEvents')
+                });
             });
-            function taskOn() {
-                displayTasks = true;
-                $('#calendar').fullCalendar('rerenderEvents')
-            };
-            function taskOff() {
-                displayTasks = false;
-                $('#calendar').fullCalendar('rerenderEvents')
-            };
         </script>
     {% endblock %}    
     {% block content %}
     <div id="calendar">
+        <div id='filterPane'>
+            <table class="filter">
+                <tr><td><b>Type</b></td></tr>
+                <tr><td><input type="checkbox" id="eventBox" checked>Events</input></td></tr>
+                <tr><td><input type="checkbox" id="taskBox">Tasks</input></td></tr>
+            </table>
+            <table class="filter">
+                <tr><td><b>Focus</b></td></tr>
+                <tr><td><input type="checkbox" id="ptBox" checked>Participating</input></td></tr>
+                <tr><td><input type="checkbox" id="lcBox" checked>Localized</input></td></tr>
+                <tr><td><input type="checkbox" id="bgBox" checked>Background</input></td></tr>
+            </table>
+            <table class="filter">
+                <tr><td><b>Priority</b></td></tr>
+                <tr><td><input type="checkbox" id="p1Box" checked>1</input></td></tr>
+                <tr><td><input type="checkbox" id="p2Box" checked>2</input></td></tr>
+                <tr><td><input type="checkbox" id="p3Box" checked>3</input></td></tr>
+                <tr><td><input type="checkbox" id="pnBox" checked>None</input></td></tr>
+            </table>
+        </div>
     </div>
     {% endblock %}

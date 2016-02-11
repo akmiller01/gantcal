@@ -17,7 +17,7 @@
             <th>Progress</th>
             <th>Assignees</th>
             <th>Event</th>
-            <th>Gantt chart</th>
+            <th></th>
             {% for task in userTasks%}
                 <tr>
                     <td>
@@ -42,7 +42,7 @@
                         <a href="{{task.event.get_event_url}}">{{task.event}}</a>
                     </td>
                     <td>
-                        <a href="{{task.event.get_gantt_url}}">Click here</a>
+                        <span class="teamworkIcon" style="font-size:12px;" ><a href="{{task.event.get_gantt_url}}">e</a></span>
                     </td>
                 </tr>
             {% endfor %}
@@ -53,6 +53,7 @@
             <th>Start</th>
             <th>End</th>
             <th>Attendees</th>
+            <th></th>
             {% for event in userEvents%}
                 <tr>
                     <td>
@@ -67,6 +68,9 @@
                     <td>
                         {% for attendee in event.attendee.all %}{{attendee.get_full_name}}, {% endfor %}
                     </td>
+                    <td>
+                        <span class="teamworkIcon" style="font-size:12px;" ><a href="{% url 'admin:cal_event_change' event.id %}">e</a></span>
+                    </td>
                 </tr>
             {% endfor %}
         </table>
@@ -79,7 +83,7 @@
             <th>Progress</th>
             <th>Assignees</th>
             <th>Event</th>
-            <th>Gantt chart</th>
+            <th></th>
             {% for task in tasks%}
                 <tr>
                     <td>
@@ -104,7 +108,7 @@
                         <a href="{{task.event.get_event_url}}">{{task.event}}</a>
                     </td>
                     <td>
-                        <a href="{{task.event.get_gantt_url}}">Click here</a>
+                        <span class="teamworkIcon" style="font-size:12px;" ><a href="{{task.event.get_gantt_url}}">e</a></span>
                     </td>
                 </tr>
             {% endfor %}
@@ -115,6 +119,7 @@
             <th>Start</th>
             <th>End</th>
             <th>Attendees</th>
+            <th></th>
             {% for event in events%}
                 <tr>
                     <td>
@@ -128,6 +133,28 @@
                     </td>
                     <td>
                         {% for attendee in event.attendee.all %}{{attendee.get_full_name}}, {% endfor %}
+                    </td>
+                    <td>
+                        <span class="teamworkIcon" style="font-size:12px;" ><a href="{% url 'admin:cal_event_change' event.id %}">e</a></span>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <b>Process update</b>
+        <table>
+            <th>Title</th>
+            <th>Themes</th>
+            <th>Events</th>
+            {% for process in processes%}
+                <tr>
+                    <td>
+                        {{process.title}}
+                    </td>
+                    <td>
+                        {% for theme in process.theme.all %}{{theme}}; {% endfor %}
+                    </td>
+                    <td>
+                        {% with eventCount=process.events.count %}{{eventCount}} {% endwith %}
                     </td>
                 </tr>
             {% endfor %}

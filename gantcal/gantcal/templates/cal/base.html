@@ -43,6 +43,7 @@
                 <strong>{% firstof user.get_short_name user.get_username %}</strong>.
             {% endblock %}
             <a href="{% url 'cal.views.month' %}">Calendar</a> /
+            <a href="{% url 'admin:cal_event_changelist' %}">List</a> /
             {% block userlinks %}
                 <a href="{% url 'admin:login' %}">Administration</a> /
                 <a href="{% url 'cal.views.login_user' %}">Log out</a>
