@@ -94,11 +94,17 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse("cal.views.event",args=[self.slug])
+    
     def get_event_url(self):
         return reverse("cal.views.event",args=[self.slug])
     
     def get_gantt_url(self):
         return reverse("cal.views.gantt",args=[self.slug])
+    
+    def focus_verbose(self):
+        return dict(Event.FOCUS_CHOICES)[self.focus]
     
     def save(self, *args, **kwargs):
         super(Event, self).save(*args, **kwargs)

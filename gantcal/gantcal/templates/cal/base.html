@@ -44,9 +44,7 @@
             {% endblock %}
             <a href="{% url 'cal.views.month' %}">Calendar</a> /
             {% block userlinks %}
-                {% if user.has_usable_password %}
-                <a href="{% url 'admin:password_change' %}">Change password</a> /
-                {% endif %}
+                <a href="{% url 'admin:login' %}">Administration</a> /
                 <a href="{% url 'cal.views.login_user' %}">Log out</a>
             {% endblock %}
         </div>

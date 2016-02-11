@@ -1,0 +1,21 @@
+{% extends 'cal/base.html' %}
+
+    {% block title %} Add new event {% endblock %}
+    {% block head %}
+        <style>
+          div#event{padding:5px;}
+          h1{
+            color: #000000;
+            font-weight: bold;
+            font-size: 28px;
+          }
+        </style>
+    {% endblock %}
+    {% block content %}
+    <div id="event">
+        <form action="" method="post">{% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Create" />
+        </form>
+    </div>
+    {% endblock %}

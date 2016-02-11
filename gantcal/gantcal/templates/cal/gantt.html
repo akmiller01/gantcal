@@ -49,10 +49,6 @@
     border: 1px solid #d0d0d0;
   }
 
-  body {
-    overflow: hidden;
-  }
-
   .ganttButtonBar h1{
     color: #000000;
     font-weight: bold;
@@ -62,6 +58,30 @@
   
   .ganttButtonBar h2{
     margin-left:10px;
+  }
+  
+  .ganttButtonBar h2 a{
+    margin-left:10px;
+    font-size:14px;
+  }
+  
+  body {
+    overflow:hidden;
+  }
+  #workSpace {
+    min-width:300px;
+    min-height:200px;
+  }
+  
+  @media (max-width : 600px) {
+    .ganttButtonBar h1{
+      font-size: 14px;
+      margin-left: 10px;
+    }
+    
+    .ganttButtonBar h2{
+      font-size:10px;
+    }
   }
 
 </style>
@@ -79,16 +99,16 @@ $(function() {
   workSpace.css({width:$(window).width() - 20,height:$(window).height() - 100});
   ge.init(workSpace);
 
-  //inject some buttons (for this demo only)
-  //$(".ganttButtonBar div").append("<button onclick='clearGantt();' class='button'>clear</button>")
-  //        .append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")
-  //        .append("<button onclick='getFile();' class='button'>export</button>");
-  $(".ganttButtonBar div").addClass('buttons');
   //overwrite with localized ones
   loadI18n();
 
   //simulate a data load from a server.
   loadGanttFromServer();
+  
+  //inject some buttons
+  $(".ganttButtonBar div").append("<button onclick='startEdit()' class='button first big' title='edit'>edit</button>")
+          .append("<button onclick='endEdit();' class='button' title='discard' style='display:none;'>stop editing</button>");
+  $(".ganttButtonBar div").addClass('buttons');
 
   $(window).resize(function(){
     workSpace.css({width:$(window).width() - 1,height:$(window).height() - workSpace.position().top});
@@ -121,13 +141,33 @@ function loadGanttFromServer() {
       tasks.push(fields);
   };
   data = {"tasks":tasks,"resources":resources,"roles":roles,
-    "canWrite":true,
-    "canWriteOnParent":true,
+    "canWrite":false,
+    "canWriteOnParent":false,
     "selectedRow":0,
     "deletedTaskIds":[],}
-    //loadFromLocalStorage();
+
   ge.loadProject(data)
 }
+
+function startEdit() {
+    $("button[title='save']").show();
+    $("button[title='discard']").show();
+    $("button[title='edit']").hide();
+    data.canWrite = true;
+    data.canWriteOnParent = true;
+    ge.loadProject(data)
+  };
+function endEdit() {
+    if (!confirm("Stop editing and discard all changes since last save?")) {
+      return;
+    };
+    $("button[title='save']").hide();
+    $("button[title='discard']").hide();
+    $("button[title='edit']").show();
+    data.canWrite = false;
+    data.canWriteOnParent = false;
+    ge.loadProject(data)
+  };
 
 // cookie authentication
 function getCookie(name) {
@@ -182,6 +222,7 @@ function saveGanttOnServer() {
       if (response.ok) {
         prof.stop();
         if (response.project) {
+          data = response.project
           ge.loadProject(response.project); //must reload as "tmp_" ids are now the good ones
         } else {
           ge.reset();
@@ -303,7 +344,7 @@ function editResources(){
   <div class="__template__" type="GANTBUTTONS"><!--
   <div class="ganttButtonBar noprint">
     <h1>{{event.title}}</h1>
-    <h2>{{event.start}} {% if event.end %} to {{event.end}}{% endif %}{% if event.location %} - {{event.location}}{% endif %}</h2>
+    <h2>{{event.start}} {% if event.end %} to {{event.end}}{% endif %}{% if event.location %} - {{event.location}}{% endif %} <a href="{{event.get_event_url}}">View event page</a></h2>
     <div class="buttons">
     <button onclick="$('#workSpace').trigger('undo.gantt');" class="button textual" title="undo"><span class="teamworkIcon">&#39;</span></button>
     <button onclick="$('#workSpace').trigger('redo.gantt');" class="button textual" title="redo"><span class="teamworkIcon">&middot;</span></button>
@@ -328,7 +369,7 @@ function editResources(){
     <span class="ganttButtonSeparator" style="display:none;"></span>
     <button onclick="editResources();" class="button textual" style="display:none;" title="edit resources"><span class="teamworkIcon">M</span></button>
       &nbsp; &nbsp; &nbsp; &nbsp;
-      <button onclick="saveGanttOnServer();" class="button first big" title="save">save</button>
+      <button onclick="saveGanttOnServer();" class="button first big" title="save" style="display:none;">save</button>
     </div></div>
   --></div>
 
@@ -453,7 +494,7 @@ function editResources(){
     </tr>
   </table>
 
-  <div style="text-align: right; padding-top: 20px"><button id="saveButton" class="button big">save</button></div>
+  <div style="text-align: right; padding-top: 20px"><button id="saveButton" class="button big">apply</button></div>
   </div>
   --></div>
 

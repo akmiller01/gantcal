@@ -11,7 +11,7 @@
             </a></h1>
         </div>
         <div id="content">
-            <form class="form-horizontal" name="LoginForm" action="/login/" method="post">
+            <form class="form-horizontal" name="LoginForm" action="/login" method="post">
             {% csrf_token %}
             {% if next %}
                 <input type="hidden" name="next" value="{{ next }}" />

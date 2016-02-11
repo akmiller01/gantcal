@@ -99,7 +99,15 @@
                     header: {
                         left:   'title',
                         center: '',
-                        right:  'today prevYear,prev,next,nextYear'
+                        right:  'today prevYear,prev,next,nextYear addEvent'
+                    },
+                    customButtons: {
+                        addEvent: {
+                            text: ' + ',
+                            click: function() {
+                                window.location.href = "{% url 'admin:cal_event_add' %}";
+                            }
+                        }
                     },
                     viewRender: setDateParam,
                     {% if year and month %}

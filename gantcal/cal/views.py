@@ -15,14 +15,16 @@ from django.contrib.auth.decorators import login_required
 from django.http import *
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
+from django.views.generic.edit import CreateView
 
 def login_user(request):
-    nextURL = request.GET.get('next')
     logout(request)
+    nextURL = request.GET.get('next')
     username = password = ''
     if request.POST:
         username = request.POST['username']
         password = request.POST['password']
+        nextURL = request.POST.get('next')
 
         user = authenticate(username=username, password=password)
         if user is not None:
@@ -32,7 +34,7 @@ def login_user(request):
                   return HttpResponseRedirect(nextURL)
                 else:
                   return HttpResponseRedirect('/')
-    return render_to_response('cal/login.html', context_instance=RequestContext(request))
+    return render_to_response('cal/login.html',{'next':nextURL}, context_instance=RequestContext(request))
 
 @login_required
 def dashboard(request):
@@ -116,6 +118,7 @@ def ganttAjax(request,slug):
         end = datetime.fromtimestamp(task['end']/1000),
       )
       taskInstance.save()
+      task['id'] = taskInstance.pk
       #Check to see if assignee exists, if not, make it
       for assignee in task['assigs']:
         resourcePK = int(assignee['resourceId'][3:])
@@ -124,6 +127,7 @@ def ganttAjax(request,slug):
         role = Role.objects.get(pk=rolePK)
         try:
           assigneeInstance = Assignee.objects.get(resource=resource,role=role)
+          assignee['id'] = assigneeInstance.pk
         except Assignee.DoesNotExist:
           assigneeInstance = Assignee(
             resource=resource,
@@ -131,6 +135,7 @@ def ganttAjax(request,slug):
             effort=0
           )
           assigneeInstance.save()
+          assignee['id'] = assigneeInstance.pk
         taskInstance.assignee.add(assigneeInstance)
       taskInstance.save()
       currentTaskPKs.append(taskInstance.pk)
@@ -161,6 +166,7 @@ def ganttAjax(request,slug):
         role = Role.objects.get(pk=rolePK)
         try:
           assigneeInstance = Assignee.objects.get(resource=resource,role=role)
+          assignee['id'] = assigneeInstance.pk
           currentAssigneePKs.append(assigneeInstance.pk)
         except Assignee.DoesNotExist:
           assigneeInstance = Assignee(
@@ -169,6 +175,7 @@ def ganttAjax(request,slug):
             effort=0
           )
           assigneeInstance.save()
+          assignee['id'] = assigneeInstance.pk
           currentAssigneePKs.append(assigneeInstance.pk)
         taskInstance.assignee.add(assigneeInstance)
       #Remove stale assignees

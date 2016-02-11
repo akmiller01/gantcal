@@ -4,10 +4,29 @@
     {% block head %}
         <style>
           div#event{padding:5px;}
+          h1{
+            color: #000000;
+            font-weight: bold;
+            font-size: 28px;
+          }
         </style>
-    {% endblock %}    
+    {% endblock %}
     {% block content %}
     <div id="event">
-        <a href="{{event.get_gantt_url}}">{{event.title}} Gantt Chart</a>
+      <h1>{{event.title}}</h1>
+      <h2>{{event.start}} {% if event.end %} to {{event.end}}{% endif %}{% if event.location %} - {{event.location}}{% endif %} </h2>
+      <p><b><a href="{{event.get_gantt_url}}">View gantt chart</a> / <a href="{% url 'admin:cal_event_change' event.id %}">Edit this event</a> / <a href="{% url 'admin:cal_event_add' %}">Add new event</a></b></p>
+      <p><b>Priority: </b>{{event.priority}}</p>
+      <p><b>Focus: </b>{{event.focus_verbose}}</p>
+      <p><b>Start date: </b>{{event.start}}</p>
+      <p><b>End date: </b>{{event.end}}</p>
+      <p><b>Location: </b>{{event.location}}</p>
+      <p><b>Description: </b>{{event.description}}</p>
+      <p><b>Purpose: </b>{{event.purpose}}</p>
+      <p><b>Attendees: </b>{% for attendee in event.attendee.all %}{{attendee.get_full_name}}, {% endfor %}</p>
+      <p><b>Processes: </b>{% for process in event.process.all %}{{process}}; {% endfor %}</p>
+      <p><b>Themes: </b>{% for process in event.process.all %} {% for theme in process.theme.all %} {{theme}}; {% endfor %} {% endfor %}</p>
+      <p><b>Tags: </b>{% for tag in event.tag.all %}{{tag}}; {% endfor %}</p>
+      <p><b>Estimated costs: </b>{% if event.estimated_cost %}£{% endif %}{{event.estimated_cost}}</p>
     </div>
     {% endblock %}

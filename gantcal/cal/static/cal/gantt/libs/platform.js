@@ -840,7 +840,7 @@ function openBlackPopup(url,width,height,onCloseCallBack,iframeId){
 
   //add black only if not already in blackpupup
   if(window.name!=iframeId)
-    bg.css({backgroundImage:"url('"+contextPath+"/applications/teamwork/images/black_70.png')"});
+    bg.css({backgroundColor:"rgba(0,0,0,0.5)"});
 
   bg.append("<iframe id='"+iframeId+"' name='"+iframeId+"' frameborder='0'></iframe>");
   bg.bringToFront();
@@ -884,7 +884,7 @@ function createBlackPage(width,height,onCloseCallBack){
   $("#__blackpopup__").remove();
 
   var bg=$("<div>").attr("id","__blackpopup__");
-  bg.css({position:'fixed',top:"0px",paddingTop:"50px", left:0,width:'100%',height:'100%',  backgroundImage:"url('res/img/black_70.png')"});
+  bg.css({position:'fixed',top:"0px",paddingTop:"50px", left:0,width:'100%',height:'100%',  backgroundColor:"rgba(0,0,0,0.5)"});
   bg.append("<div id='bwinPopupd' name='bwinPopupd'></div>");
   bg.bringToFront();
 
