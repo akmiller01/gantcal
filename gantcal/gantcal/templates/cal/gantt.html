@@ -147,12 +147,12 @@ function loadGanttFromServer() {
         assignment = new Assignment(assignee.id,assignee.resourceId,assignee.roleId,assignee.effort);
         assignees.push(assignment);
       };
-      fields.assigs = assignees;
-      {% endif %}
-      fields.start = moment(fields.start,"YYYY-MM-DD").valueOf();
-      fields.end = moment(fields.end,"YYYY-MM-DD").valueOf();
       fields.name = fields.title;
       fields.status = "STATUS_ACTIVE";
+    {% endif %}
+      fields.duration = moment.duration(moment(fields.end,"YYYY-MM-DD")-moment(fields.start,"YYYY-MM-DD")).days()
+      fields.start = moment(fields.start,"YYYY-MM-DD").valueOf();
+      fields.end = moment(fields.end,"YYYY-MM-DD").valueOf();
       tasks.push(fields);
   };
   data = {"tasks":tasks,"resources":resources,"roles":roles,
