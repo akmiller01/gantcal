@@ -129,7 +129,6 @@ class Event(models.Model):
                 status = "STATUS_SUSPENDED",
                 start = self.start,
                 end = self.end,
-                duration = (self.end - self.start).days,
                 endIsMilestone = True
             )
         super(Event, self).save(*args, **kwargs)
