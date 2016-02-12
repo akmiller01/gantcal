@@ -106,8 +106,10 @@ $(function() {
   loadGanttFromServer();
   
   //inject some buttons
+  {% if not isProcess %}
   $(".ganttButtonBar div").append("<button onclick='startEdit()' class='button first big' title='edit'>edit</button>")
           .append("<button onclick='endEdit();' class='button' title='discard' style='display:none;'>stop editing</button>");
+  {% endif %}
   $(".ganttButtonBar div").addClass('buttons');
 
   $(window).resize(function(){
@@ -128,23 +130,40 @@ function loadGanttFromServer() {
       var fields = rawTasks[i].fields;
       fields.id = rawTasks[i].pk;
       var assignees = [];
+      {% if not isProcess %}
       for(var j = 0; j < fields.assignee.length; j++){
         var assignee_id = "pk_"+fields.assignee[j].toString(),
+        assignee = rawAssignees[assignee_id];
+        assignment = new Assignment(assignee.id,assignee.resourceId,assignee.roleId,assignee.effort);
+          assignment = []
+        assignees.push(assignment);
+      };
+      fields.assigs = assignees;
+      delete fields.assignee;
+      {% else %}
+      for(var j = 0; j < fields.attendee.length; j++){
+        var assignee_id = "pk_"+fields.attendee[j].toString(),
         assignee = rawAssignees[assignee_id];
         assignment = new Assignment(assignee.id,assignee.resourceId,assignee.roleId,assignee.effort);
         assignees.push(assignment);
       };
       fields.assigs = assignees;
-      delete fields.assignee;
+      {% endif %}
       fields.start = moment(fields.start,"YYYY-MM-DD").valueOf();
       fields.end = moment(fields.end,"YYYY-MM-DD").valueOf();
+      fields.name = fields.title;
+      fields.status = "STATUS_ACTIVE";
       tasks.push(fields);
   };
   data = {"tasks":tasks,"resources":resources,"roles":roles,
     "canWrite":false,
     "canWriteOnParent":false,
     "selectedRow":0,
-    "deletedTaskIds":[],}
+    "deletedTaskIds":[],
+    {% if isProcess %}
+    "zoom":"s"
+    {% endif %}
+    }
 
   ge.loadProject(data)
 }
@@ -344,7 +363,7 @@ function editResources(){
   <div class="__template__" type="GANTBUTTONS"><!--
   <div class="ganttButtonBar noprint">
     <h1>{{event.title}}</h1>
-    <h2>{{event.start}} {% if event.end %} to {{event.end}}{% endif %}{% if event.location %} - {{event.location}}{% endif %} <a href="{{event.get_event_url}}">View event page</a></h2>
+    <h2>{{event.start}} {% if event.end %} to {{event.end}}{% endif %}{% if event.location %} - {{event.location}}{% endif %} {% if not isProcess %}<a href="{{event.get_event_url}}">View event page</a>{% else %}<a href="{% url 'admin:cal_process_change' event.id%}">Edit process</a>{% endif %}</h2>
     <div class="buttons">
     <button onclick="$('#workSpace').trigger('undo.gantt');" class="button textual" title="undo"><span class="teamworkIcon">&#39;</span></button>
     <button onclick="$('#workSpace').trigger('redo.gantt');" class="button textual" title="redo"><span class="teamworkIcon">&middot;</span></button>
@@ -489,7 +508,7 @@ function editResources(){
     <tr>
       <th style="width:100px;">name</th>
       <th style="width:70px;">role</th>
-      <th style="width:30px;display:none;">est.wklg.</th>
+      <th style="width:30px;">effort</th>
       <th style="width:30px;" id="addAssig"><span class="teamworkIcon" style="cursor: pointer">+</span></th>
     </tr>
   </table>
@@ -503,7 +522,7 @@ function editResources(){
   <tr taskId="(#=obj.task.id#)" assigId="(#=obj.assig.id#)" class="assigEditRow" >
     <td ><select name="resourceId"  class="formElements"></select></td>
     <td ><select type="select" name="roleId"  class="formElements"></select></td>
-    <td style="display:none;" ><input type="text" style="display:none;" name="effort" value="(#=getMillisInHoursMinutes(obj.assig.effort)#)" size="5" class="formElements"></td>
+    <td ><input type="text" name="effort" value="(#=getMillisInHoursMinutes(obj.assig.effort)#)" size="5" class="formElements"></td>
     <td align="center"><span class="teamworkIcon delAssig" style="cursor: pointer">d</span></td>
   </tr>
   --></div>

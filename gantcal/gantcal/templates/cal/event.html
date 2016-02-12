@@ -22,7 +22,7 @@
       <p><b>End date: </b>{{event.end}}</p>
       <p><b>Location: </b>{{event.location}}</p>
       <p><b>Description: </b>{{event.description}}</p>
-      <p><b>Purpose: </b>{{event.purpose}}</p>
+      <p><b>Objectives: </b>{{event.objectives}}</p>
       <p><b>Attendees: </b>{% for attendee in event.attendee.all %}{{attendee.get_full_name}}, {% endfor %}</p>
       <p><b>Processes: </b>{% for process in event.process.all %}{{process}}; {% endfor %}</p>
       <p><b>Themes: </b>{% for process in event.process.all %} {% for theme in process.theme.all %} {{theme}}; {% endfor %} {% endfor %}</p>

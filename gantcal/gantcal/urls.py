@@ -26,5 +26,7 @@ urlpatterns = [
     url(r'^(?P<slug>[\w\-]+)/$', views.event,name='event'),
     url(r'^g/(?P<slug>[\w\-]+)/$', views.gantt,name='gantt'),
     url(r'^g/(?P<slug>[\w\-]+)/ganttAjax$', views.ganttAjax,name='ganttAjax'),
+    url(r'^p/(?P<slug>[\w\-]+)/$', views.processGantt,name='processGantt'),
     url(r'^g/([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    url(r'^p/([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
 ]

@@ -78,17 +78,9 @@ def event(request,slug):
   event = get_object_or_404(Event,slug=slug)
   return render_to_response('cal/event.html',{'event':event,"user":user})
 
-# @login_required
-# def eventList(request):
-#   user = request.user
-#   now = datetime.now()
-#   events = Event.objects.order_by('start').filter(
-#     start__gt=now
-#   )
-#   return render_to_response('cal/list.html',{'events':events,"user":user})
-
 @login_required
 def gantt(request,slug):
+  isProcess = False
   authUser = request.user
   metaEvent = get_object_or_404(Event,slug=slug)
   tasks = Task.objects.filter(
@@ -100,26 +92,25 @@ def gantt(request,slug):
   roleDict = [{"name":uni(role.name),"id":"pk_"+str(role.id)} for role in roles]
   users = User.objects.all()
   resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
-  return render_to_response('cal/gantt.html',{'event':metaEvent,'tasks':serializers.serialize('json',tasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+  return render_to_response('cal/gantt.html',{'isProcess':isProcess,'event':metaEvent,'tasks':serializers.serialize('json',tasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
 
-# @login_required
-# def processGantt(request,slug):
-#   authUser = request.user
-#   process = get_object_or_404(Process,slug=slug)
-#   metaTasks = []
-#   for event in process.events.all():
-#     tasks = event.tasks.order_by('order')
-#     metaTasks.append(tasks)
-#   metaTasks = [item for sublist in metaTasks for item in sublist]
-#   print(metaTasks)
-#   assignees = Assignee.objects.all()
-#   assigneeDict = {"pk_"+str(assignee.id):{"id":"pk_"+str(assignee.id),"resourceId":"pk_"+str(assignee.resource.id),"roleId":"pk_"+str(assignee.role.id),"effort":assignee.effort} for assignee in assignees}
-#   roles = Role.objects.all()
-#   roleDict = [{"name":uni(role.name),"id":"pk_"+str(role.id)} for role in roles]
-#   users = User.objects.all()
-#   resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
-#   return render_to_response('cal/gantt.html',{'event':process,'tasks':serializers.serialize('json',metaTasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
-# 
+@login_required
+def processGantt(request,slug):
+  isProcess = True
+  authUser = request.user
+  process = get_object_or_404(Process,slug=slug)
+  metaTasks = process.events.order_by('start').all()
+  # for event in process.events.all():
+  #   tasks = event.tasks.order_by('order')
+  #   metaTasks.append(tasks)
+  # metaTasks = [item for sublist in metaTasks for item in sublist]
+  assignees = User.objects.all()
+  assigneeDict = {"pk_"+str(assignee.id):{"id":"pk_"+str(assignee.id),"resourceId":"pk_"+str(assignee.id),"roleId":"pk_1","effort":0} for assignee in assignees}
+  roleDict = [{"name":"Attendee","id":"pk_1"}]
+  users = User.objects.all()
+  resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
+  return render_to_response('cal/gantt.html',{'isProcess':isProcess,'event':process,'tasks':serializers.serialize('json',metaTasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+
 
 def ganttAjax(request,slug):
   project = json.loads(request.POST['prj'])
@@ -148,24 +139,35 @@ def ganttAjax(request,slug):
       )
       taskInstance.save()
       task['id'] = taskInstance.pk
-      #Check to see if assignee exists, if not, make it
+      currentAssigneePKs = []
       for assignee in task['assigs']:
         resourcePK = int(assignee['resourceId'][3:])
         rolePK = int(assignee['roleId'][3:])
         resource = User.objects.get(pk=resourcePK)
         role = Role.objects.get(pk=rolePK)
-        try:
-          assigneeInstance = Assignee.objects.get(resource=resource,role=role)
-          assignee['id'] = assigneeInstance.pk
-        except Assignee.DoesNotExist:
+        effort=assignee['effort']
+        #New assignees
+        if "tmp" in str(assignee['id']):
           assigneeInstance = Assignee(
             resource=resource,
             role=role,
-            effort=0
+            effort=effort
           )
-          assigneeInstance.save()
-          assignee['id'] = assigneeInstance.pk
+        else:
+          #Update existing assignee
+          assigneePK = int(assignee['id'][3:])
+          assigneeInstance = Assignee.objects.get(pk=assigneePK)
+          assigneeInstance.resource=resource
+          assigneeInstance.role=role
+          assigneeInstance.effort=effort
+        assigneeInstance.save()
+        assignee['id'] = assigneeInstance.pk
+        currentAssigneePKs.append(assigneeInstance.pk)
         taskInstance.assignee.add(assigneeInstance)
+      #Remove stale assignees
+      for assigneeInstance in taskInstance.assignee.all():
+        if assigneeInstance.pk not in currentAssigneePKs:
+          taskInstance.assignee.remove(assigneeInstance)
       taskInstance.save()
       currentTaskPKs.append(taskInstance.pk)
     else:
@@ -186,26 +188,30 @@ def ganttAjax(request,slug):
       taskInstance.hasChild = task['hasChild']
       taskInstance.start = datetime.fromtimestamp(task['start']/1000)
       taskInstance.end = datetime.fromtimestamp(task['end']/1000)
-      #Check to see if assignee exists, if not, make it
       currentAssigneePKs = []
       for assignee in task['assigs']:
         resourcePK = int(assignee['resourceId'][3:])
         rolePK = int(assignee['roleId'][3:])
         resource = User.objects.get(pk=resourcePK)
         role = Role.objects.get(pk=rolePK)
-        try:
-          assigneeInstance = Assignee.objects.get(resource=resource,role=role)
-          assignee['id'] = assigneeInstance.pk
-          currentAssigneePKs.append(assigneeInstance.pk)
-        except Assignee.DoesNotExist:
+        effort=assignee['effort']
+        #New assignees
+        if "tmp" in str(assignee['id']):
           assigneeInstance = Assignee(
             resource=resource,
             role=role,
-            effort=0
+            effort=effort
           )
-          assigneeInstance.save()
-          assignee['id'] = assigneeInstance.pk
-          currentAssigneePKs.append(assigneeInstance.pk)
+        else:
+          #Update existing assignee
+          assigneePK = int(assignee['id'][3:])
+          assigneeInstance = Assignee.objects.get(pk=assigneePK)
+          assigneeInstance.resource=resource
+          assigneeInstance.role=role
+          assigneeInstance.effort=effort
+        assigneeInstance.save()
+        assignee['id'] = assigneeInstance.pk
+        currentAssigneePKs.append(assigneeInstance.pk)
         taskInstance.assignee.add(assigneeInstance)
       #Remove stale assignees
       for assigneeInstance in taskInstance.assignee.all():

@@ -40,8 +40,8 @@ class Process(models.Model):
     def __str__(self):
         return self.title
     
-    # def get_absolute_url(self):
-    #     return reverse("cal.views.processGantt",args=[self.slug])
+    def get_absolute_url(self):
+        return reverse("cal.views.processGantt",args=[self.slug])
     
     def save(self, *args, **kwargs):
         super(Process, self).save(*args, **kwargs)
@@ -72,7 +72,7 @@ class Tag(models.Model):
 class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True,blank=True)
-    purpose = models.TextField(null=True,blank=True)
+    objectives = models.TextField(null=True,blank=True)
     attendee = models.ManyToManyField(User,related_name="events",related_query_name="event",blank=True)
     location = models.CharField(max_length=255,null=True,blank=True)
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True,editable=False)
@@ -90,7 +90,9 @@ class Event(models.Model):
         ('LC','Localized'),
         ('PT','Participating'),
     )
-    focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='BG')    
+    focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='BG')
+    objectives_approved = models.BooleanField(default=False)
+    attendees_approved = models.BooleanField(default=False)
     
     class Meta:
         ordering = ['start','title']

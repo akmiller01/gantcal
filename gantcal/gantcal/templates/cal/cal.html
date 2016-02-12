@@ -147,7 +147,7 @@
                 events = [
                     {% for event in events %}
                         {
-                            "title": "{{event.title}}",
+                            "title": "{{event.title|safe}}",
                             "start": "{{event.start|date:"Y-m-d"}}",
                             "end": "{{event.end|date:"Y-m-d"}}",
                             "url": "{{event.get_event_url}}",
@@ -158,7 +158,7 @@
                     {% endfor %}
                     {% for task in tasks %}
                         {
-                            "title": "{{task.event.title}} task - {{task.name}}",
+                            "title": "{{task.event.title|safe}} task - {{task.name|safe}}",
                             "start": "{{task.start|date:"Y-m-d"}}",
                             "end": "{{task.end|date:"Y-m-d"}}",
                             "color": "forestgreen",

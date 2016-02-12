@@ -148,7 +148,7 @@
             {% for process in processes%}
                 <tr>
                     <td>
-                        {{process.title}}
+                        <a href="{{process.get_absolute_url}}">{{process.title}}</a>
                     </td>
                     <td>
                         {% for theme in process.theme.all %}{{theme}}; {% endfor %}
