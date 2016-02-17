@@ -18,6 +18,122 @@ from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic.edit import CreateView
 from itertools import chain
+import vobject
+
+def ical_event(request, user_id=None):
+    events = Event.objects.order_by('start').all()
+    cal = vobject.iCalendar()
+    cal.add('method').value = 'PUBLISH'
+    cal.add('calscale').value = 'GREGORIAN'
+    cal.add('x-wr-calname').value = 'DI Events'
+    cal.add('x-wr-timezone').value = 'Europe/London'
+    cal.add('x-wr-caldesc').value = ''
+    for event in events:
+      vevent = cal.add('vevent')
+      vevent.add('dtstart').value = event.start
+      vevent.add('dtend').value = event.end
+      vevent.add('summary').value = event.title
+      description = "Priority: "
+      description += str(event.priority)
+      description += "\n"
+      description += "\n"
+      description += "Focus: "
+      description += event.focus_verbose()
+      description += "\n"
+      description += "\n"
+      description += "Description: "
+      description += event.description
+      description += "\n"
+      description += "\n"
+      description += "Objectives: "
+      description += event.objectives
+      description += "\n"
+      description += "\n"
+      description += "Attendees: "
+      attendees = ""
+      for attendee in event.attendee.all():
+        attendees += attendee.get_full_name()
+        attendees += "; "
+      description += attendees
+      description += "\n"
+      description += "\n"
+      description += "Processes: "
+      processes = ""
+      themeDict = {}
+      for process in event.process.all():
+        processes += process.title
+        processes += "; "
+        for theme in process.theme.all():
+          themeDict[theme] = True
+      themes = "; ".join([theme.title for theme in themeDict])
+      description += processes
+      description += "\n"
+      description += "\n"
+      description += "Themes: "
+      description += themes
+      description += "\n"
+      description += "\n"
+      tags = ""
+      for tag in event.tag.all():
+        tags += tag.title
+        tags += "; "
+      description += "Tags: "
+      description += tags
+      vevent.add('description').value = description
+      vevent.add('location').value = event.location
+    icalstream = cal.serialize()
+    response = HttpResponse(icalstream)
+    response['Filename'] = 'events.ics'
+    response['Content-Disposition'] = 'attachment; filename=events.ics'
+    return response
+  
+def ical_task(request, user_id=None):
+    tasks = Task.objects.order_by('start').all()
+    cal = vobject.iCalendar()
+    cal.add('method').value = 'PUBLISH'
+    cal.add('calscale').value = 'GREGORIAN'
+    cal.add('x-wr-calname').value = 'DI Tasks'
+    cal.add('x-wr-timezone').value = 'Europe/London'
+    cal.add('x-wr-caldesc').value = ''
+    for task in tasks:
+      vevent = cal.add('vevent')
+      vevent.add('dtstart').value = task.start
+      vevent.add('dtend').value = task.end
+      vevent.add('summary').value = task.event.title+" - "+task.name
+      description = "Event priority: "
+      description += str(task.event.priority)
+      description += "\n"
+      description += "\n"
+      description += "Event focus: "
+      description += task.event.focus_verbose()
+      description += "\n"
+      description += "\n"
+      description += "Task description: "
+      description += task.description
+      description += "\n"
+      description += "\n"
+      description += "Assignees: "
+      assignees = ""
+      for assignee in task.assignee.all():
+        assignees += assignee.resource.get_full_name()
+        assignees += "; "
+      description += assignees
+      description += "\n"
+      description += "\n"
+      description += "Task status: "
+      description += task.status
+      description += "\n"
+      description += "\n"
+      description += "Task progress: "
+      description += str(task.progress)+"%"
+      description += "\n"
+      description += "\n"
+      vevent.add('description').value = description
+    icalstream = cal.serialize()
+    response = HttpResponse(icalstream)
+    response['Filename'] = 'tasks.ics'
+    response['Content-Disposition'] = 'attachment; filename=tasks.ics'
+    return response
 
 def login_user(request):
     logout(request)

@@ -23,6 +23,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login', views.login_user, name='login'),
     url(r'^calendar/$', views.month, name='month'),
+    url(r'^ical/events.ics$', views.ical_event, name='icalEvent'),
+    url(r'^ical/tasks.ics$', views.ical_task, name='icalTask'),
     url(r'^(?P<slug>[\w\-]+)/$', views.event,name='event'),
     url(r'^g/(?P<slug>[\w\-]+)/$', views.gantt,name='gantt'),
     url(r'^g/(?P<slug>[\w\-]+)/ganttAjax$', views.ganttAjax,name='ganttAjax'),
