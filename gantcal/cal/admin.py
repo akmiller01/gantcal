@@ -77,7 +77,7 @@ class EventAdmin(admin.ModelAdmin):
     #fields to filter the change list with
     list_filter = ['created','priority','focus','start','tag','process','process__theme','attendee','location']
     #fields to search in change list
-    search_fields = ['title','description','attendee','tag','process']
+    search_fields = ['title','description']
     #enable the date drill down on change list
     date_hierarchy = 'start'
     prepopulated_fields = {"end":("start",)}
