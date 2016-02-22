@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.core.urlresolvers import reverse
 from cal.models import Event
 from cal.models import Theme
 from cal.models import Process
@@ -73,7 +74,7 @@ unapprove_attendees.short_description = "Un-approve selected event attendees"
 
 class EventAdmin(admin.ModelAdmin):
     #fields display on change list
-    list_display = ['title','start','location','priority','focus','objectives_approved','attendees_approved']
+    list_display = ['event_summary_title','start','priority','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
     list_filter = ['created','priority','focus','start','tag','process','process__theme','attendee','location']
     #fields to search in change list
@@ -84,6 +85,28 @@ class EventAdmin(admin.ModelAdmin):
     #enable the save buttons on top of change form
     save_on_top = True
     actions = [approve_objectives,approve_attendees,unapprove_objectives,unapprove_attendees]
+    
+    def edit(self,obj):
+        return '<a href="%s">%s</a>' % (reverse("admin:cal_event_change", args=[obj.id]), "edit")
+    edit.allow_tags = True
+    
+    def short_objectives_approved(self,obj):
+        return obj.objectives_approved
+    short_objectives_approved.short_description = "Approved"
+    short_objectives_approved.boolean = True
+    
+    def short_attendees_approved(self,obj):
+        return obj.attendees_approved
+    short_attendees_approved.short_description = "Approved"
+    short_attendees_approved.boolean = True
+    
+    def event_summary_title(self, obj):
+        return '<a href="%s">%s</a>' % (obj.get_event_url(), obj.title)
+    event_summary_title.allow_tags = True
+    event_summary_title.short_description = 'Title'
+    
+    def attendees(self, obj):
+        return "; ".join([p.get_full_name() for p in obj.attendee.all()])
     
     def save_model(self, request, obj, form, change):
         if getattr(obj, 'holder', None) is None:
