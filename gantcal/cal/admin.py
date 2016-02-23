@@ -1,5 +1,8 @@
+from datetime import timedelta
+from datetime import datetime
 from django.contrib import admin
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from cal.models import Event
 from cal.models import Theme
 from cal.models import Process
@@ -72,11 +75,65 @@ def unapprove_attendees(modeladmin, request, queryset):
     queryset.update(attendees_approved=False)
 unapprove_attendees.short_description = "Un-approve selected event attendees"
 
+class EventTimeFilter(admin.SimpleListFilter):
+    # Human-readable title which will be displayed in the
+    # right admin sidebar just above the filter options.
+    title = ('date')
+
+    # Parameter for the filter that will be used in the URL query.
+    parameter_name = 'date'
+
+    def lookups(self, request, model_admin):
+        """
+        Returns a list of tuples. The first element in each
+        tuple is the coded value for the option that will
+        appear in the URL query. The second element is the
+        human-readable name for the option that will appear
+        in the right sidebar.
+        """
+        return (
+            (None, ('All future events')),
+            ('past', ('All past events')),
+            ('all', ('All events')),
+            ('weeks', ('Next 2 weeks')),
+            ('month', ('Next month')),
+        )
+
+    def choices(self, cl):
+        for lookup, title in self.lookup_choices:
+            yield {
+                'selected': self.value() == lookup,
+                'query_string': cl.get_query_string({
+                    self.parameter_name: lookup,
+                }, []),
+                'display': title,
+            }
+    
+    def queryset(self, request, queryset):
+        """
+        Returns the filtered queryset based on the value
+        provided in the query string and retrievable via
+        `self.value()`.
+        """
+        # Compare the requested value (either '80s' or '90s')
+        # to decide how to filter the queryset.
+        now = datetime.now()
+        if self.value() == None:
+            return queryset.filter(start__gte=now)
+        if self.value() == 'past':
+            return queryset.filter(start__lte=now)
+        if self.value() == 'all':
+            return queryset
+        if self.value() == 'weeks':
+            return queryset.filter(start__gte=now, start__lte=now+timedelta(14))
+        if self.value() == 'month':
+            return queryset.filter(start__gte=now, start__lte=now+timedelta(31))
+
 class EventAdmin(admin.ModelAdmin):
     #fields display on change list
-    list_display = ['event_summary_title','start','priority','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
+    list_display = ['event_summary_title','start','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
-    list_filter = ['created','priority','focus','start','tag','process','process__theme','attendee','location']
+    list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','process','process__theme','attendee','location']
     #fields to search in change list
     search_fields = ['title','description']
     #enable the date drill down on change list
@@ -94,16 +151,19 @@ class EventAdmin(admin.ModelAdmin):
         return obj.objectives_approved
     short_objectives_approved.short_description = "Approved"
     short_objectives_approved.boolean = True
+    short_objectives_approved.admin_order_field = 'objectives_approved'
     
     def short_attendees_approved(self,obj):
         return obj.attendees_approved
     short_attendees_approved.short_description = "Approved"
     short_attendees_approved.boolean = True
+    short_attendees_approved.admin_order_field = 'attendees_approved'
     
     def event_summary_title(self, obj):
         return '<a href="%s">%s</a>' % (obj.get_event_url(), obj.title)
     event_summary_title.allow_tags = True
     event_summary_title.short_description = 'Title'
+    event_summary_title.admin_order_field = 'title'
     
     def attendees(self, obj):
         return "; ".join([p.get_full_name() for p in obj.attendee.all()])

@@ -90,52 +90,54 @@
                 window.alert(date);
             };
             //Default filter settings
-            displayTasks = false
-            displayEvents = true
-            displayBG = true
-            displayLC = true
-            displayPT = true
-            displayP1 = true
-            displayP2 = true
-            displayP3 = true
-            displayPN = true
+            filterDict = {}
+            filterDict.displayTasks = false
+            filterDict.displayEvents = true
+            foci = {{foci|safe}}
+            for (i in foci) {
+                var focus = foci[i];
+                filterDict['display_focus_'+focus] = true;
+            };
+            filterDict.displayP1 = true
+            filterDict.displayP2 = true
+            filterDict.displayP3 = true
+            filterDict.displayPN = true
             function eventFilter(event,element) {
                 var metaBool = true,
-                isTask = event.type=="task",
-                isEvent = event.type=="event";
-                isBG = event.focus=="BG";
-                isLC = event.focus=="LC";
-                isPT = event.focus=="PT";
-                isP1 = event.priority==1;
-                isP2 = event.priority==2;
-                isP3 = event.priority==3;
-                isPN = event.priority=="None";
-                if(!displayTasks){
-                    metaBool = metaBool && !isTask;
+                boolDict = {};
+                boolDict.isTask = event.type=="task";
+                boolDict.isEvent = event.type=="event";
+                for (i in foci) {
+                    var focus = foci[i];
+                    boolDict['is_focus_'+focus] = event.focus==focus;
                 };
-                if(!displayEvents){
-                    metaBool = metaBool && !isEvent;
+                boolDict.isP1 = event.priority==1;
+                boolDict.isP2 = event.priority==2;
+                boolDict.isP3 = event.priority==3;
+                boolDict.isPN = event.priority=="None";
+                if(!filterDict.displayTasks){
+                    metaBool = metaBool && !boolDict.isTask;
                 };
-                if(!displayBG){
-                    metaBool = metaBool && !isBG;
+                if(!filterDict.displayEvents){
+                    metaBool = metaBool && !boolDict.isEvent;
                 };
-                if(!displayLC){
-                    metaBool = metaBool && !isLC;
+                for(i in foci){
+                    var focus = foci[i];
+                    if(!filterDict['display_focus_'+focus]){
+                        metaBool = metaBool && !boolDict['is_focus_'+focus];
+                    };
                 };
-                if(!displayPT){
-                    metaBool = metaBool && !isPT;
+                if(!filterDict.displayP1){
+                    metaBool = metaBool && !boolDict.isP1;
                 };
-                if(!displayP1){
-                    metaBool = metaBool && !isP1;
+                if(!filterDict.displayP2){
+                    metaBool = metaBool && !boolDict.isP2;
                 };
-                if(!displayP2){
-                    metaBool = metaBool && !isP2;
+                if(!filterDict.displayP3){
+                    metaBool = metaBool && !boolDict.isP3;
                 };
-                if(!displayP3){
-                    metaBool = metaBool && !isP3;
-                };
-                if(!displayPN){
-                    metaBool = metaBool && !isPN;
+                if(!filterDict.displayPN){
+                    metaBool = metaBool && !boolDict.isPN;
                 };
                 return metaBool;
             };
@@ -214,33 +216,16 @@
                     };
                     $('#calendar').fullCalendar('rerenderEvents')
                 });
-                $('#bgBox').change(function() {
-                    if($(this).is(":checked")) {
-                        displayBG = true;
-                        
-                    }else{
-                        displayBG = false;
-                    };
-                    $('#calendar').fullCalendar('rerenderEvents')
-                });
-                $('#lcBox').change(function() {
-                    if($(this).is(":checked")) {
-                        displayLC = true;
-                        
-                    }else{
-                        displayLC = false;
-                    };
-                    $('#calendar').fullCalendar('rerenderEvents')
-                });
-                $('#ptBox').change(function() {
-                    if($(this).is(":checked")) {
-                        displayPT = true;
-                        
-                    }else{
-                        displayPT = false;
-                    };
-                    $('#calendar').fullCalendar('rerenderEvents')
-                });
+                {% for key, value in fociDict.iteritems %}
+                    $('#{{key}}Box').change(function() {
+                        if($(this).is(":checked")) {
+                            filterDict['display_focus_{{key}}'] = true;
+                        }else{
+                            filterDict['display_focus_{{key}}'] = false;
+                        };
+                        $('#calendar').fullCalendar('rerenderEvents')
+                    });
+                {% endfor %}
                 $('#p1Box').change(function() {
                     if($(this).is(":checked")) {
                         displayP1 = true;
@@ -290,9 +275,9 @@
             </table>
             <table class="filter">
                 <tr><td><b>Focus</b></td></tr>
-                <tr><td><input type="checkbox" id="ptBox" checked>Participating</input></td></tr>
-                <tr><td><input type="checkbox" id="lcBox" checked>Localized</input></td></tr>
-                <tr><td><input type="checkbox" id="bgBox" checked>Background</input></td></tr>
+                {% for key, value in fociDict.iteritems %}
+                <tr><td><input type="checkbox" id="{{key}}Box" checked>{{value}}</input></td></tr>
+                {% endfor %}
             </table>
             <table class="filter">
                 <tr><td><b>Priority</b></td></tr>

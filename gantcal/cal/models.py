@@ -86,11 +86,15 @@ class Event(models.Model):
     priority = models.IntegerField(choices=PRIORITY_CHOICES,blank=True,null=True)
     estimated_cost = models.IntegerField(blank=True,null=True)
     FOCUS_CHOICES = (
-        ('BG','Background'),
-        ('LC','Localized'),
-        ('PT','Participating'),
+        ('AT','Attending'),
+        ('PR','Presenting'),
+        ('SE','Organising side event'),
+        ('LR','Launching report'),
+        ('MO','Monitoring'),
+        ('MF','Monitoring and follow-up'),
+        ('RE','Remotely engage'),
     )
-    focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='BG')
+    focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='MO')
     objectives_approved = models.BooleanField(default=False)
     attendees_approved = models.BooleanField(default=False)
     
@@ -121,7 +125,7 @@ class Event(models.Model):
             )
         if len(self.tasks.all())==0:
             self.tasks.create(
-                name = "Attend "+self.title,
+                name = self.title,
                 description = self.description,
                 code = "MEET",
                 level = 1,

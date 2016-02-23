@@ -186,7 +186,10 @@ def month(request):
     month = now.month
   events = Event.objects.order_by('start').all()
   tasks = Task.objects.order_by('start').all()
-  return render_to_response('cal/cal.html', {'events': events,'tasks': tasks,'year': year,'month':month,"user":user})
+  foci = Event.FOCUS_CHOICES
+  fociDict = {uni(focus[0]):uni(focus[1]) for focus in foci}
+  foci = [uni(focus[0]) for focus in foci]
+  return render_to_response('cal/cal.html', {'events': events,'tasks': tasks,'foci':foci,'fociDict':fociDict,'year': year,'month':month,"user":user})
 
 @login_required
 def event(request,slug):
