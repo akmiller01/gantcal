@@ -77,6 +77,7 @@ class Event(models.Model):
     location = models.CharField(max_length=255,null=True,blank=True)
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True,editable=False)
     start = models.DateField(auto_now=False, auto_now_add=False)
+    date_confirmed = models.BooleanField(default=True)
     end = models.DateField(auto_now=False, auto_now_add=False)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=False)

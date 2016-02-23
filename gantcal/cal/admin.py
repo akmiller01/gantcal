@@ -131,7 +131,7 @@ class EventTimeFilter(admin.SimpleListFilter):
 
 class EventAdmin(admin.ModelAdmin):
     #fields display on change list
-    list_display = ['event_summary_title','start','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
+    list_display = ['event_summary_title','confirmed_date','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
     list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','process','process__theme','attendee','location']
     #fields to search in change list
@@ -146,6 +146,12 @@ class EventAdmin(admin.ModelAdmin):
     def edit(self,obj):
         return '<a href="%s">%s</a>' % (reverse("admin:cal_event_change", args=[obj.id]), "edit")
     edit.allow_tags = True
+    
+    def confirmed_date(self, obj):
+        return '<span style="color:%s">%s</span>' % ("black" if obj.date_confirmed else "red", obj.start)
+    confirmed_date.allow_tags = True
+    confirmed_date.short_description = 'Start'
+    confirmed_date.admin_order_field = 'start'
     
     def short_objectives_approved(self,obj):
         return obj.objectives_approved
