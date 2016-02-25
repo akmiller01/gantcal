@@ -1,0 +1,2526 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: auth_group; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_group (
+    id integer NOT NULL,
+    name character varying(80) NOT NULL
+);
+
+
+ALTER TABLE public.auth_group OWNER TO postgres;
+
+--
+-- Name: auth_group_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_group_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_group_id_seq OWNER TO postgres;
+
+--
+-- Name: auth_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_group_id_seq OWNED BY auth_group.id;
+
+
+--
+-- Name: auth_group_permissions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_group_permissions (
+    id integer NOT NULL,
+    group_id integer NOT NULL,
+    permission_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_group_permissions OWNER TO postgres;
+
+--
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_group_permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_group_permissions_id_seq OWNER TO postgres;
+
+--
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_group_permissions_id_seq OWNED BY auth_group_permissions.id;
+
+
+--
+-- Name: auth_permission; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_permission (
+    id integer NOT NULL,
+    content_type_id integer NOT NULL,
+    codename character varying(100) NOT NULL,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.auth_permission OWNER TO postgres;
+
+--
+-- Name: auth_permission_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_permission_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_permission_id_seq OWNER TO postgres;
+
+--
+-- Name: auth_permission_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_permission_id_seq OWNED BY auth_permission.id;
+
+
+--
+-- Name: auth_user; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user (
+    id integer NOT NULL,
+    password character varying(128) NOT NULL,
+    last_login timestamp without time zone,
+    is_superuser text NOT NULL,
+    first_name character varying(30) NOT NULL,
+    last_name character varying(30) NOT NULL,
+    email character varying(254) NOT NULL,
+    is_staff text NOT NULL,
+    is_active text NOT NULL,
+    date_joined timestamp without time zone NOT NULL,
+    username character varying(30) NOT NULL
+);
+
+
+ALTER TABLE public.auth_user OWNER TO postgres;
+
+--
+-- Name: auth_user_groups; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user_groups (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    group_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_user_groups OWNER TO postgres;
+
+--
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_groups_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_groups_id_seq OWNER TO postgres;
+
+--
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_groups_id_seq OWNED BY auth_user_groups.id;
+
+
+--
+-- Name: auth_user_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_id_seq OWNER TO postgres;
+
+--
+-- Name: auth_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_id_seq OWNED BY auth_user.id;
+
+
+--
+-- Name: auth_user_user_permissions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE auth_user_user_permissions (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    permission_id integer NOT NULL
+);
+
+
+ALTER TABLE public.auth_user_user_permissions OWNER TO postgres;
+
+--
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE auth_user_user_permissions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.auth_user_user_permissions_id_seq OWNER TO postgres;
+
+--
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE auth_user_user_permissions_id_seq OWNED BY auth_user_user_permissions.id;
+
+
+--
+-- Name: cal_assignee; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_assignee (
+    id integer NOT NULL,
+    resource_id integer NOT NULL,
+    role_id integer,
+    effort bigint NOT NULL
+);
+
+
+ALTER TABLE public.cal_assignee OWNER TO postgres;
+
+--
+-- Name: cal_assignee_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_assignee_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_assignee_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_assignee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_assignee_id_seq OWNED BY cal_assignee.id;
+
+
+--
+-- Name: cal_event; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_event (
+    id integer NOT NULL,
+    title character varying(255) NOT NULL,
+    description text,
+    slug character varying(255),
+    start date NOT NULL,
+    "end" date NOT NULL,
+    created timestamp without time zone NOT NULL,
+    modified timestamp without time zone NOT NULL,
+    focus character varying(2) NOT NULL,
+    location character varying(255),
+    priority integer,
+    estimated_cost integer,
+    objectives text,
+    attendees_approved text NOT NULL,
+    objectives_approved text NOT NULL,
+    date_confirmed text NOT NULL
+);
+
+
+ALTER TABLE public.cal_event OWNER TO postgres;
+
+--
+-- Name: cal_event_attendee; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_event_attendee (
+    id integer NOT NULL,
+    event_id integer NOT NULL,
+    user_id integer NOT NULL
+);
+
+
+ALTER TABLE public.cal_event_attendee OWNER TO postgres;
+
+--
+-- Name: cal_event_attendee_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_event_attendee_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_event_attendee_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_event_attendee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_event_attendee_id_seq OWNED BY cal_event_attendee.id;
+
+
+--
+-- Name: cal_event_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_event_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_event_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_event_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_event_id_seq OWNED BY cal_event.id;
+
+
+--
+-- Name: cal_event_process; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_event_process (
+    id integer NOT NULL,
+    event_id integer NOT NULL,
+    process_id integer NOT NULL
+);
+
+
+ALTER TABLE public.cal_event_process OWNER TO postgres;
+
+--
+-- Name: cal_event_process_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_event_process_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_event_process_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_event_process_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_event_process_id_seq OWNED BY cal_event_process.id;
+
+
+--
+-- Name: cal_event_tag; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_event_tag (
+    id integer NOT NULL,
+    event_id integer NOT NULL,
+    tag_id integer NOT NULL
+);
+
+
+ALTER TABLE public.cal_event_tag OWNER TO postgres;
+
+--
+-- Name: cal_event_tag_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_event_tag_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_event_tag_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_event_tag_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_event_tag_id_seq OWNED BY cal_event_tag.id;
+
+
+--
+-- Name: cal_process; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_process (
+    id integer NOT NULL,
+    title character varying(255) NOT NULL,
+    slug character varying(255) NOT NULL,
+    start date,
+    description text,
+    "end" date NOT NULL
+);
+
+
+ALTER TABLE public.cal_process OWNER TO postgres;
+
+--
+-- Name: cal_process_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_process_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_process_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_process_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_process_id_seq OWNED BY cal_process.id;
+
+
+--
+-- Name: cal_process_theme; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_process_theme (
+    id integer NOT NULL,
+    process_id integer NOT NULL,
+    theme_id integer NOT NULL
+);
+
+
+ALTER TABLE public.cal_process_theme OWNER TO postgres;
+
+--
+-- Name: cal_process_theme_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_process_theme_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_process_theme_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_process_theme_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_process_theme_id_seq OWNED BY cal_process_theme.id;
+
+
+--
+-- Name: cal_role; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_role (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.cal_role OWNER TO postgres;
+
+--
+-- Name: cal_role_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_role_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_role_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_role_id_seq OWNED BY cal_role.id;
+
+
+--
+-- Name: cal_tag; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_tag (
+    id integer NOT NULL,
+    title character varying(255) NOT NULL,
+    slug character varying(255) NOT NULL
+);
+
+
+ALTER TABLE public.cal_tag OWNER TO postgres;
+
+--
+-- Name: cal_tag_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_tag_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_tag_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_tag_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_tag_id_seq OWNED BY cal_tag.id;
+
+
+--
+-- Name: cal_task; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_task (
+    id integer NOT NULL,
+    name character varying(255),
+    code character varying(255),
+    level integer,
+    status character varying(255) NOT NULL,
+    start date NOT NULL,
+    duration integer,
+    "end" date NOT NULL,
+    "startIsMilestone" text NOT NULL,
+    "endIsMilestone" text NOT NULL,
+    depends character varying(255),
+    description text,
+    progress integer NOT NULL,
+    event_id integer NOT NULL,
+    "hasChild" text NOT NULL,
+    "order" integer
+);
+
+
+ALTER TABLE public.cal_task OWNER TO postgres;
+
+--
+-- Name: cal_task_assignee; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_task_assignee (
+    id integer NOT NULL,
+    task_id integer NOT NULL,
+    assignee_id integer NOT NULL
+);
+
+
+ALTER TABLE public.cal_task_assignee OWNER TO postgres;
+
+--
+-- Name: cal_task_assignee_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_task_assignee_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_task_assignee_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_task_assignee_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_task_assignee_id_seq OWNED BY cal_task_assignee.id;
+
+
+--
+-- Name: cal_task_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_task_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_task_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_task_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_task_id_seq OWNED BY cal_task.id;
+
+
+--
+-- Name: cal_theme; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE cal_theme (
+    id integer NOT NULL,
+    title character varying(255) NOT NULL,
+    slug character varying(255) NOT NULL,
+    description text
+);
+
+
+ALTER TABLE public.cal_theme OWNER TO postgres;
+
+--
+-- Name: cal_theme_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE cal_theme_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.cal_theme_id_seq OWNER TO postgres;
+
+--
+-- Name: cal_theme_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE cal_theme_id_seq OWNED BY cal_theme.id;
+
+
+--
+-- Name: django_admin_log; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_admin_log (
+    id integer NOT NULL,
+    object_id text,
+    object_repr character varying(200) NOT NULL,
+    action_flag integer NOT NULL,
+    change_message text NOT NULL,
+    content_type_id integer,
+    user_id integer NOT NULL,
+    action_time timestamp without time zone NOT NULL,
+    CONSTRAINT django_admin_log_action_flag_check CHECK ((action_flag >= 0))
+);
+
+
+ALTER TABLE public.django_admin_log OWNER TO postgres;
+
+--
+-- Name: django_admin_log_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_admin_log_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_admin_log_id_seq OWNER TO postgres;
+
+--
+-- Name: django_admin_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_admin_log_id_seq OWNED BY django_admin_log.id;
+
+
+--
+-- Name: django_content_type; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_content_type (
+    id integer NOT NULL,
+    app_label character varying(100) NOT NULL,
+    model character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.django_content_type OWNER TO postgres;
+
+--
+-- Name: django_content_type_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_content_type_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_content_type_id_seq OWNER TO postgres;
+
+--
+-- Name: django_content_type_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_content_type_id_seq OWNED BY django_content_type.id;
+
+
+--
+-- Name: django_migrations; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_migrations (
+    id integer NOT NULL,
+    app character varying(255) NOT NULL,
+    name character varying(255) NOT NULL,
+    applied timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.django_migrations OWNER TO postgres;
+
+--
+-- Name: django_migrations_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE django_migrations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.django_migrations_id_seq OWNER TO postgres;
+
+--
+-- Name: django_migrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE django_migrations_id_seq OWNED BY django_migrations.id;
+
+
+--
+-- Name: django_session; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE django_session (
+    session_key character varying(40) NOT NULL,
+    session_data text NOT NULL,
+    expire_date timestamp without time zone NOT NULL
+);
+
+
+ALTER TABLE public.django_session OWNER TO postgres;
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group ALTER COLUMN id SET DEFAULT nextval('auth_group_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions ALTER COLUMN id SET DEFAULT nextval('auth_group_permissions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_permission ALTER COLUMN id SET DEFAULT nextval('auth_permission_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user ALTER COLUMN id SET DEFAULT nextval('auth_user_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups ALTER COLUMN id SET DEFAULT nextval('auth_user_groups_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions ALTER COLUMN id SET DEFAULT nextval('auth_user_user_permissions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_assignee ALTER COLUMN id SET DEFAULT nextval('cal_assignee_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event ALTER COLUMN id SET DEFAULT nextval('cal_event_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_attendee ALTER COLUMN id SET DEFAULT nextval('cal_event_attendee_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_process ALTER COLUMN id SET DEFAULT nextval('cal_event_process_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_tag ALTER COLUMN id SET DEFAULT nextval('cal_event_tag_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_process ALTER COLUMN id SET DEFAULT nextval('cal_process_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_process_theme ALTER COLUMN id SET DEFAULT nextval('cal_process_theme_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_role ALTER COLUMN id SET DEFAULT nextval('cal_role_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_tag ALTER COLUMN id SET DEFAULT nextval('cal_tag_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_task ALTER COLUMN id SET DEFAULT nextval('cal_task_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_task_assignee ALTER COLUMN id SET DEFAULT nextval('cal_task_assignee_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_theme ALTER COLUMN id SET DEFAULT nextval('cal_theme_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log ALTER COLUMN id SET DEFAULT nextval('django_admin_log_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_content_type ALTER COLUMN id SET DEFAULT nextval('django_content_type_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_migrations ALTER COLUMN id SET DEFAULT nextval('django_migrations_id_seq'::regclass);
+
+
+--
+-- Data for Name: auth_group; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_group (id, name) FROM stdin;
+\.
+
+
+--
+-- Name: auth_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_group_id_seq', 1, false);
+
+
+--
+-- Data for Name: auth_group_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_group_permissions (id, group_id, permission_id) FROM stdin;
+\.
+
+
+--
+-- Name: auth_group_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_group_permissions_id_seq', 1, false);
+
+
+--
+-- Data for Name: auth_permission; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_permission (id, content_type_id, codename, name) FROM stdin;
+1	1	add_logentry	Can add log entry
+2	1	change_logentry	Can change log entry
+3	1	delete_logentry	Can delete log entry
+4	2	add_permission	Can add permission
+5	2	change_permission	Can change permission
+6	2	delete_permission	Can delete permission
+7	3	add_group	Can add group
+8	3	change_group	Can change group
+9	3	delete_group	Can delete group
+10	4	add_user	Can add user
+11	4	change_user	Can change user
+12	4	delete_user	Can delete user
+13	5	add_contenttype	Can add content type
+14	5	change_contenttype	Can change content type
+15	5	delete_contenttype	Can delete content type
+16	6	add_session	Can add session
+17	6	change_session	Can change session
+18	6	delete_session	Can delete session
+19	7	add_event	Can add event
+20	7	change_event	Can change event
+21	7	delete_event	Can delete event
+22	8	add_theme	Can add theme
+23	8	change_theme	Can change theme
+24	8	delete_theme	Can delete theme
+25	9	add_process	Can add process
+26	9	change_process	Can change process
+27	9	delete_process	Can delete process
+31	11	add_tag	Can add tag
+32	11	change_tag	Can change tag
+33	11	delete_tag	Can delete tag
+34	12	add_role	Can add role
+35	12	change_role	Can change role
+36	12	delete_role	Can delete role
+37	13	add_assignee	Can add assignee
+38	13	change_assignee	Can change assignee
+39	13	delete_assignee	Can delete assignee
+40	14	add_task	Can add task
+41	14	change_task	Can change task
+42	14	delete_task	Can delete task
+\.
+
+
+--
+-- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_permission_id_seq', 43, false);
+
+
+--
+-- Data for Name: auth_user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_user (id, password, last_login, is_superuser, first_name, last_name, email, is_staff, is_active, date_joined, username) FROM stdin;
+1	pbkdf2_sha256$24000$fQmwJF635I1a$NwwGa+D6a5MkdE/omxPWfZRwYk77i5aqEx2S/+10EXU=	2016-02-23 16:44:22.962852	true	Alex	Miller	alex.miller@devinit.org	true	true	2016-02-03 16:20:13	alex
+2	pbkdf2_sha256$24000$nQhInozSAePX$IbH5jeqgMqTubgmMLgqX8Kf9mmq1Y4yBwgcAWWx89bo=	2016-02-22 16:24:13.726526	true	Martin	Horwood	martin.horwood@devinit.org	true	true	2016-02-10 12:42:23	martin
+3	pbkdf2_sha256$24000$AtgRSn2kq0Wd$55yK+BkRF4EYHzP7j5hgs0jKETeFqD7m7zXGUmYwQCg=	2016-02-12 12:04:56.891211	true	Andrew	Palmer	andrew.palmer@devinit.org	true	true	2016-02-10 12:44:36	andrew
+4	pbkdf2_sha256$24000$7tGnzpmDf4fr$f2MLhCETrxKBF0/LbUzb9N2UXw9uTnFfIyxSYtWdzoY=	2016-02-19 14:35:13.175762	true	Leighton	James	leighton.james@devinit.org	true	true	2016-02-10 12:45:29	leighton
+5	pbkdf2_sha256$24000$XN9r4C0PdNMP$ivXMgMt7GRT+kDCxLbnUgCDs8a2355pbGuOwzZgvn04=	2016-02-23 16:44:48.853395	true	Cat	Langdon	Cat.Langdon@devinit.org	true	true	2016-02-11 19:33:23	cat
+6	pbkdf2_sha256$24000$l30CbJFXdDJH$VcctwDVYyGsLZFAC3gu5ZZhzBdqZkAaPQVASXRWiNZ0=	\N	true	Sarah	Dalrymple	Sarah.Dalrymple@devinit.org	true	true	2016-02-11 19:34:13	sarah
+7	pbkdf2_sha256$24000$8SEz2BmHrkLF$mS3o6iIP2NVnZ7abGT7z6fDW8D+88/yC2vgfDihPdoc=	\N	true	Charlotte	Lattimer	Charlotte.Lattimer@devinit.org	true	true	2016-02-11 19:34:44	charlotte
+8	pbkdf2_sha256$24000$SOcPCN3EhHRh$QlGOe2fodYTjkRv5G7v2kJxRiXmavCaTpx1ukFYtffM=	\N	true	Cordelia	Lonsdale	Cordelia.Lonsdale@devinit.org	true	true	2016-02-11 19:35:15	cordelia
+9	pbkdf2_sha256$24000$Kb3fAHGgG1HR$vQIvFWk3wyvaayEcNDWOJ3Ysk4G72NqvYyn7uRTZ29g=	\N	true	Richard	Watts	Richard.Watts@devinit.org	true	true	2016-02-11 19:35:56	richard
+10	pbkdf2_sha256$24000$l5wPZnLizjKA$ecDGtvCCXhQtdWbvbDijCxkLAvJpLKd4Z5fqz4swsfM=	\N	true	Harpinder	Collacott	Harpinder.Collacott@devinit.org	true	true	2016-02-11 19:36:21	pin
+11	pbkdf2_sha256$24000$zOOCUe6Fq984$Ea1ZedEz1BankkSEW1gyXmvhA67henS5goHYuK7MnL0=	\N	true	Tony	German	Tony.German@devinit.org	true	true	2016-02-11 19:37:14	tony
+12	pbkdf2_sha256$24000$dTbZs30lPsnv$QlnBoBTI31fY5NE/fXq4dfMdm64Q6FXfd7LrdzkEEJk=	\N	true	Judith	Randel	Judith.Randel@devinit.org	true	true	2016-02-11 19:37:37	judith
+13	pbkdf2_sha256$24000$oilT2tOLkmuc$UI+emeMZ9ETN336iW+aFtC6owRR2VPJkhyqDWUmBmO0=	\N	true	Daniel	Coppard	Daniel.Coppard@devinit.org	true	true	2016-02-11 19:38:27	dan
+14	pbkdf2_sha256$24000$fBGeJimjBcyf$jpaaeJEdqCN2l1GTgqgi+82pCLEUtfkW18xDCW0uVvk=	\N	true	Carolyn	Culey	Carolyn.Culey@devinit.org	true	true	2016-02-12 14:26:18	carolyn
+15	pbkdf2_sha256$24000$pCZMSHxKyrBZ$PlAWSilPc292OrIV1q12E52mYA+v1r5Z3/YQaAEYqZw=	\N	false				false	true	2016-02-16 13:48:55.555589	sophia
+16	pbkdf2_sha256$24000$7r3ZP2ll4YPH$QarHIjrMLzZWXEQ4deujeqzgcE+LqigwKNqYIv+Faj4=	\N	false	Chloe	Parrish		false	true	2016-02-16 15:57:43	chloe
+17	pbkdf2_sha256$24000$43TKFlQgWIj9$vLGpaymJZ83OA3qY9xIhCZUemG67tbmzFK6u0E9Otro=	\N	true	Dale	Potter	Dale.Potter@devinit.org	true	true	2016-02-18 14:17:33	dale
+18	pbkdf2_sha256$24000$foyINLbXy09i$5T8Qb74u2PAQeEAOi8Vq06iphksRvJC0kGSXJl4NyDI=	2016-02-18 14:18:58.91492	true	Rory	Scott	Rory.Scott@devinit.org	true	true	2016-02-18 14:18:02	rory
+19	pbkdf2_sha256$24000$JgdqVh73K1o5$IOKFWV2jyBU+K+h5/fMAvhaIS5dwuNRoWPpvbdjcEcE=	\N	true	Hannah	Sweeney	Hannah.Sweeney@devinit.org	true	true	2016-02-19 14:26:26	hannah
+\.
+
+
+--
+-- Data for Name: auth_user_groups; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_user_groups (id, user_id, group_id) FROM stdin;
+\.
+
+
+--
+-- Name: auth_user_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_groups_id_seq', 1, false);
+
+
+--
+-- Name: auth_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_id_seq', 20, false);
+
+
+--
+-- Data for Name: auth_user_user_permissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY auth_user_user_permissions (id, user_id, permission_id) FROM stdin;
+1	2	32
+2	2	33
+3	2	34
+4	2	35
+5	2	36
+6	2	37
+7	2	38
+8	2	39
+9	2	40
+10	2	41
+11	2	42
+12	2	19
+13	2	20
+14	2	21
+15	2	22
+16	2	23
+17	2	24
+18	2	25
+19	2	26
+20	2	27
+21	2	31
+\.
+
+
+--
+-- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('auth_user_user_permissions_id_seq', 22, false);
+
+
+--
+-- Data for Name: cal_assignee; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_assignee (id, resource_id, role_id, effort) FROM stdin;
+13	1	2	0
+14	6	1	0
+15	7	2	0
+16	7	1	0
+\.
+
+
+--
+-- Name: cal_assignee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_assignee_id_seq', 17, false);
+
+
+--
+-- Data for Name: cal_event; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_event (id, title, description, slug, start, "end", created, modified, focus, location, priority, estimated_cost, objectives, attendees_approved, objectives_approved, date_confirmed) FROM stdin;
+12	World Bank Fragility, Conflict and Violence Forum	The World Bank Fragility, Conflict and Violence Forum is convening in Washington, DC from March 1-3, 2016. The Forum will focus on realizing the SDGs in fragile and conflict-affected states (with special attention to Goal 16).\r\n\r\nMore information here: http://www.worldbank.org/en/events/2015/07/30/world-bank-group-fragility-conflict-and-violence-forum-2016\r\n\r\nContact Ozong Agborsangaya-Fiteu (ozong@worldbank.org), Cynthia Delgadillo (cdelgadillo@worldbank.org), or fcvforum@worldbank.org	world-bank-fragility-conflict-and-violence-forum-20163112	2016-03-01	2016-03-03	2016-02-12 15:00:10.225316	2016-02-23 13:42:54.096017	AT	Washington DC, USA	1	\N	Position DI as an expert on data on peace and security. \r\nChance to identify key actors working on peace and security and providers of data. \r\nDistribute report on peace and security spending	false	false	true
+13	UN Development Cooperation Forum Symposium	The UN DCF High-Level Symposium will be held in Brussels, from April 6-8, 2016 as a preparation meeting for the Forum itself being held in New York City, from July 21-22, 2016.	un-development-cooperation-forum-symposium-20164613	2016-04-06	2016-04-08	2016-02-12 15:03:01.591215	2016-02-23 13:43:32.283649	AT	Brussels, Belgium	1	\N	Presenting DI's work with DCF, ODA for domestic resource mobilisation. \r\nPanel on domestic resource mobilisation - seeking position on panel. \r\nMaintain relationship with DCF personal regarding future consultancy work. \r\nRichard attending for technical engagement with DCF	false	false	true
+14	Financing for Development Forum	As a follow-up to the Addis Ababa Action Agenda meeting in 2015, ECOSOC will host a follow-up Financing for Development Forum in New York City from April 18-22, 2016. Cordelia will be attending, as this event relates to Theme 2, the BDBABR and JUDS projects, and the Transparency, Accountability, and Data Revolution cross-cutting themes. The deadline for submission of input is not clear, but may be due by the end of February.\r\nContact Peter Shari with UNDESA.	financing-for-development-forum-201641814	2016-04-18	2016-04-22	2016-02-12 15:04:41.384487	2016-02-16 17:08:43.777112	AT	New York, USA	1	\N		false	false	true
+15	World Bank Spring Meetings	The World Bank is hosting its annual Spring Meetings in Washington, DC from April 15-17, 2016. The agenda for this set of meetings has not yet been announced, details are forthcoming. These meetings possibly relate to all external themes, and many of our current projects. Cordelia, Martin will possibly be attending. The deadline for CSO accreditation usually opens mid-February and closes end-March.	world-bank-spring-meetings-201641515	2016-04-15	2016-04-18	2016-02-12 15:05:47.517842	2016-02-16 17:09:40.377183	AT	Washington DC, USA	1	\N		false	false	true
+16	World Humanitarian Summit	The World Humanitarian Summit will be held in Istanbul, Turkey from May 23-24, 2016. The purpose of the summit is to create a forward-looking agenda for humanitarian action, with an aim of creating a more inclusive and diverse humanitarian system committed to the humanitarian principles. The summit will revolve around four themes: humanitarian effectiveness, reducing vulnerability and managing risk, innovation, and serving the needs of people in conflict. Judith, Pin, and Charlotte might be attending, as this event relates to Theme 2, as well as the Crisis, Risk, and Resilience cross-cutting theme. Consultation has already occurred, and Development Initiatives provided input here: https://www.worldhumanitariansummit.org/node/502033 Deadline for side-event applications is February 12, 2016.\r\nMore information is available here: https://www.worldhumanitariansummit.org/	world-humanitarian-summit-201652316	2016-05-23	2016-05-24	2016-02-12 15:07:07.09137	2016-02-16 15:59:45.569121	AT	Istanbul, Turkey	1	\N		false	false	true
+17	US Presidential Election	The 2016 election for US president.	us-presidential-election-201611817	2016-11-08	2016-11-08	2016-02-12 15:08:24.186665	2016-02-12 16:21:07.28614	MO	USA	\N	\N		false	false	true
+18	ECOSOC Humanitarian Affairs Segment	The Humanitarian Affairs Segment (HAS) provides a unique opportunity for Member States to address challenges, operational and normative progress on the humanitarian policy agenda.	ecosoc-humanitarian-affairs-segment-201662718	2016-06-27	2016-06-29	2016-02-16 13:50:52.861555	2016-02-16 14:45:58.641949	AT	New York, USA	1	\N	Share key findings and trend from GHA report 2016 with key stakeholders from member states and INGOs.	false	false	true
+19	DIHAD	The overall aim of DIHAD is to contribute to the further enhancement of technically sound and principled international humanitarian and development assistance. In keeping with Dubai’s strategic location between ‘East’ and ‘West’, its energetic entrepreneurial climate and diverse international character, DIHAD further endeavors to build bridges between various actors and countries from around the globe engaged in addressing needs of those affected by crises, disasters or the adverse effects of under-development. In addition, DIHAD strives to provide a platform where assistance providers can interface with relevant actors from the corporate and governmental sectors with a view to creating meaningful synergies in support of those in need. DIHAD aims to further evolve into a truly global event with a distinct yet appropriately-sized regional character.	dihad-201632119	2016-03-21	2016-03-23	2016-02-16 13:58:44.616409	2016-02-16 13:58:44.620682	AT	Dubai, UAE	2	\N	Raise awareness and profile of DI in the Gulf and wider MENA region with a particular focus on engaging with Gulf donors on the GHA programme and other areas of DI's work.	false	false	true
+20	UNGA	The General Assembly (GA) is the main deliberative, policymaking and representative organ of the UN.\r\n\r\nDecisions on important questions, such as those on peace and security, admission of new members and budgetary matters, require a two-thirds majority. Decisions on other questions are by simple majority.\r\n\r\nThere are also a host of side and fringe events taking place on a variety of topics relevent to DI's work.	unga-201691320	2016-09-13	2016-09-26	2016-02-16 16:09:52.694026	2016-02-16 16:15:04.763506	MO	New York, USA	1	\N		false	false	true
+34	DAC High Level Meeting	The OECD Development Assistance Committee (DAC) will convene its next High Level Meeting (HLM) from 18-19 February 2016 in Paris, the first such meeting since December 2014 when ministers agreed to modernise the DAC's statistical system and its measurement of development finance. The February 2016 HLM will review progress in modernising the system, drawing on the results of the July 2015 Addis Ababa Third International Conference on Financing for Development and the September 2015 United Nations Sustainable Development Summit. The HLM will also seek agreement on a number of outstanding issues, including the measurement in official development assistance (ODA) of peace and security expenditures and the donor effort involved in using private sector instruments. HLM participants will also discuss the role of development co-operation in the refugee crisis and, more broadly, in the 2030 Agenda.\r\n\r\nMore information here: http://www.oecd.org/dac/dac-hlm.htm	dac-high-level-meeting-201621834	2016-02-18	2016-02-19	2016-02-16 18:01:39.383941	2016-02-23 19:05:31.601205	MO	Paris, France	3	\N		false	false	true
+21	UNGA High-level Thematic Debate: Implementing Commitments on Sustainable Development, Climate Change and Financing	The President of the UN General Assembly (UNGA), Mogens Lykketoft, will convene a high-level thematic debate on sustainable development, climate change and financing. This event is one of three high-level events the President will convene during UNGA 70. Lykketoft said on 19 October 2015 that the meeting will involve a range of stakeholders. Per remarks on 15 December 2015, the event will allow for Member States to present the steps they are taking to implement the 2030 Agenda for Sustainable Development, and to look at inter-connections between Intended Nationally Determined Contributions (INDCs) on climate change, the broader Paris Agreement and overall implementation of the Sustainable Development Goals (SDGs), and to share thinking on how to effectively integrate climate action into sustainable development strategies. On this topic, the UN Secretary-General is expected to address how the UN system is moving ahead to support national actions, and there will be a broader discussion on capacity building for achieving the 2030 Agenda. In addition, the event will address how to catalyze means of implementation for the SDGs, including ICTs and financing for “sustainable, resilient and climate smart infrastructure.” Finally, discussions will consider how to foster accountable and transparent multi-stakeholder partnerships to support the 2030 Agenda.\r\nread more: http://sd.iisd.org/events/unga-high-level-thematic-debate-implementing-commitments-on-sustainable-development-climate-change-and-financing/	unga-high-level-thematic-debate-implementing-commitments-on-sustainable-development-climate-change-and-financing-201641221	2016-04-12	2016-04-12	2016-02-16 16:14:51.774096	2016-02-23 19:07:50.747114	MO	New York, USA	2	\N		false	false	true
+22	High-Level Political Forum on Sustainable Development (HLPF 2016)	The HLPF is the central UN platform for the follow-up and review of the 2030 Agenda for Sustainable Development adopted at the United Nations Sustainable Development Summit on 25 September 2015. HLPF 2016 will be the first HLPF after the adoption of the 2030 Agenda for Sustainable Development.\r\nThe forum, which adopts a Ministerial Declaration, is expected to start effectively delivering on its mandates to provide political leadership, guidance and recommendations on the Agenda's implementation and follow-up; keep track of progress; spur coherent policies informed by evidence, science and country experiences; as well as address new and emerging issues.\r\nNational reviews\r\nThe forum is mandated to conduct national reviews and thematic reviews of the implementation of the Agenda, with inputs from other intergovernmental bodies and forums, relevant UN entities, regional processes, major groups and other stakeholders. The national reviews will provide a platform for partnerships.\r\nBelow is a listing (as of 10 February 2016) of those states taking part in the national reviews in the 2016 session of the High-level Political Forum.	high-level-political-forum-on-sustainable-development-hlpf-2016-201671122	2016-07-11	2016-07-20	2016-02-16 16:16:51.134864	2016-02-16 16:16:51.138902	MO	New York, USA	2	\N		false	false	true
+23	Annual Bank Conference on Development Economics (ABCDE) - Development Data	The Annual Bank Conference on Development Economics (ABCDE), organized by the World Bank Development Economics (DEC) Vice Presidency, is one of the world’s best known series of conferences for the presentation and discussion of new knowledge on development. The conference aims to promote the exchange of cutting-edge research among researchers, policymakers, and development practitioners.	annual-bank-conference-on-development-economics-abcde-development-data-201662023	2016-06-20	2016-06-21	2016-02-16 16:18:51.438999	2016-02-16 16:18:51.443192	AT	Washington DC, USA	2	\N		false	false	true
+24	47th Session of UN Statistical Commission	The 47th Session of the UN Statistical Commission will be held from 8-11 March 2016 in New York. The agenda will cover indicators for the 2030 SDGs, the transformative agenda for official statistics, the use of big data in official statistics, and more. Judith will be attending in order to address the meeting on the Joined Up Data Standards Project.\r\nMore information is available here: http://unstats.un.org/unsd/statcom/47th-session/	47th-session-of-un-statistical-commission-20163824	2016-03-08	2016-03-11	2016-02-16 16:22:52.832345	2016-02-17 15:47:10.950868	AT	New York, USA	2	\N	Judith will be attending in order to address the meeting on the Joined Up Data Standards Project.	false	false	true
+25	OECD Forum	A major international conference where policies and ideas are shared between governments, business, civil society and academia. Useful for gaining insights into the global trends and opportunities shaping our societies, to take part in exchanges addressing these challenges, and to enrich the Ministerial Meeting	oecd-forum-201653125	2016-05-31	2016-06-01	2016-02-16 16:25:12.981147	2016-02-16 17:10:04.316089	MO	Paris, France	2	\N		false	false	true
+26	COP 22		cop-22-201611726	2016-11-07	2016-11-18	2016-02-16 16:29:49.001978	2016-02-16 16:29:49.006148	MO	Marrakesh, Morocco	2	\N		false	false	true
+27	COP 23		cop-23-201711627	2017-11-06	2017-11-17	2016-02-16 16:30:39.252422	2016-02-16 16:30:39.256381	MO	TBC	2	\N		false	false	true
+29	Global Partnership for Effective Cooperation	The 10th Global Partnership for Effective Cooperation Steering Committee Meeting will take place in Korea on a date in September 2016 yet to be determined. Cordelia will be attending, as this event relates to Theme 2, as well as the Korea project and the Transparency & Accountability cross-cutting theme. There is no priority deadline for input submission.	global-partnership-for-effective-cooperation-20166129	2016-09-01	2016-09-01	2016-02-16 17:12:55.763591	2016-02-23 20:09:28.298666	AT	Korea	1	\N		false	false	false
+30	World Data Forum for Global Partnership for Sustainable Development Data	The World Data Forum for GPSDD will be held on November 12, 2016. More information on the agenda is forthcoming.	world-data-forum-for-global-partnership-for-sustainable-development-data-2016111230	2016-11-12	2016-11-14	2016-02-16 17:15:28.078654	2016-02-16 17:15:28.083003	MO	TBC	1	\N		false	false	true
+31	Second High Level Meeting of the Global Partnership for Effective Development Co-operation	The Second High Level Meeting of the Global Partnership for Effective Development Co-operation will take place from 21-24 November in Nairobi, Kenya. It may take place in December, instead.	second-high-level-meeting-of-the-global-partnership-for-effective-development-co-operation-2016112131	2016-11-21	2016-11-24	2016-02-16 17:24:20.052274	2016-02-17 14:47:21.187949	MO	Nairobi, Kenya	2	\N		false	false	true
+32	World Bank Autumn Meetings	The annual World Bank / IMF Autumn Meetings will take place from 7-9 October, 2016 in Washington, D.C. The agenda is yet to be determined.	world-bank-autumn-meetings-201610732	2016-10-07	2016-10-09	2016-02-16 17:26:35.376858	2016-02-17 14:00:20.868439	MO	Washington DC, USA	2	\N		false	false	true
+33	UN High-level plenary meeting on addressing large movements of refugees and migrants	The UN High-level plenary meeting on addressing large movements of refugees and migrants will take place on the 19th of September, 2016 in New York, N.Y., one day before the opening of general debates. Karen AbuZayd of the United States  was appointed by Ban Ki-moon as Special Adviser for the upcoming UN summit.	un-high-level-plenary-meeting-on-addressing-large-movements-of-refugees-and-migrants-201691933	2016-09-19	2016-09-19	2016-02-16 17:31:02.238191	2016-02-16 17:31:02.242799	MO	New York, USA	2	\N		false	false	true
+35	UNGA High-level Thematic Debate: Strengthening the UN's Role in Peace and Security	The President of the UN General Assembly (UNGA), Mogens Lykketoft, will hold a high-level thematic debate to examine how to strengthen the UN's role and coherence in the area of peace and security. The event is expected to identify synergies from three review processes related to peace and security taking place at the UN (peace operations review, peacebuilding activities review, and global study on women, peace and security). The event will also be informed by preparatory discussions, including workshops and meetings organized by Member States, regional and sub-regional organizations, civil society and the private sector. The debate is one of three high-level events that the President will convene during UNGA 70.\r\nread more: http://sd.iisd.org/events/unga-high-level-thematic-debate-strengthening-the-uns-role-in-peace-and-security/	unga-high-level-thematic-debate-strengthening-the-uns-role-in-peace-and-security-201651035	2016-05-10	2016-05-11	2016-02-16 18:04:20.591945	2016-02-16 18:04:20.596973	MO	New York, USA	3	\N		false	false	true
+36	GPECD Workshop for the Global Partnership Initiatives	What will be happening in June/July on the GPEDC side is a workshop in Vienna for the Global Partnership Initiatives - as IATI is one, I suspect IATI at least will want to attend.	gpecd-workshop-for-the-global-partnership-initiatives-201661536	2016-06-15	2016-06-15	2016-02-17 14:44:34.905103	2016-02-23 20:11:47.230316	MO	Vienna, Austria	2	\N		false	false	false
+37	Development Cooperation Forum	The 5th Biennial High-level Meeting of the Development Cooperation Forum will be held in New York from July 21-22, 2016. The Forum will have three focuses: trends in development cooperation, south-south development cooperation, and tracking development cooperation.\r\nMore information is available here: https://www.un.org/ecosoc/en/development-cooperation-forum	development-cooperation-forum-201672137	2016-07-21	2016-07-22	2016-02-17 14:45:38.006181	2016-02-17 14:46:17.63936	MO	New York, USA	1	\N		false	false	true
+38	G20 Summit	The 11th G-20 Summit will be held from 4-5 September, 2016 in Hangzhou, China.	g20-summit-20169438	2016-09-04	2016-09-05	2016-02-17 14:49:55.311792	2016-02-17 14:49:55.322994	MO	Hangzhou, China	3	\N		false	false	true
+39	G7 Summit	The 42nd G7 summit will be held on 26–27 May 2016 at the Shima Kanko Hotel in Kashiko Island, Shima, Mie Prefecture, Japan. In March 2014 the G7 declared that a meaningful discussion was currently not possible with Russia in the context of the G8. Since then meetings have continued within the G7 process.	g7-summit-201652639	2016-05-26	2016-05-27	2016-02-17 14:51:19.585145	2016-02-17 14:51:19.592177	MO	Shima, Japan	3	\N		false	false	true
+40	UNDP 50th Anniversary Ministerial Meeting		undp-50th-anniversary-ministerial-meeting-201622440	2016-02-24	2016-02-24	2016-02-17 14:56:45.317286	2016-02-23 19:06:28.735745	MO	TBC	3	\N		false	false	true
+41	9th GPEDC Steering Committee		9th-gpecd-steering-committee-201622941	2016-02-29	2016-03-01	2016-02-17 14:57:41.755629	2016-02-23 19:06:51.093798	MO	Lilongwe, Malawi	3	\N		false	false	true
+42	OECD Global Forum on Development		oecd-global-forum-on-development-201632142	2016-03-21	2016-03-21	2016-02-17 14:58:45.481856	2016-02-23 19:07:10.563567	MO	TBC	3	\N		false	false	true
+43	ECOSOC Partnership Forum		ecosoc-partnership-forum-201633143	2016-03-31	2016-03-31	2016-02-17 14:59:35.638592	2016-02-23 19:07:23.735881	MO	New York, USA	3	\N		false	false	true
+44	Asia-Pacific Development Effectiveness Facility Annual Forum / Regional Consultations HLM2		asia-pacific-development-effectiveness-facility-annual-forum-regional-consultations-hlm2-201653144	2016-05-31	2016-05-31	2016-02-17 15:01:17.858694	2016-02-23 20:11:06.526455	MO	TBC	3	\N		false	false	false
+45	ECOSOC Integration Segment		ecosoc-integration-segment-20165245	2016-05-02	2016-05-04	2016-02-17 15:01:53.909916	2016-02-23 19:08:19.199616	MO	New York, USA	3	\N		false	false	true
+46	Annual Meeting, Asian Development Bank		annual-meeting-asian-development-bank-20165346	2016-05-03	2016-05-05	2016-02-17 15:02:23.660651	2016-02-17 15:02:23.681883	MO	Frankfurt, Germany	3	\N		false	false	true
+47	Tidewater		tidewater-201651647	2016-05-16	2016-05-18	2016-02-17 15:02:50.296412	2016-02-17 15:02:50.303099	MO	UAE	3	\N		false	false	true
+48	ESCAP Asia-Pacific Forum on Sustainable Development / Annual Session of ESCAP		escap-asia-pacific-forum-on-sustainable-development-annual-session-of-escap-20165148	2016-05-01	2016-05-01	2016-02-17 15:03:40.594512	2016-02-23 20:10:33.291508	MO	TBC	3	\N		false	false	false
+49	OECD Ministerial Council Meeting		oecd-ministerial-council-meeting-20166149	2016-06-01	2016-06-02	2016-02-17 15:04:30.691715	2016-02-17 15:16:52.433982	MO	TBC	3	\N		false	false	true
+50	4th GPEDC Monitoring Advisory Group meeting		4th-gpedc-monitoring-advisory-group-meeting-201663050	2016-06-30	2016-06-30	2016-02-17 15:05:03.666403	2016-02-23 20:10:08.689628	MO	TBC	3	\N		false	false	false
+51	European Development Days		european-development-days-201661551	2016-06-15	2016-06-16	2016-02-17 15:05:38.518541	2016-02-17 15:16:43.757798	MO	TBC	3	\N		false	false	true
+52	10th GPEDC Steering Committee		10th-gpedc-steering-committee-20167152	2016-07-01	2016-07-01	2016-02-17 15:07:04.082114	2016-02-23 20:09:05.756427	MO	TBC	3	\N		false	false	false
+53	8th Annual Summit of the BRICS	The 2016 BRICS summit will be the eighth annual BRICS summit, an international relations conference attended by the heads of state or heads of government of the five member states Brazil, Russia, India, China and South Africa. The summit will be held on a yet undecided date in July in New Delhi, India, the second time the city has hosted the summit after the 2012 summit. India is to assume the chair of the BRICS from February 2016 to December 2016.	8th-annual-summit-of-the-brics-20167153	2016-07-01	2016-07-01	2016-02-17 15:08:15.672026	2016-02-23 20:08:51.774305	MO	India	3	\N		false	false	false
+54	Third annual GPEDC Learning and Acceleration Programme		third-annual-gpedc-learning-and-acceleration-programme-20169154	2016-09-01	2016-09-01	2016-02-17 15:09:15.738505	2016-02-23 20:09:46.791102	MO	TBC	3	\N		false	false	false
+55	DAC Senior Level Meeting		dac-senior-level-meeting-2016101055	2016-10-10	2016-10-12	2016-02-17 15:10:05.756589	2016-02-17 15:10:05.761465	MO	TBC	3	\N		false	false	true
+56	Third UN Conference on Housing and Sustainable Urban Development (Habitat III)	Habitat III is the United Nations Conference on Housing and Sustainable Urban Development to take place in Quito, Ecuador, from 17 – 20 October 2016.\r\n\r\nIn Resolution 66/207 and in line with the bi-decennial cycle (1976, 1996 and 2016), the United Nations General Assembly decided to convene, the Habitat III Conference to reinvigorate the global commitment to sustainable urbanization, to focus on the implementation of a New Urban Agenda, building on the Habitat Agenda of Istanbul in 1996.\r\n\r\nMore information here: https://www.habitat3.org/the-new-urban-agenda/about	third-un-conference-on-housing-and-sustainable-urban-development-habitat-iii-2016101756	2016-10-17	2016-10-20	2016-02-17 15:11:44.80503	2016-02-17 15:11:44.812463	MO	Quito, Ecuador	3	\N		false	false	true
+57	5th Global Meeting of the International Dialogue	The meeting will take place in Stockholm, Sweden, on 5th April 2016. The theme will be ‘Addressing Fragility and Building Peace in a Changing World’.The meeting will bring together ministers and high level representatives from a range of organisations, including the UN Deputy Secretary General Jan Eliasson, and civil society. It will seek to reaffirm our commitment to addressing the drivers of conflict by creating clear pathways out of fragility and towards greater resilience, as a means of achieving the 2030 Agenda.	5th-global-meeting-of-the-international-dialogue-20164557	2016-04-05	2016-04-05	2016-02-22 14:16:14.772884	2016-02-23 19:07:33.910347	AT	Stockholm, Sweden	3	\N		false	false	true
+\.
+
+
+--
+-- Data for Name: cal_event_attendee; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_event_attendee (id, event_id, user_id) FROM stdin;
+17	12	1
+18	12	6
+19	13	8
+20	13	9
+21	14	8
+22	15	8
+23	15	2
+24	16	10
+25	16	12
+26	16	7
+27	17	1
+28	18	7
+29	18	5
+30	18	15
+31	19	10
+32	19	6
+33	23	1
+34	23	2
+35	29	8
+36	24	12
+37	57	6
+38	13	13
+\.
+
+
+--
+-- Name: cal_event_attendee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_event_attendee_id_seq', 39, false);
+
+
+--
+-- Name: cal_event_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_event_id_seq', 58, false);
+
+
+--
+-- Data for Name: cal_event_process; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_event_process (id, event_id, process_id) FROM stdin;
+9	12	1
+10	12	4
+13	13	2
+14	14	3
+15	14	5
+16	15	1
+17	15	2
+18	15	3
+19	15	4
+20	15	5
+21	16	1
+22	18	1
+23	18	3
+24	19	1
+25	19	3
+26	16	3
+27	20	2
+28	20	3
+29	20	5
+30	21	5
+31	20	1
+32	20	4
+33	22	5
+34	23	5
+35	24	5
+36	26	6
+37	27	6
+39	29	3
+40	30	5
+41	31	2
+42	33	1
+43	34	3
+44	35	4
+45	36	3
+46	37	2
+47	40	2
+48	41	2
+49	42	2
+50	43	2
+51	44	2
+52	45	2
+53	46	2
+54	47	2
+55	48	2
+56	49	2
+57	50	2
+58	51	2
+59	52	2
+60	53	2
+61	54	2
+62	55	2
+63	56	1
+64	56	2
+65	57	1
+66	57	4
+\.
+
+
+--
+-- Name: cal_event_process_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_event_process_id_seq', 67, false);
+
+
+--
+-- Data for Name: cal_event_tag; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_event_tag (id, event_id, tag_id) FROM stdin;
+6	12	1
+7	12	4
+8	12	5
+9	13	2
+12	14	6
+13	14	7
+14	15	1
+15	16	4
+16	18	4
+17	19	4
+18	20	3
+19	21	2
+20	21	6
+21	22	5
+22	23	6
+23	24	7
+24	26	8
+25	27	8
+27	29	9
+28	32	1
+29	33	4
+30	34	6
+31	36	10
+32	37	2
+33	40	11
+34	41	11
+35	42	11
+36	43	11
+37	44	11
+38	45	11
+39	46	11
+40	47	11
+41	48	11
+42	49	11
+43	50	11
+44	51	11
+45	52	11
+46	54	11
+47	55	11
+48	56	11
+49	57	5
+\.
+
+
+--
+-- Name: cal_event_tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_event_tag_id_seq', 50, false);
+
+
+--
+-- Data for Name: cal_process; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_process (id, title, slug, start, description, "end") FROM stdin;
+1	Crisis, Risk, and Resilience	crisis-risk-and-resilience-1	2016-02-08	Also a cross cutting theme, this process is important.	2016-12-31
+2	Financing for development	financing-for-development-2	2016-02-11	In order to better understand how different modes of finance can affect development outcomes, DI splits ODA into several categories (i.e. cash vs. technical assistance). This unbundling of aid can actually be a politically contentious subject because some countries continue to count aid differently. For example, the largest component of French ODA in 2013 went to "non-transfer aid" meaning that it never actually leaves the donor country; instead, non-transfer aid is spent on debt-relief, conferences, and administrative costs.\r\n\r\nIncreasing political focus is also being spent on the domestic finances of recipient nations. Although aid plays an important role in lifting nations out of poverty, developing nations do need to be able to make the transition away from aid as their economies advance.	2016-12-31
+3	Transparency & Accountability	transparency-accountability-3	2016-01-01	Short description	2016-12-31
+4	Peace & Security	peace-security-4	2016-01-01	A process about peace and security.	2016-12-31
+5	Data revolution	data-revolution-5	2016-01-01		2016-12-31
+6	Environment	environment-6	\N		2017-04-30
+\.
+
+
+--
+-- Name: cal_process_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_process_id_seq', 7, false);
+
+
+--
+-- Data for Name: cal_process_theme; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_process_theme (id, process_id, theme_id) FROM stdin;
+1	1	1
+2	2	1
+3	3	1
+4	3	2
+5	3	3
+6	4	1
+7	5	3
+\.
+
+
+--
+-- Name: cal_process_theme_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_process_theme_id_seq', 8, false);
+
+
+--
+-- Data for Name: cal_role; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_role (id, name) FROM stdin;
+1	Project manager
+2	Worker
+3	Stakeholder
+\.
+
+
+--
+-- Name: cal_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_role_id_seq', 4, false);
+
+
+--
+-- Data for Name: cal_tag; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_tag (id, title, slug) FROM stdin;
+1	World Bank	world-bank-1
+2	DCF	dcf-2
+3	UNGA	unga-3
+4	GHA	gha-4
+5	PPA	ppa-5
+6	BDBABR	bdbabr-6
+7	JUDS	juds-7
+8	COP	cop-8
+9	Korea	korea-9
+10	IATI	iati-10
+11	HLM	hlm-11
+\.
+
+
+--
+-- Name: cal_tag_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_tag_id_seq', 12, false);
+
+
+--
+-- Data for Name: cal_task; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_task (id, name, code, level, status, start, duration, "end", "startIsMilestone", "endIsMilestone", depends, description, progress, event_id, "hasChild", "order") FROM stdin;
+63	Attend World Bank Fragility, Conflict and Violence Forum	MEET	1	STATUS_SUSPENDED	2016-03-01	3	2016-03-04	false	true	1	The World Bank Fragility, Conflict and Violence Forum is convening in Washington, DC from March 1-3, 2016. The Forum will focus on realizing the SDGs in fragile and conflict-affected states (with special attention to Goal 16).\r\n\r\nMore information here: http://www.worldbank.org/en/events/2015/07/30/world-bank-group-fragility-conflict-and-violence-forum-2016\r\n\r\nContact Ozong Agborsangaya-Fiteu (ozong@worldbank.org), Cynthia Delgadillo (cdelgadillo@worldbank.org), or fcvforum@worldbank.org	0	12	false	1
+64	Attend UN Development Cooperation Forum Symposium	MEET	1	STATUS_SUSPENDED	2016-04-06	\N	2016-04-08	false	true	\N	The UN DCF High-Level Symposium will be held in Brussels, from April 6-8, 2016 as a preparation meeting for the Forum itself being held in New York City, from July 21-22, 2016.	0	13	false	999
+65	Attend World Bank Spring Meetings	MEET	1	STATUS_SUSPENDED	2016-04-14	2	2016-04-18	false	true		The World Bank is hosting its annual Spring Meetings in Washington, DC from April 15-17, 2016. The agenda for this set of meetings has not yet been announced, details are forthcoming. These meetings possibly relate to all external themes, and many of our current projects. Cordelia, Martin will possibly be attending. The deadline for CSO accreditation usually opens mid-February and closes end-March.	0	15	false	1
+66	Attend Financing for Development Forum	MEET	1	STATUS_SUSPENDED	2016-04-18	\N	2016-04-22	false	true	\N	As a follow-up to the Addis Ababa Action Agenda meeting in 2015, ECOSOC will host a follow-up Financing for Development Forum in New York City from April 18-22, 2016. Cordelia will be attending, as this event relates to Theme 2, the BDBABR and JUDS projects, and the Transparency, Accountability, and Data Revolution cross-cutting themes. The deadline for submission of input is not clear, but may be due by the end of February.\r\nContact Peter Shari with UNDESA.	0	14	false	999
+67	Attend World Humanitarian Summit	MEET	1	STATUS_SUSPENDED	2016-05-22	2	2016-05-24	false	true		The World Humanitarian Summit will be held in Istanbul, Turkey from May 23-24, 2016. The purpose of the summit is to create a forward-looking agenda for humanitarian action, with an aim of creating a more inclusive and diverse humanitarian system committed to the humanitarian principles. The summit will revolve around four themes: humanitarian effectiveness, reducing vulnerability and managing risk, innovation, and serving the needs of people in conflict. Judith, Pin, and Charlotte might be attending, as this event relates to Theme 2, as well as the Crisis, Risk, and Resilience cross-cutting theme. Consultation has already occurred, and Development Initiatives provided input here: https://www.worldhumanitariansummit.org/node/502033 Deadline for side-event applications is February 12, 2016.\r\nMore information is available here: https://www.worldhumanitariansummit.org/	0	16	false	3
+68	Attend US Presidential Election	MEET	1	STATUS_SUSPENDED	2016-11-08	\N	2016-11-08	false	true	\N	The 2016 election for US president.	0	17	false	999
+69	Prep phase		1	STATUS_ACTIVE	2016-02-10	14	2016-03-01	false	false			0	12	false	0
+70	Attend ECOSOC Humanitarian Affairs Segment	MEET	1	STATUS_SUSPENDED	2016-06-26	3	2016-06-29	false	true		The Humanitarian Affairs Segment (HAS) provides a unique opportunity for Member States to address challenges, operational and normative progress on the humanitarian policy agenda.	0	18	false	2
+71	Engagement planning		1	STATUS_ACTIVE	2016-02-22	91	2016-06-29	true	false			0	18	false	0
+72	Concept note development for side event		1	STATUS_ACTIVE	2016-03-01	35	2016-04-18	false	false			0	18	false	1
+73	Attend DIHAD	MEET	1	STATUS_SUSPENDED	2016-03-21	\N	2016-03-23	false	true	\N	The overall aim of DIHAD is to contribute to the further enhancement of technically sound and principled international humanitarian and development assistance. In keeping with Dubai’s strategic location between ‘East’ and ‘West’, its energetic entrepreneurial climate and diverse international character, DIHAD further endeavors to build bridges between various actors and countries from around the globe engaged in addressing needs of those affected by crises, disasters or the adverse effects of under-development. In addition, DIHAD strives to provide a platform where assistance providers can interface with relevant actors from the corporate and governmental sectors with a view to creating meaningful synergies in support of those in need. DIHAD aims to further evolve into a truly global event with a distinct yet appropriately-sized regional character.	0	19	false	999
+74	CSO accreditation 		1	STATUS_ACTIVE	2016-02-17	32	2016-03-31	false	false			0	15	false	0
+75	Application for side event on transparency		1	STATUS_ACTIVE	2016-02-01	15	2016-02-19	false	false			0	16	false	0
+76	Preparing side event on transparency		1	STATUS_ACTIVE	2016-02-16	69	2016-05-23	false	false			0	16	false	1
+77	Preparation of GHA analysis to share top line figures		1	STATUS_ACTIVE	2016-02-17	68	2016-05-23	false	false			0	16	false	2
+78	Attend UNGA	MEET	1	STATUS_SUSPENDED	2016-09-13	\N	2016-09-26	false	true	\N	The General Assembly (GA) is the main deliberative, policymaking and representative organ of the UN.\r\n\r\nDecisions on important questions, such as those on peace and security, admission of new members and budgetary matters, require a two-thirds majority. Decisions on other questions are by simple majority.\r\n\r\nThere are also a host of side and fringe events taking place on a variety of topics relevent to DI's work.	0	20	false	999
+79	Attend UNGA High-level Thematic Debate: Implementing Commitments on Sustainable Development, Climate Change and Financing	MEET	1	STATUS_SUSPENDED	2016-04-12	\N	2016-04-12	false	true	\N	The President of the UN General Assembly (UNGA), Mogens Lykketoft, will convene a high-level thematic debate on sustainable development, climate change and financing. This event is one of three high-level events the President will convene during UNGA 70. Lykketoft said on 19 October 2015 that the meeting will involve a range of stakeholders. Per remarks on 15 December 2015, the event will allow for Member States to present the steps they are taking to implement the 2030 Agenda for Sustainable Development, and to look at inter-connections between Intended Nationally Determined Contributions (INDCs) on climate change, the broader Paris Agreement and overall implementation of the Sustainable Development Goals (SDGs), and to share thinking on how to effectively integrate climate action into sustainable development strategies. On this topic, the UN Secretary-General is expected to address how the UN system is moving ahead to support national actions, and there will be a broader discussion on capacity building for achieving the 2030 Agenda. In addition, the event will address how to catalyze means of implementation for the SDGs, including ICTs and financing for “sustainable, resilient and climate smart infrastructure.” Finally, discussions will consider how to foster accountable and transparent multi-stakeholder partnerships to support the 2030 Agenda.\r\nread more: http://sd.iisd.org/events/unga-high-level-thematic-debate-implementing-commitments-on-sustainable-development-climate-change-and-financing/	0	21	false	999
+80	Attend High-Level Political Forum on Sustainable Development (HLPF 2016)	MEET	1	STATUS_SUSPENDED	2016-07-11	\N	2016-07-20	false	true	\N	The HLPF is the central UN platform for the follow-up and review of the 2030 Agenda for Sustainable Development adopted at the United Nations Sustainable Development Summit on 25 September 2015. HLPF 2016 will be the first HLPF after the adoption of the 2030 Agenda for Sustainable Development.\r\nThe forum, which adopts a Ministerial Declaration, is expected to start effectively delivering on its mandates to provide political leadership, guidance and recommendations on the Agenda's implementation and follow-up; keep track of progress; spur coherent policies informed by evidence, science and country experiences; as well as address new and emerging issues.\r\nNational reviews\r\nThe forum is mandated to conduct national reviews and thematic reviews of the implementation of the Agenda, with inputs from other intergovernmental bodies and forums, relevant UN entities, regional processes, major groups and other stakeholders. The national reviews will provide a platform for partnerships.\r\nBelow is a listing (as of 10 February 2016) of those states taking part in the national reviews in the 2016 session of the High-level Political Forum.	0	22	false	999
+81	Attend Annual Bank Conference on Development Economics (ABCDE) - Development Data	MEET	1	STATUS_SUSPENDED	2016-06-20	\N	2016-06-21	false	true	\N	The Annual Bank Conference on Development Economics (ABCDE), organized by the World Bank Development Economics (DEC) Vice Presidency, is one of the world’s best known series of conferences for the presentation and discussion of new knowledge on development. The conference aims to promote the exchange of cutting-edge research among researchers, policymakers, and development practitioners.	0	23	false	999
+82	Attend 47th Session of UN Statistical Commission	MEET	1	STATUS_SUSPENDED	2016-03-08	\N	2016-03-11	false	true	\N	The United Nations Statistical Commission, established in 1947, is the highest body of the global statistical system. It brings together the Chief Statisticians from member states from around the world. It is the highest decision making body for international statistical activities especially the setting of statistical standards, the development of concepts and methods and their implementation at the national and international level.\r\n\r\nThe Statistical Commission oversees the work of the United Nations Statistics Division (UNSD), and is a Functional Commission of the UN Economic and Social Council.	0	24	false	999
+83	Attend OECD Forum	MEET	1	STATUS_SUSPENDED	2016-05-31	\N	2016-06-01	false	true	\N	A major international conference where policies and ideas are shared between governments, business, civil society and academia. Useful for gaining insights into the global trends and opportunities shaping our societies, to take part in exchanges addressing these challenges, and to enrich the Ministerial Meeting	0	25	false	999
+84	Attend COP 22	MEET	1	STATUS_SUSPENDED	2016-11-07	\N	2016-11-18	false	true	\N		0	26	false	999
+85	Attend COP 23	MEET	1	STATUS_SUSPENDED	2017-11-06	10	2017-11-17	false	true			0	27	false	1
+87	Admissions applications deadline		1	STATUS_ACTIVE	2016-07-24	27	2016-08-31	false	false			0	27	false	0
+89	Attend World Data Forum for Global Partnership for Sustainable Development Data	MEET	1	STATUS_SUSPENDED	2016-11-12	\N	2016-11-14	false	true	\N	The World Data Forum for GPSDD will be held on November 12, 2016. More information on the agenda is forthcoming.	0	30	false	999
+90	Attend Second High Level Meeting of the Global Partnership for Effective Development Co-operation	MEET	1	STATUS_SUSPENDED	2016-11-21	\N	2016-11-24	false	true	\N	The Second High Level Meeting of the Global Partnership for Effective Development Co-operation will take place from 21-24 November in a location yet to be determined.	0	31	false	999
+91	Attend World Bank Autumn Meetings	MEET	1	STATUS_SUSPENDED	2016-10-07	\N	2016-10-09	false	true	\N	The annual World Bank / IMF Autumn Meetings will take place from 7-9 October, 2016 in Washington, D.C. The agenda is yet to be determined.	0	32	false	999
+92	Attend UN High-level plenary meeting on addressing large movements of refugees and migrants	MEET	1	STATUS_SUSPENDED	2016-09-19	\N	2016-09-19	false	true	\N	The UN High-level plenary meeting on addressing large movements of refugees and migrants will take place on the 19th of September, 2016 in New York, N.Y., one day before the opening of general debates. Karen AbuZayd of the United States  was appointed by Ban Ki-moon as Special Adviser for the upcoming UN summit.	0	33	false	999
+93	Attend DAC High Level Meeting	MEET	1	STATUS_SUSPENDED	2016-02-18	\N	2016-02-19	false	true	\N	The OECD Development Assistance Committee (DAC) will convene its next High Level Meeting (HLM) from 18-19 February 2016 in Paris, the first such meeting since December 2014 when ministers agreed to modernise the DAC's statistical system and its measurement of development finance. The February 2016 HLM will review progress in modernising the system, drawing on the results of the July 2015 Addis Ababa Third International Conference on Financing for Development and the September 2015 United Nations Sustainable Development Summit. The HLM will also seek agreement on a number of outstanding issues, including the measurement in official development assistance (ODA) of peace and security expenditures and the donor effort involved in using private sector instruments. HLM participants will also discuss the role of development co-operation in the refugee crisis and, more broadly, in the 2030 Agenda.\r\n\r\nMore information here: http://www.oecd.org/dac/dac-hlm.htm	0	34	false	999
+94	Attend UNGA High-level Thematic Debate: Strengthening the UN's Role in Peace and Security	MEET	1	STATUS_SUSPENDED	2016-05-10	\N	2016-05-11	false	true	\N	The President of the UN General Assembly (UNGA), Mogens Lykketoft, will hold a high-level thematic debate to examine how to strengthen the UN's role and coherence in the area of peace and security. The event is expected to identify synergies from three review processes related to peace and security taking place at the UN (peace operations review, peacebuilding activities review, and global study on women, peace and security). The event will also be informed by preparatory discussions, including workshops and meetings organized by Member States, regional and sub-regional organizations, civil society and the private sector. The debate is one of three high-level events that the President will convene during UNGA 70.\r\nread more: http://sd.iisd.org/events/unga-high-level-thematic-debate-strengthening-the-uns-role-in-peace-and-security/	0	35	false	999
+96	Attend Global Partnership for Effective Cooperation	MEET	1	STATUS_SUSPENDED	2016-09-01	\N	2016-09-01	false	true	\N	The 10th Global Partnership for Effective Cooperation Steering Committee Meeting will take place in Korea on a date in September 2016 yet to be determined. Cordelia will be attending, as this event relates to Theme 2, as well as the Korea project and the Transparency & Accountability cross-cutting theme. There is no priority deadline for input submission.	0	29	false	999
+97	Attend GPECD Workshop for the Global Partnership Initiatives	MEET	1	STATUS_SUSPENDED	2016-06-15	\N	2016-06-15	false	true	\N	What will be happening in June/July on the GPEDC side is a workshop in Vienna for the Global Partnership Initiatives - as IATI is one, I suspect IATI at least will want to attend.	0	36	false	999
+98	Attend Development Cooperation Forum	MEET	1	STATUS_SUSPENDED	2016-07-21	\N	2016-07-22	false	true	\N	The 5th Biennial High-level Meeting of the Development Cooperation Forum will be held in New York from July 21-22, 2016. The Forum will have three focuses: trends in development cooperation, south-south development cooperation, and tracking development cooperation.\r\nMore information is available here: https://www.un.org/ecosoc/en/development-cooperation-forum	0	37	false	999
+99	Attend G20 Summit	MEET	1	STATUS_SUSPENDED	2016-09-04	\N	2016-09-05	false	true	\N	The 11th G-20 Summit will be held from 4-5 September, 2016 in Hangzhou, China.	0	38	false	999
+100	Attend G7 Summit	MEET	1	STATUS_SUSPENDED	2016-05-26	\N	2016-05-27	false	true	\N	The 42nd G7 summit will be held on 26–27 May 2016 at the Shima Kanko Hotel in Kashiko Island, Shima, Mie Prefecture, Japan. In March 2014 the G7 declared that a meaningful discussion was currently not possible with Russia in the context of the G8. Since then meetings have continued within the G7 process.	0	39	false	999
+101	Attend UNDP 50th Anniversary Ministerial Meeting	MEET	1	STATUS_SUSPENDED	2016-02-24	\N	2016-02-24	false	true	\N		0	40	false	999
+102	Attend 9th GPECD Steering Committee	MEET	1	STATUS_SUSPENDED	2016-02-29	\N	2016-03-01	false	true	\N		0	41	false	999
+103	Attend OECD Global Forum on Development	MEET	1	STATUS_SUSPENDED	2016-03-21	\N	2016-03-21	false	true	\N		0	42	false	999
+104	Attend ECOSOC Partnership Forum	MEET	1	STATUS_SUSPENDED	2016-03-31	\N	2016-03-31	false	true	\N		0	43	false	999
+105	Attend Asia-Pacific Development Effectiveness Facility Annual Forum / Regional Consultations HLM2	MEET	1	STATUS_SUSPENDED	2016-05-31	\N	2016-05-31	false	true	\N		0	44	false	999
+106	Attend ECOSOC Integration Segment	MEET	1	STATUS_SUSPENDED	2016-05-02	\N	2016-05-04	false	true	\N		0	45	false	999
+107	Attend Annual Meeting, Asian Development Bank	MEET	1	STATUS_SUSPENDED	2016-05-03	\N	2016-05-05	false	true	\N		0	46	false	999
+108	Attend Tidewater	MEET	1	STATUS_SUSPENDED	2016-05-16	\N	2016-05-18	false	true	\N		0	47	false	999
+109	Attend ESCAP Asia-Pacific Forum on Sustainable Development / Annual Session of ESCAP	MEET	1	STATUS_SUSPENDED	2016-05-01	\N	2016-05-01	false	true	\N		0	48	false	999
+110	Attend OECD Ministerial Council Meeting	MEET	1	STATUS_SUSPENDED	2016-06-01	\N	2016-06-02	false	true	\N		0	49	false	999
+111	Attend 4th GPEDC Monitoring Advisory Group meeting	MEET	1	STATUS_SUSPENDED	2016-06-30	\N	2016-06-30	false	true	\N		0	50	false	999
+112	Attend European Development Days	MEET	1	STATUS_SUSPENDED	2016-06-15	\N	2016-06-16	false	true	\N		0	51	false	999
+113	Attend 10th GPEDC Steering Committee	MEET	1	STATUS_SUSPENDED	2016-07-01	\N	2016-07-01	false	true	\N		0	52	false	999
+114	Attend 8th Annual Summit of the BRICS	MEET	1	STATUS_SUSPENDED	2016-07-01	\N	2016-07-01	false	true	\N		0	53	false	999
+115	Attend Third annual GPEDC Learning and Acceleration Programme	MEET	1	STATUS_SUSPENDED	2016-09-01	\N	2016-09-01	false	true	\N		0	54	false	999
+116	Attend DAC Senior Level Meeting	MEET	1	STATUS_SUSPENDED	2016-10-10	\N	2016-10-12	false	true	\N		0	55	false	999
+117	Attend Third UN Conference on Housing and Sustainable Urban Development (Habitat III)	MEET	1	STATUS_SUSPENDED	2016-10-17	\N	2016-10-20	false	true	\N	Habitat III is the United Nations Conference on Housing and Sustainable Urban Development to take place in Quito, Ecuador, from 17 – 20 October 2016.\r\n\r\nIn Resolution 66/207 and in line with the bi-decennial cycle (1976, 1996 and 2016), the United Nations General Assembly decided to convene, the Habitat III Conference to reinvigorate the global commitment to sustainable urbanization, to focus on the implementation of a New Urban Agenda, building on the Habitat Agenda of Istanbul in 1996.\r\n\r\nMore information here: https://www.habitat3.org/the-new-urban-agenda/about	0	56	false	999
+118	Attend 5th Global Meeting of the International Dialogue	MEET	1	STATUS_SUSPENDED	2016-04-05	\N	2016-04-05	false	true	\N	The meeting will take place in Stockholm, Sweden, on 5th April 2016. The theme will be ‘Addressing Fragility and Building Peace in a Changing World’.The meeting will bring together ministers and high level representatives from a range of organisations, including the UN Deputy Secretary General Jan Eliasson, and civil society. It will seek to reaffirm our commitment to addressing the drivers of conflict by creating clear pathways out of fragility and towards greater resilience, as a means of achieving the 2030 Agenda.	0	57	false	999
+\.
+
+
+--
+-- Data for Name: cal_task_assignee; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_task_assignee (id, task_id, assignee_id) FROM stdin;
+18	75	15
+19	77	16
+\.
+
+
+--
+-- Name: cal_task_assignee_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_task_assignee_id_seq', 20, false);
+
+
+--
+-- Name: cal_task_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_task_id_seq', 119, false);
+
+
+--
+-- Data for Name: cal_theme; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY cal_theme (id, title, slug, description) FROM stdin;
+1	Theme 2	theme-2-1	The mix of all resources
+2	Theme 1	theme-1-2	Understanding poverty
+3	Theme 3	theme-3-3	Data use
+\.
+
+
+--
+-- Name: cal_theme_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('cal_theme_id_seq', 4, false);
+
+
+--
+-- Data for Name: django_admin_log; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY django_admin_log (id, object_id, object_repr, action_flag, change_message, content_type_id, user_id, action_time) FROM stdin;
+1	1	Test Event	1	Added.	7	1	2016-02-03 16:22:26.024428
+2	1	Test Event	2	No fields changed.	7	1	2016-02-03 16:22:32.763267
+3	1	World Bank Group Fragility, Conflict and Violence Forum 2016	2	Changed title.	7	1	2016-02-03 16:54:48.046455
+4	1	World Bank Group Fragility, Conflict and Violence Forum 2016	3		7	1	2016-02-08 17:27:00.198213
+5	2	World Bank Group Fragility, Conflict and Violence Forum 2016	1	Added.	7	1	2016-02-08 17:27:42.19916
+6	2	World Bank Group Fragility, Conflict and Violence Forum 2016	3		7	1	2016-02-08 18:52:02.960748
+7	1	World Bank	1	Added.	11	1	2016-02-08 18:52:54.11417
+8	1	Theme 2	1	Added.	8	1	2016-02-08 18:53:45.426813
+9	1	Crisis, Risk, and Resilience	1	Added.	9	1	2016-02-08 18:53:47.722695
+10	3	World Bank Group Fragility, Conflict and Violence Forum 2016	1	Added.	7	1	2016-02-08 18:54:06.922375
+11	1	Gather intel	1	Added.	\N	1	2016-02-08 18:55:25.477355
+12	4	New Hampshire Primary	1	Added.	7	1	2016-02-08 18:56:39.963088
+13	3	World Bank Group Fragility, Conflict and Violence Forum 2016	2	Changed start.	7	1	2016-02-08 18:59:47.445875
+14	1	Project manager	1	Added.	12	1	2016-02-08 20:38:47.37111
+15	2	Worker	1	Added.	12	1	2016-02-08 20:38:50.586984
+16	3	Stakeholder	1	Added.	12	1	2016-02-08 20:38:56.351294
+17	1	alex	2	Changed first_name and last_name.	4	1	2016-02-08 20:41:33.895582
+18	1	Alex Miller	1	Added.	13	1	2016-02-08 20:42:42.641688
+19	2	Alex Miller as Project manager	1	Added.	13	1	2016-02-08 20:45:15.903418
+20	1		1	Added.	14	1	2016-02-08 20:45:40.869775
+21	1		3		14	1	2016-02-08 20:45:53.778348
+22	2	Start research	1	Added.	14	1	2016-02-08 20:46:28.245333
+23	2	Start research	2	No fields changed.	14	1	2016-02-08 20:46:33.052325
+24	3	World Bank Group Fragility, Conflict and Violence Forum 2016	2	Changed purpose.	7	1	2016-02-10 12:34:35.688262
+25	3	World Bank Group Fragility, Conflict and Violence Forum 2016	2	Changed attendee.	7	1	2016-02-10 12:41:52.767341
+26	2	martin	1	Added.	4	1	2016-02-10 12:42:23.83378
+27	3	World Bank Group Fragility, Conflict and Violence Forum 2016	2	Changed attendee.	7	1	2016-02-10 12:42:28.32763
+28	2	martin	2	Changed first_name, last_name, email, is_staff and user_permissions.	4	1	2016-02-10 12:44:14.91903
+29	3	andrew	1	Added.	4	1	2016-02-10 12:44:36.184414
+30	3	andrew	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-10 12:45:15.481968
+31	4	leighton	1	Added.	4	1	2016-02-10 12:45:29.517686
+32	4	leighton	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-10 12:45:48.447637
+33	6	Another new tasks	3		14	1	2016-02-10 15:02:56.946571
+34	5	Brand new task	3		14	1	2016-02-10 15:02:56.957056
+35	4	Brand new task	3		14	1	2016-02-10 15:02:56.968271
+36	3	Test task	3		14	1	2016-02-10 15:02:56.978372
+37	8	please?	3		14	1	2016-02-10 15:02:56.988899
+38	7	please?	3		14	1	2016-02-10 15:02:57.00103
+39	4	Leighton James as Worker	3		13	1	2016-02-10 15:03:10.42918
+40	3	Martin Horwood as Project manager	3		13	1	2016-02-10 15:03:10.437718
+41	2	Alex Miller as Project manager	3		13	1	2016-02-10 15:03:10.448418
+42	1	Alex Miller as Worker	3		13	1	2016-02-10 15:03:10.458783
+43	5	Test event	1	Added.	7	1	2016-02-10 18:10:56.812706
+44	4	New Hampshire Primary	3		7	1	2016-02-10 18:13:22.880864
+45	5	Test event	3		7	1	2016-02-10 18:13:22.891439
+46	2	DCF	1	Added.	11	1	2016-02-10 18:15:07.476784
+47	6	UN Development Cooperation Forum Symposium	1	Added.	7	1	2016-02-10 18:16:02.963958
+48	3	UNGA	1	Added.	11	1	2016-02-10 18:25:57.992428
+49	7	United Nations General Assembly	1	Added.	7	1	2016-02-10 18:26:08.770363
+50	2	martin	2	Changed is_superuser.	4	1	2016-02-11 16:55:05.212767
+51	2	Theme 1	1	Added.	8	1	2016-02-11 17:07:09.471232
+52	3	Theme 3	1	Added.	8	1	2016-02-11 17:07:22.580481
+53	2	Financing for development	1	Added.	9	1	2016-02-11 17:08:56.826433
+54	3	World Bank Group Fragility, Conflict and Violence Forum 2016	2	No fields changed.	7	1	2016-02-11 17:09:18.603358
+55	6	UN Development Cooperation Forum Symposium	2	Changed process.	7	1	2016-02-11 17:09:25.522599
+56	7	United Nations General Assembly	2	Changed process.	7	1	2016-02-11 17:09:33.884717
+57	8	US Democratic Debate	1	Added.	7	1	2016-02-11 18:34:00.79794
+58	9	A low priority event	1	Added.	7	1	2016-02-11 19:26:23.52775
+59	10	Tomorrow's event	1	Added.	7	1	2016-02-11 19:31:08.420973
+60	5	cat	1	Added.	4	1	2016-02-11 19:33:23.748536
+61	5	cat	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:33:49.467935
+62	6	sarah	1	Added.	4	1	2016-02-11 19:34:13.809568
+63	6	sarah	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:34:33.138128
+64	7	charlotte	1	Added.	4	1	2016-02-11 19:34:44.98462
+65	7	charlotte	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:35:04.985469
+66	8	cordelia	1	Added.	4	1	2016-02-11 19:35:15.273447
+67	8	cordelia	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:35:37.879366
+68	9	richard	1	Added.	4	1	2016-02-11 19:35:56.773767
+69	9	richard	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:36:13.92377
+70	10	pin	1	Added.	4	1	2016-02-11 19:36:21.490629
+71	10	pin	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:37:05.864101
+72	11	tony	1	Added.	4	1	2016-02-11 19:37:14.74839
+73	11	tony	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:37:29.303023
+74	12	judith	1	Added.	4	1	2016-02-11 19:37:37.609723
+75	12	judith	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:37:52.824385
+76	13	dan	1	Added.	4	1	2016-02-11 19:38:27.672871
+77	13	dan	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-11 19:38:55.719372
+78	6	UN Development Cooperation Forum Symposium	2	Changed attendee.	7	1	2016-02-11 19:39:58.361321
+79	3	Transparency & Accountability	1	Added.	9	1	2016-02-12 12:10:39.103579
+80	11	World Bank Spring Meetings	1	Added.	7	1	2016-02-12 12:10:50.841636
+81	10	Cat Langdon as Project manager	3		13	1	2016-02-12 13:22:38.467249
+82	9	Alex Miller as Project manager	3		13	1	2016-02-12 13:22:38.474079
+83	8	Alex Miller as Worker	3		13	1	2016-02-12 13:22:38.482699
+84	7	Andrew Palmer as Project manager	3		13	1	2016-02-12 13:22:38.491312
+85	6	Martin Horwood as Project manager	3		13	1	2016-02-12 13:22:38.50051
+86	5	Leighton James as Stakeholder	3		13	1	2016-02-12 13:22:38.509397
+87	14	carolyn	1	Added.	4	1	2016-02-12 14:26:18.707526
+88	14	carolyn	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-12 14:26:38.418835
+89	12	Alex Miller as Worker	3		13	1	2016-02-12 14:55:43.595186
+90	11	Sarah Dalrymple as Project manager	3		13	1	2016-02-12 14:55:43.602938
+91	9	A low priority event	3		7	1	2016-02-12 14:56:05.337132
+92	8	US Democratic Debate	3		7	1	2016-02-12 14:56:05.345332
+93	10	Tomorrow's event	3		7	1	2016-02-12 14:56:05.355258
+94	3	World Bank Group Fragility, Conflict and Violence Forum 2016	3		7	1	2016-02-12 14:56:05.364076
+95	6	UN Development Cooperation Forum Symposium	3		7	1	2016-02-12 14:56:05.373166
+96	11	World Bank Spring Meetings	3		7	1	2016-02-12 14:56:05.382932
+97	7	United Nations General Assembly	3		7	1	2016-02-12 14:56:05.392617
+98	4	GHA	1	Added.	11	1	2016-02-12 14:58:42.861537
+99	12	World Bank Fragility, Conflict and Violence Forum	1	Added.	7	1	2016-02-12 15:00:10.242369
+100	5	PPA	1	Added.	11	1	2016-02-12 15:00:26.62011
+101	4	Peace & Security	1	Added.	9	1	2016-02-12 15:00:58.66747
+102	12	World Bank Fragility, Conflict and Violence Forum	2	Changed tag and process.	7	1	2016-02-12 15:01:11.276343
+103	6	BDBABR	1	Added.	11	1	2016-02-12 15:02:14.831684
+104	7	JUDS	1	Added.	11	1	2016-02-12 15:02:19.70972
+105	5	Data revolution	1	Added.	9	1	2016-02-12 15:02:52.222764
+106	13	UN Development Cooperation Forum Symposium	1	Added.	7	1	2016-02-12 15:03:01.606055
+107	13	UN Development Cooperation Forum Symposium	2	Changed tag and process.	7	1	2016-02-12 15:03:35.812341
+108	14	Financing for Development Forum	1	Added.	7	1	2016-02-12 15:04:41.398349
+109	15	World Bank Spring Meetings	1	Added.	7	1	2016-02-12 15:05:47.532334
+110	16	World Humanitarian Summit	1	Added.	7	1	2016-02-12 15:07:07.106207
+111	17	US Presidential Election	1	Added.	7	1	2016-02-12 15:08:24.199254
+112	17	US Presidential Election'	2	Changed title.	7	1	2016-02-12 15:14:37.802584
+113	40	Preparatory phase	3		14	1	2016-02-12 15:27:43.991689
+114	34		3		14	1	2016-02-12 15:27:44.001897
+115	12	World Bank Fragility, Conflict and Violence Forum	2	No fields changed.	7	1	2016-02-12 15:27:54.63617
+116	17	US Presidential Election&'><	2	Changed title.	7	1	2016-02-12 15:30:18.881059
+117	17	US Presidential Election	2	Changed title.	7	1	2016-02-12 15:30:34.931165
+118	42	Prep phase	3		14	1	2016-02-12 15:32:42.803944
+119	41	Attend World Bank Fragility, Conflict and Violence Forum	3		14	1	2016-02-12 15:32:42.813385
+120	35	Attend UN Development Cooperation Forum Symposium	3		14	1	2016-02-12 15:32:42.825467
+121	37	Attend World Bank Spring Meetings	3		14	1	2016-02-12 15:32:42.837769
+122	36	Attend Financing for Development Forum	3		14	1	2016-02-12 15:32:42.850871
+123	38	Attend World Humanitarian Summit	3		14	1	2016-02-12 15:32:42.8626
+124	39	Attend US Presidential Election	3		14	1	2016-02-12 15:32:42.874953
+125	12	World Bank Fragility, Conflict and Violence Forum	2	No fields changed.	7	1	2016-02-12 15:33:46.677626
+126	13	UN Development Cooperation Forum Symposium	2	No fields changed.	7	1	2016-02-12 15:33:50.897595
+127	15	World Bank Spring Meetings	2	No fields changed.	7	1	2016-02-12 15:33:53.079901
+128	14	Financing for Development Forum	2	No fields changed.	7	1	2016-02-12 15:33:55.284172
+129	16	World Humanitarian Summit	2	No fields changed.	7	1	2016-02-12 15:33:57.929102
+130	17	US Presidential Election	2	No fields changed.	7	1	2016-02-12 15:34:00.262984
+131	49	Prep phase	3		14	1	2016-02-12 16:05:12.688518
+132	50	Write report	3		14	1	2016-02-12 16:05:12.697533
+133	43	Attend World Bank Fragility, Conflict and Violence Forum	3		14	1	2016-02-12 16:05:12.708671
+134	12	World Bank Fragility, Conflict and Violence Forum	2	No fields changed.	7	1	2016-02-12 16:05:24.3805
+135	52	Prep phase	3		14	1	2016-02-12 16:08:35.463989
+136	51	Attend World Bank Fragility, Conflict and Violence Forum	3		14	1	2016-02-12 16:08:35.474957
+137	44	Attend UN Development Cooperation Forum Symposium	3		14	1	2016-02-12 16:08:35.486946
+138	45	Attend World Bank Spring Meetings	3		14	1	2016-02-12 16:08:35.498882
+139	46	Attend Financing for Development Forum	3		14	1	2016-02-12 16:08:35.50864
+140	47	Attend World Humanitarian Summit	3		14	1	2016-02-12 16:08:35.519204
+141	48	Attend US Presidential Election	3		14	1	2016-02-12 16:08:35.529472
+142	12	World Bank Fragility, Conflict and Violence Forum	2	No fields changed.	7	1	2016-02-12 16:08:43.443028
+143	13	UN Development Cooperation Forum Symposium	2	No fields changed.	7	1	2016-02-12 16:08:46.112782
+144	15	World Bank Spring Meetings	2	No fields changed.	7	1	2016-02-12 16:08:50.417831
+145	14	Financing for Development Forum	2	No fields changed.	7	1	2016-02-12 16:08:52.519707
+146	16	World Humanitarian Summit	2	No fields changed.	7	1	2016-02-12 16:08:56.162147
+147	17	US Presidential Election	2	No fields changed.	7	1	2016-02-12 16:08:58.360033
+148	14	Financing for Development Forum	2	No fields changed.	7	1	2016-02-12 16:09:00.674372
+149	15	World Bank Spring Meetings	2	Changed end.	7	1	2016-02-12 16:12:03.657504
+150	55	Attend World Bank Spring Meetings	3		14	1	2016-02-12 16:12:20.840349
+151	15	World Bank Spring Meetings	2	No fields changed.	7	1	2016-02-12 16:12:29.546821
+152	60	Attend World Bank Spring Meetings	2	Changed duration.	14	1	2016-02-12 16:16:31.826714
+153	60	Attend World Bank Spring Meetings	3		14	1	2016-02-12 16:17:10.098302
+154	15	World Bank Spring Meetings	2	No fields changed.	7	1	2016-02-12 16:17:17.368897
+155	61	Attend World Bank Spring Meetings	3		14	1	2016-02-12 16:18:02.001212
+156	15	World Bank Spring Meetings	2	No fields changed.	7	1	2016-02-12 16:18:09.253712
+157	59	Prep phase	3		14	1	2016-02-12 16:20:48.404328
+158	53	Attend World Bank Fragility, Conflict and Violence Forum	3		14	1	2016-02-12 16:20:48.414189
+159	54	Attend UN Development Cooperation Forum Symposium	3		14	1	2016-02-12 16:20:48.425698
+160	62	Attend World Bank Spring Meetings	3		14	1	2016-02-12 16:20:48.436905
+161	56	Attend Financing for Development Forum	3		14	1	2016-02-12 16:20:48.449698
+162	57	Attend World Humanitarian Summit	3		14	1	2016-02-12 16:20:48.461129
+163	58	Attend US Presidential Election	3		14	1	2016-02-12 16:20:48.473656
+164	12	World Bank Fragility, Conflict and Violence Forum	2	No fields changed.	7	1	2016-02-12 16:20:56.330288
+165	13	UN Development Cooperation Forum Symposium	2	No fields changed.	7	1	2016-02-12 16:20:58.284321
+166	15	World Bank Spring Meetings	2	No fields changed.	7	1	2016-02-12 16:21:00.584449
+167	14	Financing for Development Forum	2	No fields changed.	7	1	2016-02-12 16:21:02.7186
+168	16	World Humanitarian Summit	2	No fields changed.	7	1	2016-02-12 16:21:04.787468
+169	17	US Presidential Election	2	No fields changed.	7	1	2016-02-12 16:21:07.289216
+170	12	World Bank Fragility, Conflict and Violence Forum	2	No fields changed.	7	5	2016-02-16 13:23:41.900608
+171	15	sophia	1	Added.	4	5	2016-02-16 13:48:55.614692
+172	18	ECOSOC Humanitarian Affairs Segment	1	Added.	7	5	2016-02-16 13:50:52.873646
+173	18	ECOSOC Humanitarian Affairs Segment	2	No fields changed.	7	5	2016-02-16 13:51:01.874765
+174	19	DIHAD	1	Added.	7	5	2016-02-16 13:58:44.627628
+175	18	ECOSOC Humanitarian Affairs Segment	2	No fields changed.	7	5	2016-02-16 14:45:58.644633
+176	16	World Humanitarian Summit	2	Changed process.	7	5	2016-02-16 15:50:13.066447
+177	16	World Humanitarian Summit	2	No fields changed.	7	5	2016-02-16 15:50:20.207842
+178	16	Chloe	1	Added.	4	5	2016-02-16 15:57:44.033395
+179	16	chloe	2	Changed username, first_name and last_name.	4	5	2016-02-16 15:58:13.010106
+180	16	World Humanitarian Summit	2	No fields changed.	7	5	2016-02-16 15:59:45.571775
+181	20	UNGA	1	Added.	7	5	2016-02-16 16:09:52.704419
+182	21	UNGA High-level Thematic Debate: Implementing Commitments on Sustainable Development, Climate Change and Financing	1	Added.	7	5	2016-02-16 16:14:51.784407
+183	20	UNGA	2	Changed process.	7	5	2016-02-16 16:15:04.768194
+184	21	UNGA High-level Thematic Debate: Implementing Commitments on Sustainable Development, Climate Change and Financing	2	No fields changed.	7	5	2016-02-16 16:15:16.723085
+185	22	High-Level Political Forum on Sustainable Development (HLPF 2016)	1	Added.	7	5	2016-02-16 16:16:51.145027
+186	23	Annual Bank Conference on Development Economics (ABCDE) - Development Data	1	Added.	7	5	2016-02-16 16:18:51.451045
+187	24	47th Session of UN Statistical Commission	1	Added.	7	5	2016-02-16 16:22:52.84271
+188	25	OECD Forum	1	Added.	7	5	2016-02-16 16:25:12.989306
+189	6	Environment	1	Added.	9	5	2016-02-16 16:26:07.483586
+190	8	COP	1	Added.	11	5	2016-02-16 16:26:30.244737
+191	26	COP 22	1	Added.	7	5	2016-02-16 16:29:49.012363
+192	27	COP 23	1	Added.	7	5	2016-02-16 16:30:39.262531
+193	28	COP 23	1	Added.	7	5	2016-02-16 16:31:32.033359
+194	28	COP 23	3		7	5	2016-02-16 16:31:54.635214
+195	14	Financing for Development Forum	2	Changed location.	7	1	2016-02-16 17:08:43.780546
+196	12	World Bank Fragility, Conflict and Violence Forum	2	Changed location.	7	1	2016-02-16 17:09:24.043477
+197	15	World Bank Spring Meetings	2	Changed location.	7	1	2016-02-16 17:09:40.379756
+198	25	OECD Forum	2	Changed location.	7	1	2016-02-16 17:10:04.320242
+199	9	Korea	1	Added.	11	1	2016-02-16 17:12:29.070419
+200	29	Global Partnership for Effective Cooperation	1	Added.	7	1	2016-02-16 17:12:55.775733
+201	30	World Data Forum for Global Partnership for Sustainable Development Data	1	Added.	7	1	2016-02-16 17:15:28.088284
+202	31	Second High Level Meeting of the Global Partnership for Effective Development Co-operation	1	Added.	7	1	2016-02-16 17:24:20.062169
+203	32	World Bank Autumn Meetings	1	Added.	7	1	2016-02-16 17:26:35.386152
+204	33	UN High-level plenary meeting on addressing large movements of refugees and migrants	1	Added.	7	1	2016-02-16 17:31:02.249132
+205	34	DAC High Level Meeting	1	Added.	7	1	2016-02-16 18:01:39.39466
+206	35	UNGA High-level Thematic Debate: Strengthening the UN's Role in Peace and Security	1	Added.	7	1	2016-02-16 18:04:20.602024
+207	32	World Bank Autumn Meetings	2	Changed location.	7	1	2016-02-17 14:00:20.885409
+208	29	Global Partnership for Effective Cooperation	2	Changed start and end.	7	1	2016-02-17 14:40:40.222897
+209	88	Attend Global Partnership for Effective Cooperation	3		14	1	2016-02-17 14:40:57.778326
+210	29	Global Partnership for Effective Cooperation	2	No fields changed.	7	1	2016-02-17 14:41:08.253135
+211	29	Global Partnership for Effective Cooperation	2	Changed description.	7	1	2016-02-17 14:41:58.477076
+212	95	Attend Global Partnership for Effective Cooperation	3		14	1	2016-02-17 14:42:36.609168
+213	29	Global Partnership for Effective Cooperation	2	No fields changed.	7	1	2016-02-17 14:42:45.747659
+214	10	IATI	1	Added.	11	1	2016-02-17 14:44:27.275792
+215	36	GPECD Workshop for the Global Partnership Initiatives	1	Added.	7	1	2016-02-17 14:44:34.936557
+216	37	Development Cooperation Forum	1	Added.	7	1	2016-02-17 14:45:38.019318
+217	37	Development Cooperation Forum	2	Changed location and process.	7	1	2016-02-17 14:46:17.64672
+218	31	Second High Level Meeting of the Global Partnership for Effective Development Co-operation	2	Changed description, location and focus.	7	1	2016-02-17 14:47:21.191403
+219	38	G20 Summit	1	Added.	7	1	2016-02-17 14:49:55.328338
+220	39	G7 Summit	1	Added.	7	1	2016-02-17 14:51:19.596532
+221	11	HLM	1	Added.	11	1	2016-02-17 14:56:39.150087
+222	40	UNDP 50th Anniversary Ministerial Meeting	1	Added.	7	1	2016-02-17 14:56:45.333693
+223	41	9th GPECD Steering Committee	1	Added.	7	1	2016-02-17 14:57:41.770831
+224	42	OECD Global Forum on Development	1	Added.	7	1	2016-02-17 14:58:45.494223
+225	43	ECOSOC Partnership Forum	1	Added.	7	1	2016-02-17 14:59:35.651379
+226	40	UNDP 50th Anniversary Ministerial Meeting	2	Changed location.	7	1	2016-02-17 14:59:48.558625
+227	13	UN Development Cooperation Forum Symposium	2	Changed location.	7	1	2016-02-17 15:00:07.554762
+228	44	Asia-Pacific Development Effectiveness Facility Annual Forum / Regional Consultations HLM2	1	Added.	7	1	2016-02-17 15:01:17.88599
+229	45	ECOSOC Integration Segment	1	Added.	7	1	2016-02-17 15:01:53.935081
+230	46	Annual Meeting, Asian Development Bank	1	Added.	7	1	2016-02-17 15:02:23.701358
+231	47	Tidewater	1	Added.	7	1	2016-02-17 15:02:50.311856
+232	48	ESCAP Asia-Pacific Forum on Sustainable Development / Annual Session of ESCAP	1	Added.	7	1	2016-02-17 15:03:40.607301
+233	49	OECD Ministerial Council Meeting	1	Added.	7	1	2016-02-17 15:04:30.704071
+234	50	4th GPEDC Monitoring Advisory Group meeting	1	Added.	7	1	2016-02-17 15:05:03.692412
+235	51	European Development Days	1	Added.	7	1	2016-02-17 15:05:38.535405
+236	52	10th GPEDC Steering Committee	1	Added.	7	1	2016-02-17 15:07:04.126069
+237	53	8th Annual Summit of the BRICS	1	Added.	7	1	2016-02-17 15:08:15.685129
+238	54	Third annual GPEDC Learning and Acceleration Programme	1	Added.	7	1	2016-02-17 15:09:15.750601
+239	55	DAC Senior Level Meeting	1	Added.	7	1	2016-02-17 15:10:05.768675
+240	56	Third UN Conference on Housing and Sustainable Urban Development (Habitat III)	1	Added.	7	1	2016-02-17 15:11:44.821129
+241	51	European Development Days	2	Changed location.	7	1	2016-02-17 15:16:43.761789
+242	49	OECD Ministerial Council Meeting	2	Changed location.	7	1	2016-02-17 15:16:52.437078
+243	24	47th Session of UN Statistical Commission	2	Changed description, objectives and attendee.	7	1	2016-02-17 15:47:01.887163
+244	24	47th Session of UN Statistical Commission	2	Changed focus.	7	1	2016-02-17 15:47:10.954733
+245	53	8th Annual Summit of the BRICS	2	Changed description.	7	1	2016-02-17 15:57:18.304028
+246	53	8th Annual Summit of the BRICS	2	Changed description.	7	1	2016-02-17 15:58:04.131677
+247	17	dale	1	Added.	4	1	2016-02-18 14:17:33.683572
+248	17	dale	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-18 14:17:54.918092
+249	18	rory	1	Added.	4	1	2016-02-18 14:18:02.214983
+250	18	rory	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-18 14:18:17.104839
+251	19	hannah	1	Added.	4	1	2016-02-19 14:26:26.235559
+252	19	hannah	2	Changed first_name, last_name, email, is_staff and is_superuser.	4	1	2016-02-19 14:26:51.325501
+253	57	5th Global Meeting of the International Dialogue	1	Added.	7	5	2016-02-22 14:16:14.81957
+254	41	9th GPEDC Steering Committee	2	Changed title.	7	1	2016-02-22 14:51:38.264138
+255	12	World Bank Fragility, Conflict and Violence Forum	2	Changed objectives.	7	5	2016-02-23 13:42:54.104589
+256	13	UN Development Cooperation Forum Symposium	2	Changed objectives and attendee.	7	5	2016-02-23 13:43:32.288341
+257	34	DAC High Level Meeting	2	Changed focus.	7	1	2016-02-23 19:05:31.605694
+258	40	UNDP 50th Anniversary Ministerial Meeting	2	Changed focus.	7	1	2016-02-23 19:06:28.740065
+259	41	9th GPEDC Steering Committee	2	Changed focus.	7	1	2016-02-23 19:06:51.098499
+260	42	OECD Global Forum on Development	2	Changed focus.	7	1	2016-02-23 19:07:10.568006
+261	43	ECOSOC Partnership Forum	2	Changed focus.	7	1	2016-02-23 19:07:23.740861
+262	57	5th Global Meeting of the International Dialogue	2	Changed focus.	7	1	2016-02-23 19:07:33.914265
+263	21	UNGA High-level Thematic Debate: Implementing Commitments on Sustainable Development, Climate Change and Financing	2	Changed focus.	7	1	2016-02-23 19:07:50.751248
+264	48	ESCAP Asia-Pacific Forum on Sustainable Development / Annual Session of ESCAP	2	Changed focus.	7	1	2016-02-23 19:08:07.083117
+265	45	ECOSOC Integration Segment	2	Changed focus.	7	1	2016-02-23 19:08:19.203813
+266	53	8th Annual Summit of the BRICS	2	Changed date_confirmed.	7	1	2016-02-23 20:08:51.777594
+267	52	10th GPEDC Steering Committee	2	Changed date_confirmed.	7	1	2016-02-23 20:09:05.759626
+268	29	Global Partnership for Effective Cooperation	2	Changed date_confirmed.	7	1	2016-02-23 20:09:28.302438
+269	54	Third annual GPEDC Learning and Acceleration Programme	2	Changed date_confirmed.	7	1	2016-02-23 20:09:46.794322
+270	50	4th GPEDC Monitoring Advisory Group meeting	2	Changed date_confirmed.	7	1	2016-02-23 20:10:08.693938
+271	48	ESCAP Asia-Pacific Forum on Sustainable Development / Annual Session of ESCAP	2	Changed date_confirmed.	7	1	2016-02-23 20:10:33.294792
+272	44	Asia-Pacific Development Effectiveness Facility Annual Forum / Regional Consultations HLM2	2	Changed date_confirmed.	7	1	2016-02-23 20:11:06.529156
+273	36	GPECD Workshop for the Global Partnership Initiatives	2	Changed date_confirmed.	7	1	2016-02-23 20:11:47.233692
+\.
+
+
+--
+-- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_admin_log_id_seq', 274, false);
+
+
+--
+-- Data for Name: django_content_type; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY django_content_type (id, app_label, model) FROM stdin;
+1	admin	logentry
+2	auth	permission
+3	auth	group
+4	auth	user
+5	contenttypes	contenttype
+6	sessions	session
+7	cal	event
+8	cal	theme
+9	cal	process
+11	cal	tag
+12	cal	role
+13	cal	assignee
+14	cal	task
+\.
+
+
+--
+-- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_content_type_id_seq', 15, false);
+
+
+--
+-- Data for Name: django_migrations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY django_migrations (id, app, name, applied) FROM stdin;
+1	contenttypes	0001_initial	2016-02-03 16:15:06.282422
+2	auth	0001_initial	2016-02-03 16:15:06.317402
+3	admin	0001_initial	2016-02-03 16:15:06.346226
+4	admin	0002_logentry_remove_auto_add	2016-02-03 16:15:06.373193
+5	contenttypes	0002_remove_content_type_name	2016-02-03 16:15:06.416275
+6	auth	0002_alter_permission_name_max_length	2016-02-03 16:15:06.452673
+7	auth	0003_alter_user_email_max_length	2016-02-03 16:15:06.480996
+8	auth	0004_alter_user_username_opts	2016-02-03 16:15:06.50815
+9	auth	0005_alter_user_last_login_null	2016-02-03 16:15:06.534334
+10	auth	0006_require_contenttypes_0002	2016-02-03 16:15:06.544045
+11	auth	0007_alter_validators_add_error_messages	2016-02-03 16:15:06.571517
+12	sessions	0001_initial	2016-02-03 16:15:06.597502
+13	cal	0001_initial	2016-02-03 16:18:36.595757
+14	cal	0002_auto_20160208_1834	2016-02-08 18:34:50.368178
+15	cal	0003_auto_20160208_1849	2016-02-08 18:49:46.107341
+16	cal	0004_auto_20160208_1851	2016-02-08 18:51:17.58319
+17	cal	0005_auto_20160208_2037	2016-02-08 20:37:39.654851
+18	cal	0006_auto_20160210_1233	2016-02-10 12:33:58.43176
+19	cal	0007_auto_20160210_1313	2016-02-10 13:14:02.661703
+20	cal	0008_task_haschild	2016-02-10 14:07:17.140799
+21	cal	0009_auto_20160210_1457	2016-02-10 14:57:59.060653
+22	cal	0010_task_order	2016-02-10 15:39:13.213846
+23	cal	0011_remove_event_url	2016-02-10 16:53:28.274177
+24	cal	0012_auto_20160211_1711	2016-02-11 17:11:55.18426
+25	cal	0013_auto_20160211_1842	2016-02-11 18:42:56.890387
+26	cal	0014_auto_20160211_1922	2016-02-11 19:22:20.818856
+27	cal	0015_auto_20160211_1924	2016-02-11 19:24:13.643981
+28	cal	0016_auto_20160212_1242	2016-02-12 12:42:14.36969
+29	cal	0017_auto_20160212_1419	2016-02-12 14:19:28.250557
+30	cal	0018_auto_20160223_1827	2016-02-23 18:27:21.773204
+31	cal	0019_event_date_confirmed	2016-02-23 20:03:20.827979
+\.
+
+
+--
+-- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('django_migrations_id_seq', 32, false);
+
+
+--
+-- Data for Name: django_session; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY django_session (session_key, session_data, expire_date) FROM stdin;
+zqa6cdmzficj4uytmdg81n1syb8apppw	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-02-17 16:20:33.738276
+mb9v3v4fri3l14psvuq0cp7a28wwbub3	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-02-25 16:35:44.736317
+y9zkkcr4wjtiz8dwdfc9fo8oxpyc1y50	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-02-26 12:04:31.198094
+mbxyaxm0yq1hq1fi7ryohj8flgiuhcmz	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-02-26 12:04:31.255901
+1ox8oq689oq05iygmyhsy09sghsmtj83	MzRjZThmNGY1MjlhZjQxYWE4NTk0M2RlYzE4YmIzZTNmMDhkZDNiMTp7Il9hdXRoX3VzZXJfaGFzaCI6Ijk2OTk3YjJhNmEwNjBiMzdlY2M4ZDY5N2RiMjc3M2JjYWZiODQ0MTYiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIzIn0=	2016-02-26 12:04:56.904416
+gm2x1ygydkqahr0vn0e05qe9dbm0oq86	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-02-26 12:37:22.921472
+zocx3kugexn9mxnxs9tabij1o00hyyem	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-02-26 15:59:34.300781
+zbrkhtfolx3quboxr3yzku9ubac99lb8	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-03-01 13:18:00.223155
+96jo608un90azcayyf47phx237wndn1v	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-01 13:19:10.776176
+8f0kib04ek1ne5rfbu9u2rxlnjt9r7s7	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-03-01 14:44:08.959733
+269ug0x67in3eqnz77t21c7nr45xbayu	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-01 17:03:34.554621
+3c1vlfjaf4ythxaneaczxmlcjcyoxm0a	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-03-02 12:42:41.791742
+vpduo08x6mdhy16y2kiucpkl0rtz9pxv	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-02 13:07:46.992404
+8zodbj9w82ii5bv4hhwyoe1s7xkuhjy6	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-02 13:47:11.194277
+6dqwj22cis1ud1ihcwwrv9b0ala6o082	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-02 14:40:05.529287
+3jwrwjbdk724owxxo2fyabgukiurriqe	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-03 14:17:20.542942
+8oyey40438uv1b1y02nrocxd9r0xswre	MWFiNWIzZGYyNzIyMTMyNmVkZjI3NWZkZjEzNzRmOTRiZWFlMjk5Nzp7Il9hdXRoX3VzZXJfaGFzaCI6IjI3NzI2YzZiZTVhZTBiY2JmNDI3ODM5NjRhM2FlODQwOWQwMDM0YTgiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxOCJ9	2016-03-03 14:18:58.926357
+okp2grdlpk3vusf2o5xxt5wm5lk00dri	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-04 14:26:05.600787
+iix4x9f8nq8ivs7gdnjsgvepki6pv61b	YWQ4OGE5MTk3MTY3OGFhMTNhNDE4ZjA4Yzg1MzkwZDhhMmU1ZDQ3NDp7Il9hdXRoX3VzZXJfaGFzaCI6ImZhN2E4YTM0OTM3OWUxNWE2MjY0ZjhkYzg4MGEyMTVkNDRlMDVlMTIiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI0In0=	2016-03-04 14:35:13.186991
+oobqpqia4py9ig3eakp7plbg1dzn9hw8	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-03-07 14:13:42.707539
+5sr0fiefl9wd2q72o3a5doj38mn7558q	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-07 14:38:29.684381
+k3rk6a91ej0ufzrizi2skjwslp648p4m	YWUzZGNhYWNlZjkxZGYxMWIzODM1ZTI5Y2ZhOTdiZDkwZTM0MGM3Mjp7Il9hdXRoX3VzZXJfaGFzaCI6IjMyNzAzNDE5ZTk5MGU0Yzg4MmEyNDYwNmEyODYxMzMyM2Q1OGUwZTkiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIyIn0=	2016-03-07 15:07:49.96915
+gktx9tf4hkq46ka2oy5p3on0dqjn6vn4	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-03-07 16:04:12.341286
+4115ba8ogyeft8ks2vead2r1wejevzxx	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-07 16:17:19.51125
+uqzdv4fmy5bru3rv6bboaucx7ntmh18m	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-03-07 16:17:47.641418
+qwgnmyq163upuvr7jndusbvai98lgyy6	YWUzZGNhYWNlZjkxZGYxMWIzODM1ZTI5Y2ZhOTdiZDkwZTM0MGM3Mjp7Il9hdXRoX3VzZXJfaGFzaCI6IjMyNzAzNDE5ZTk5MGU0Yzg4MmEyNDYwNmEyODYxMzMyM2Q1OGUwZTkiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIyIn0=	2016-03-07 16:24:13.73647
+hy3199wpuumwbyqfwnnx1o82vrwvgz2h	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-03-08 13:42:20.762311
+ddmdh84wo9qbunwcp8xtmf0efiu5byb3	N2Q0NWJkMzAwNmQ4NmVmMWMzMmFmZWU0NzY2MGRmZmRhN2QzYjcxNjp7Il9hdXRoX3VzZXJfaGFzaCI6ImZmODVmMTdhYTBkZDA5Y2Y3NDUxZWI5NGVjZDdhNDc3OTlmMGE4MzMiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=	2016-03-08 16:44:22.972033
+dme3enn3a9wfbp9fvhm5j1aepg5znu8h	NWQ5YTU2ZjRiNmFkN2I2Njg0ZTlkYTE1YThjM2U4Nzg3MDI0Nzk4Mzp7Il9hdXRoX3VzZXJfaGFzaCI6ImNmNmQ4ZDEzZWY1YzY0OTVkYTdhOGMwNDQ5OWFmZWQyNjk0N2Q0YTciLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI1In0=	2016-03-08 16:44:48.866465
+\.
+
+
+--
+-- Name: auth_group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_group_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_group
+    ADD CONSTRAINT auth_group_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permission_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user
+    ADD CONSTRAINT auth_user_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: auth_user_user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_assignee_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_assignee
+    ADD CONSTRAINT cal_assignee_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_event_attendee_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_event_attendee
+    ADD CONSTRAINT cal_event_attendee_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_event_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_event
+    ADD CONSTRAINT cal_event_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_event_process_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_event_process
+    ADD CONSTRAINT cal_event_process_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_event_tag_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_event_tag
+    ADD CONSTRAINT cal_event_tag_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_process_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_process
+    ADD CONSTRAINT cal_process_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_process_theme_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_process_theme
+    ADD CONSTRAINT cal_process_theme_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_role_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_role
+    ADD CONSTRAINT cal_role_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_tag_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_tag
+    ADD CONSTRAINT cal_tag_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_task_assignee_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_task_assignee
+    ADD CONSTRAINT cal_task_assignee_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_task_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_task
+    ADD CONSTRAINT cal_task_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cal_theme_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY cal_theme
+    ADD CONSTRAINT cal_theme_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: django_admin_log_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: django_content_type_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_content_type
+    ADD CONSTRAINT django_content_type_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: django_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_migrations
+    ADD CONSTRAINT django_migrations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: django_session_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY django_session
+    ADD CONSTRAINT django_session_pkey PRIMARY KEY (session_key);
+
+
+--
+-- Name: auth_group_permissions_0e939a4f; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_group_permissions_0e939a4f ON auth_group_permissions USING btree (group_id);
+
+
+--
+-- Name: auth_group_permissions_8373b171; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_group_permissions_8373b171 ON auth_group_permissions USING btree (permission_id);
+
+
+--
+-- Name: auth_group_permissions_group_id_0cd325b0_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX auth_group_permissions_group_id_0cd325b0_uniq ON auth_group_permissions USING btree (group_id, permission_id);
+
+
+--
+-- Name: auth_permission_417f1b1c; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_permission_417f1b1c ON auth_permission USING btree (content_type_id);
+
+
+--
+-- Name: auth_permission_content_type_id_01ab375a_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX auth_permission_content_type_id_01ab375a_uniq ON auth_permission USING btree (content_type_id, codename);
+
+
+--
+-- Name: auth_user_groups_0e939a4f; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_groups_0e939a4f ON auth_user_groups USING btree (group_id);
+
+
+--
+-- Name: auth_user_groups_e8701ad4; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_groups_e8701ad4 ON auth_user_groups USING btree (user_id);
+
+
+--
+-- Name: auth_user_groups_user_id_94350c0c_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX auth_user_groups_user_id_94350c0c_uniq ON auth_user_groups USING btree (user_id, group_id);
+
+
+--
+-- Name: auth_user_user_permissions_8373b171; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_user_permissions_8373b171 ON auth_user_user_permissions USING btree (permission_id);
+
+
+--
+-- Name: auth_user_user_permissions_e8701ad4; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX auth_user_user_permissions_e8701ad4 ON auth_user_user_permissions USING btree (user_id);
+
+
+--
+-- Name: auth_user_user_permissions_user_id_14a6b632_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX auth_user_user_permissions_user_id_14a6b632_uniq ON auth_user_user_permissions USING btree (user_id, permission_id);
+
+
+--
+-- Name: cal_assignee_84566833; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_assignee_84566833 ON cal_assignee USING btree (role_id);
+
+
+--
+-- Name: cal_assignee_e2f3ef5b; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_assignee_e2f3ef5b ON cal_assignee USING btree (resource_id);
+
+
+--
+-- Name: cal_event_process_4437cfac; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_event_process_4437cfac ON cal_event_process USING btree (event_id);
+
+
+--
+-- Name: cal_event_process_c9cf7ee8; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_event_process_c9cf7ee8 ON cal_event_process USING btree (process_id);
+
+
+--
+-- Name: cal_event_process_event_id_1da22d56_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX cal_event_process_event_id_1da22d56_uniq ON cal_event_process USING btree (event_id, process_id);
+
+
+--
+-- Name: cal_event_tag_4437cfac; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_event_tag_4437cfac ON cal_event_tag USING btree (event_id);
+
+
+--
+-- Name: cal_event_tag_76f094bc; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_event_tag_76f094bc ON cal_event_tag USING btree (tag_id);
+
+
+--
+-- Name: cal_event_tag_event_id_e6f8fe97_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX cal_event_tag_event_id_e6f8fe97_uniq ON cal_event_tag USING btree (event_id, tag_id);
+
+
+--
+-- Name: cal_process_theme_a9fd70f9; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_process_theme_a9fd70f9 ON cal_process_theme USING btree (theme_id);
+
+
+--
+-- Name: cal_process_theme_c9cf7ee8; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_process_theme_c9cf7ee8 ON cal_process_theme USING btree (process_id);
+
+
+--
+-- Name: cal_process_theme_process_id_c366a640_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX cal_process_theme_process_id_c366a640_uniq ON cal_process_theme USING btree (process_id, theme_id);
+
+
+--
+-- Name: cal_task_4437cfac; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_task_4437cfac ON cal_task USING btree (event_id);
+
+
+--
+-- Name: cal_task_assignee_57746cc8; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_task_assignee_57746cc8 ON cal_task_assignee USING btree (task_id);
+
+
+--
+-- Name: cal_task_assignee_c979bd5b; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX cal_task_assignee_c979bd5b ON cal_task_assignee USING btree (assignee_id);
+
+
+--
+-- Name: cal_task_assignee_task_id_cc69491a_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX cal_task_assignee_task_id_cc69491a_uniq ON cal_task_assignee USING btree (task_id, assignee_id);
+
+
+--
+-- Name: django_admin_log_417f1b1c; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_admin_log_417f1b1c ON django_admin_log USING btree (content_type_id);
+
+
+--
+-- Name: django_admin_log_e8701ad4; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_admin_log_e8701ad4 ON django_admin_log USING btree (user_id);
+
+
+--
+-- Name: django_content_type_app_label_76bd3d3b_uniq; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX django_content_type_app_label_76bd3d3b_uniq ON django_content_type USING btree (app_label, model);
+
+
+--
+-- Name: django_session_de54fa62; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX django_session_de54fa62 ON django_session USING btree (expire_date);
+
+
+--
+-- Name: auth_group_permissions_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_group_id_fkey FOREIGN KEY (group_id) REFERENCES auth_group(id);
+
+
+--
+-- Name: auth_group_permissions_permission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_group_permissions
+    ADD CONSTRAINT auth_group_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES auth_permission(id);
+
+
+--
+-- Name: auth_permission_content_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_permission
+    ADD CONSTRAINT auth_permission_content_type_id_fkey FOREIGN KEY (content_type_id) REFERENCES django_content_type(id);
+
+
+--
+-- Name: auth_user_groups_group_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_group_id_fkey FOREIGN KEY (group_id) REFERENCES auth_group(id);
+
+
+--
+-- Name: auth_user_groups_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_groups
+    ADD CONSTRAINT auth_user_groups_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id);
+
+
+--
+-- Name: auth_user_user_permissions_permission_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_permission_id_fkey FOREIGN KEY (permission_id) REFERENCES auth_permission(id);
+
+
+--
+-- Name: auth_user_user_permissions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY auth_user_user_permissions
+    ADD CONSTRAINT auth_user_user_permissions_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id);
+
+
+--
+-- Name: cal_assignee_resource_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_assignee
+    ADD CONSTRAINT cal_assignee_resource_id_fkey FOREIGN KEY (resource_id) REFERENCES auth_user(id);
+
+
+--
+-- Name: cal_assignee_role_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_assignee
+    ADD CONSTRAINT cal_assignee_role_id_fkey FOREIGN KEY (role_id) REFERENCES cal_role(id);
+
+
+--
+-- Name: cal_event_attendee_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_attendee
+    ADD CONSTRAINT cal_event_attendee_event_id_fkey FOREIGN KEY (event_id) REFERENCES cal_event(id);
+
+
+--
+-- Name: cal_event_attendee_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_attendee
+    ADD CONSTRAINT cal_event_attendee_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id);
+
+
+--
+-- Name: cal_event_process_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_process
+    ADD CONSTRAINT cal_event_process_event_id_fkey FOREIGN KEY (event_id) REFERENCES cal_event(id);
+
+
+--
+-- Name: cal_event_process_process_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_process
+    ADD CONSTRAINT cal_event_process_process_id_fkey FOREIGN KEY (process_id) REFERENCES cal_process(id);
+
+
+--
+-- Name: cal_event_tag_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_tag
+    ADD CONSTRAINT cal_event_tag_event_id_fkey FOREIGN KEY (event_id) REFERENCES cal_event(id);
+
+
+--
+-- Name: cal_event_tag_tag_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_event_tag
+    ADD CONSTRAINT cal_event_tag_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES cal_tag(id);
+
+
+--
+-- Name: cal_process_theme_process_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_process_theme
+    ADD CONSTRAINT cal_process_theme_process_id_fkey FOREIGN KEY (process_id) REFERENCES cal_process(id);
+
+
+--
+-- Name: cal_process_theme_theme_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_process_theme
+    ADD CONSTRAINT cal_process_theme_theme_id_fkey FOREIGN KEY (theme_id) REFERENCES cal_theme(id);
+
+
+--
+-- Name: cal_task_assignee_assignee_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_task_assignee
+    ADD CONSTRAINT cal_task_assignee_assignee_id_fkey FOREIGN KEY (assignee_id) REFERENCES cal_assignee(id);
+
+
+--
+-- Name: cal_task_assignee_task_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_task_assignee
+    ADD CONSTRAINT cal_task_assignee_task_id_fkey FOREIGN KEY (task_id) REFERENCES cal_task(id);
+
+
+--
+-- Name: cal_task_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY cal_task
+    ADD CONSTRAINT cal_task_event_id_fkey FOREIGN KEY (event_id) REFERENCES cal_event(id);
+
+
+--
+-- Name: django_admin_log_content_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_content_type_id_fkey FOREIGN KEY (content_type_id) REFERENCES django_content_type(id);
+
+
+--
+-- Name: django_admin_log_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY django_admin_log
+    ADD CONSTRAINT django_admin_log_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth_user(id);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
