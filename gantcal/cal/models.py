@@ -95,7 +95,7 @@ class Event(models.Model):
     location = models.CharField(max_length=255,null=True,blank=True)
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True,editable=False)
     start = models.DateField(auto_now=False, auto_now_add=False)
-    date_confirmed = models.MyBooleanField(default=True)
+    date_confirmed = MyBooleanField(default=True)
     end = models.DateField(auto_now=False, auto_now_add=False)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
@@ -114,8 +114,8 @@ class Event(models.Model):
         ('RE','Remotely engage'),
     )
     focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='MO')
-    objectives_approved = models.MyBooleanField(default=False)
-    attendees_approved = models.MyBooleanField(default=False)
+    objectives_approved = MyBooleanField(default=False)
+    attendees_approved = MyBooleanField(default=False)
     
     class Meta:
         ordering = ['start','title']
@@ -186,14 +186,14 @@ class Task(models.Model):
     start = models.DateField(auto_now=False, auto_now_add=False)
     duration = models.IntegerField(blank=True,null=True)
     end = models.DateField(auto_now=False, auto_now_add=False)
-    startIsMilestone = models.MyBooleanField(default=False)
-    endIsMilestone = models.MyBooleanField(default=False)
+    startIsMilestone = MyBooleanField(default=False)
+    endIsMilestone = MyBooleanField(default=False)
     assignee = models.ManyToManyField(Assignee, related_name="tasks", related_query_name="task",blank=True)
     depends = models.CharField(max_length=255,blank=True,null=True)
     description = models.TextField(null=True,blank=True)
     progress = models.IntegerField(default=0)
     event = models.ForeignKey(Event, related_name="tasks", related_query_name="task",blank=True)
-    hasChild = models.MyBooleanField(default=False)
+    hasChild = MyBooleanField(default=False)
     
     class Meta:
         ordering = ['start','name']
