@@ -6,6 +6,24 @@ from django.core.urlresolvers import reverse
 from datetime import datetime
 from django.utils.text import slugify
 
+class MyBooleanField(models.BooleanField):
+
+    __metaclass__ = models.SubfieldBase
+
+    def get_internal_type(self):
+        return "MyBooleanField"
+
+    def db_type(self):
+        return 'bit(1)'
+
+    def to_python(self, value):
+        if value in (True, False): return value
+        if value in ('t', 'True', '1', '\x01'): return True  
+        if value in ('f', 'False', '0', '\x00'): return False
+
+    def get_db_prep_value(self, value):  
+        return 0x01 if value else 0x00
+
 class Theme(models.Model):
     title = models.CharField(max_length=255,unique=True)
     slug = models.SlugField(max_length=255,unique=True,editable=False)
@@ -77,7 +95,7 @@ class Event(models.Model):
     location = models.CharField(max_length=255,null=True,blank=True)
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True,editable=False)
     start = models.DateField(auto_now=False, auto_now_add=False)
-    date_confirmed = models.BooleanField(default=True)
+    date_confirmed = models.MyBooleanField(default=True)
     end = models.DateField(auto_now=False, auto_now_add=False)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
@@ -96,8 +114,8 @@ class Event(models.Model):
         ('RE','Remotely engage'),
     )
     focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='MO')
-    objectives_approved = models.BooleanField(default=False)
-    attendees_approved = models.BooleanField(default=False)
+    objectives_approved = models.MyBooleanField(default=False)
+    attendees_approved = models.MyBooleanField(default=False)
     
     class Meta:
         ordering = ['start','title']
@@ -168,14 +186,14 @@ class Task(models.Model):
     start = models.DateField(auto_now=False, auto_now_add=False)
     duration = models.IntegerField(blank=True,null=True)
     end = models.DateField(auto_now=False, auto_now_add=False)
-    startIsMilestone = models.BooleanField(default=False)
-    endIsMilestone = models.BooleanField(default=False)
+    startIsMilestone = models.MyBooleanField(default=False)
+    endIsMilestone = models.MyBooleanField(default=False)
     assignee = models.ManyToManyField(Assignee, related_name="tasks", related_query_name="task",blank=True)
     depends = models.CharField(max_length=255,blank=True,null=True)
     description = models.TextField(null=True,blank=True)
     progress = models.IntegerField(default=0)
     event = models.ForeignKey(Event, related_name="tasks", related_query_name="task",blank=True)
-    hasChild = models.BooleanField(default=False)
+    hasChild = models.MyBooleanField(default=False)
     
     class Meta:
         ordering = ['start','name']
