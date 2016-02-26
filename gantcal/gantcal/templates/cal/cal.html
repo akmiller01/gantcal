@@ -202,17 +202,17 @@
                 });
                 $('#taskBox').change(function() {
                     if($(this).is(":checked")) {
-                        displayTasks = true;
+                        filterDict.displayTasks = true;
                     }else{
-                        displayTasks = false;
+                        filterDict.displayTasks = false;
                     };
                     $('#calendar').fullCalendar('rerenderEvents')
                 });
                 $('#eventBox').change(function() {
                     if($(this).is(":checked")) {
-                        displayEvents = true;
+                        filterDict.displayEvents = true;
                     }else{
-                        displayEvents = false;
+                        filterDict.displayEvents = false;
                     };
                     $('#calendar').fullCalendar('rerenderEvents')
                 });
@@ -228,37 +228,37 @@
                 {% endfor %}
                 $('#p1Box').change(function() {
                     if($(this).is(":checked")) {
-                        displayP1 = true;
+                        filterDict.displayP1 = true;
                         
                     }else{
-                        displayP1 = false;
+                        filterDict.displayP1 = false;
                     };
                     $('#calendar').fullCalendar('rerenderEvents')
                 });
                 $('#p2Box').change(function() {
                     if($(this).is(":checked")) {
-                        displayP2 = true;
+                        filterDict.displayP2 = true;
                         
                     }else{
-                        displayP2 = false;
+                        filterDict.displayP2 = false;
                     };
                     $('#calendar').fullCalendar('rerenderEvents')
                 });
                 $('#p3Box').change(function() {
                     if($(this).is(":checked")) {
-                        displayP3 = true;
+                        filterDict.displayP3 = true;
                         
                     }else{
-                        displayP3 = false;
+                        filterDict.displayP3 = false;
                     };
                     $('#calendar').fullCalendar('rerenderEvents')
                 });
                 $('#pnBox').change(function() {
                     if($(this).is(":checked")) {
-                        displayPN = true;
+                        filterDict.displayPN = true;
                         
                     }else{
-                        displayPN = false;
+                        filterDict.displayPN = false;
                     };
                     $('#calendar').fullCalendar('rerenderEvents')
                 });
