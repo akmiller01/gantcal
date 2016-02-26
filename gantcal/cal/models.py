@@ -13,16 +13,17 @@ class MyBooleanField(models.BooleanField):
     def get_internal_type(self):
         return "MyBooleanField"
 
-    def db_type(self):
-        return 'bit(1)'
+    def db_type(self, connection):
+        return "text"
 
     def to_python(self, value):
         if value in (True, False): return value
-        if value in ('t', 'True', '1', '\x01'): return True  
-        if value in ('f', 'False', '0', '\x00'): return False
+        if value in ('t', 'True', 'true', '1', '\x01'): return True  
+        if value in ('f', 'False', 'false', '0', '\x00'): return False
 
-    def get_db_prep_value(self, value):  
-        return 0x01 if value else 0x00
+    def get_db_prep_value(self, value, connection,prepared=False):
+        value = super(MyBooleanField, self).get_db_prep_value(value, connection, prepared)
+        return 'true' if value else 'false'
 
 class Theme(models.Model):
     title = models.CharField(max_length=255,unique=True)
