@@ -1,6 +1,7 @@
 from datetime import timedelta
 from datetime import datetime
 from django.contrib import admin
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Count
 from cal.models import Event
@@ -10,6 +11,29 @@ from cal.models import Task
 from cal.models import Tag
 from cal.models import Role
 from cal.models import Assignee
+
+class ViewAdmin(admin.ModelAdmin):
+
+    """
+    Custom made change_form template just for viewing purposes
+    You need to copy this from /django/contrib/admin/templates/admin/change_form.html
+    And then put that in your template folder that is specified in the 
+    settings.TEMPLATE_DIR
+    """
+    change_form_template = 'view_form.html'
+
+    # Remove the delete Admin Action for this Model
+    actions = None
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def save_model(self, request, obj, form, change):
+        #Return nothing to make sure user can't update any data
+        pass
 
 class RoleAdmin(admin.ModelAdmin):
     #fields display on change list
@@ -60,19 +84,39 @@ class TagAdmin(admin.ModelAdmin):
     save_on_top = True
 
 def approve_objectives(modeladmin, request, queryset):
-    queryset.update(objectives_approved=True)
+    if request.user.has_perm('cal.add_event'):
+        queryset.update(objectives_approved=True)
+    else:
+        messages.set_level(request, messages.ERROR)
+        messages.error(request, 'You do not have permission to edit events')
+        pass
 approve_objectives.short_description = "Approve selected event objectives"
 
 def unapprove_objectives(modeladmin, request, queryset):
-    queryset.update(objectives_approved=False)
+    if request.user.has_perm('cal.add_event'):
+        queryset.update(objectives_approved=False)
+    else:
+        messages.set_level(request, messages.ERROR)
+        messages.error(request, 'You do not have permission to edit events')
+        pass
 unapprove_objectives.short_description = "Un-approve selected event objectives"
 
 def approve_attendees(modeladmin, request, queryset):
-    queryset.update(attendees_approved=True)
+    if request.user.has_perm('cal.add_event'):
+        queryset.update(attendees_approved=True)
+    else:
+        messages.set_level(request, messages.ERROR)
+        messages.error(request, 'You do not have permission to edit events')
+        pass
 approve_attendees.short_description = "Approve selected event attendees"
 
 def unapprove_attendees(modeladmin, request, queryset):
-    queryset.update(attendees_approved=False)
+    if request.user.has_perm('cal.add_event'):
+        queryset.update(attendees_approved=False)
+    else:
+        messages.set_level(request, messages.ERROR)
+        messages.error(request, 'You do not have permission to edit events')
+        pass
 unapprove_attendees.short_description = "Un-approve selected event attendees"
 
 class EventTimeFilter(admin.SimpleListFilter):
@@ -130,6 +174,7 @@ class EventTimeFilter(admin.SimpleListFilter):
             return queryset.filter(start__gte=now, start__lte=now+timedelta(31))
 
 class EventAdmin(admin.ModelAdmin):
+    
     #fields display on change list
     list_display = ['event_summary_title','confirmed_date','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
@@ -175,9 +220,13 @@ class EventAdmin(admin.ModelAdmin):
         return "; ".join([p.get_full_name() for p in obj.attendee.all()])
     
     def save_model(self, request, obj, form, change):
-        if getattr(obj, 'holder', None) is None:
-            obj.holder = request.user
-        obj.save()
+        print(request.user.groups)
+        if not request.user.has_perm('cal.add_event'):
+            messages.set_level(request, messages.ERROR)
+            messages.error(request, 'You do not have permission to edit events')
+            pass
+        else:
+            return super(EventAdmin, self).save_model(request, obj, form, change)
         
 admin.site.register(Role,RoleAdmin)
 admin.site.register(Assignee,AssigneeAdmin)

@@ -179,7 +179,11 @@
                     header: {
                         left:   'title',
                         center: '',
+                        {% if perm.add_event %}
                         right:  'today prevYear,prev,next,nextYear addEvent openFilters'
+                        {% else%}
+                        right:  'today prevYear,prev,next,nextYear openFilters'
+                        {% endif %}
                     },
                     customButtons: {
                         addEvent: {

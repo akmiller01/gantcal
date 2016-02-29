@@ -160,6 +160,9 @@ def login_user(request):
 
 @login_required
 def dashboard(request):
+  perm = {}
+  perm['add_event'] = request.user.has_perm('cal.add_event')
+  perm['add_task'] = request.user.has_perm('cal.add_task')
   now = datetime.now()
   user = request.user
   userTasks = Task.objects.order_by('start').filter(
@@ -177,10 +180,13 @@ def dashboard(request):
   processes = Process.objects.order_by('start').filter(
     end__gte=now
   )
-  return render_to_response('cal/dashboard.html', {"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks,"processes":processes})
+  return render_to_response('cal/dashboard.html', {"perm":perm,"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks,"processes":processes})
 
 @login_required
 def month(request):
+  perm = {}
+  perm['add_event'] = request.user.has_perm('cal.add_event')
+  perm['add_task'] = request.user.has_perm('cal.add_task')
   user = request.user
   now = datetime.now()
   year = request.GET.get('y')
@@ -193,16 +199,22 @@ def month(request):
   foci = Event.FOCUS_CHOICES
   fociDict = {uni(focus[0]):uni(focus[1]) for focus in foci}
   foci = [uni(focus[0]) for focus in foci]
-  return render_to_response('cal/cal.html', {'events': events,'tasks': tasks,'foci':foci,'fociDict':fociDict,'year': year,'month':month,"user":user})
+  return render_to_response('cal/cal.html', {"perm":perm,'events': events,'tasks': tasks,'foci':foci,'fociDict':fociDict,'year': year,'month':month,"user":user})
 
 @login_required
 def event(request,slug):
+  perm = {}
+  perm['add_event'] = request.user.has_perm('cal.add_event')
+  perm['add_task'] = request.user.has_perm('cal.add_task')
   user = request.user
   event = get_object_or_404(Event,slug=slug)
-  return render_to_response('cal/event.html',{'event':event,"user":user})
+  return render_to_response('cal/event.html',{"perm":perm,'event':event,"user":user})
 
 @login_required
 def gantt(request,slug):
+  perm = {}
+  perm['add_event'] = request.user.has_perm('cal.add_event')
+  perm['add_task'] = request.user.has_perm('cal.add_task')
   isProcess = False
   authUser = request.user
   metaEvent = get_object_or_404(Event,slug=slug)
@@ -215,7 +227,7 @@ def gantt(request,slug):
   roleDict = [{"name":uni(role.name),"id":"pk_"+str(role.id)} for role in roles]
   users = User.objects.all()
   resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
-  return render_to_response('cal/gantt.html',{'isProcess':isProcess,'event':metaEvent,'tasks':serializers.serialize('json',tasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+  return render_to_response('cal/gantt.html',{"perm":perm,'isProcess':isProcess,'event':metaEvent,'tasks':serializers.serialize('json',tasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
 
 @login_required
 def processGantt(request,slug):
@@ -237,123 +249,132 @@ def processGantt(request,slug):
 
 def ganttAjax(request,slug):
   project = json.loads(request.POST['prj'])
-  event = Event.objects.get(slug=slug)
-  #Check to see if there are any new tasks
-  newTasks = project['tasks']
-  currentTaskPKs = []
-  for (idx,task) in enumerate(newTasks):
-    if "tmp" in str(task['id']):
-      taskInstance = Task(
-        name = task['name'],
-        order = idx,
-        code = task['code'],
-        level = task['level'],
-        status = task['status'],
-        duration = task['duration'],
-        startIsMilestone = task['startIsMilestone'],
-        endIsMilestone = task['endIsMilestone'],
-        depends = task['depends'],
-        description = task['description'],
-        progress = task['progress'],
-        event = event,
-        hasChild = task['hasChild'],
-        start = datetime.fromtimestamp(task['start']/1000),
-        end = datetime.fromtimestamp(task['end']/1000),
-      )
-      taskInstance.save()
-      task['id'] = taskInstance.pk
-      currentAssigneePKs = []
-      for assignee in task['assigs']:
-        resourcePK = int(assignee['resourceId'][3:])
-        rolePK = int(assignee['roleId'][3:])
-        resource = User.objects.get(pk=resourcePK)
-        role = Role.objects.get(pk=rolePK)
-        effort=assignee['effort']
-        #New assignees
-        if "tmp" in str(assignee['id']):
-          assigneeInstance = Assignee(
-            resource=resource,
-            role=role,
-            effort=effort
-          )
-        else:
-          #Update existing assignee
-          assigneePK = int(assignee['id'][3:])
-          assigneeInstance = Assignee.objects.get(pk=assigneePK)
-          assigneeInstance.resource=resource
-          assigneeInstance.role=role
-          assigneeInstance.effort=effort
-        assigneeInstance.save()
-        assignee['id'] = assigneeInstance.pk
-        currentAssigneePKs.append(assigneeInstance.pk)
-        taskInstance.assignee.add(assigneeInstance)
-      #Remove stale assignees
-      for assigneeInstance in taskInstance.assignee.all():
-        if assigneeInstance.pk not in currentAssigneePKs:
-          taskInstance.assignee.remove(assigneeInstance)
-      taskInstance.save()
-      currentTaskPKs.append(taskInstance.pk)
-    else:
-      #Update the pre-existing task
-      taskInstance = Task.objects.get(pk=task['id'])
-      taskInstance.name = task['name']
-      taskInstance.order = idx
-      taskInstance.code = task['code']
-      taskInstance.level = task['level']
-      taskInstance.status = task['status']
-      taskInstance.duration = task['duration']
-      taskInstance.startIsMilestone = task['startIsMilestone']
-      taskInstance.endIsMilestone = task['endIsMilestone']
-      taskInstance.depends = task['depends']
-      taskInstance.description = task['description']
-      taskInstance.progress = task['progress']
-      taskInstance.event = event
-      taskInstance.hasChild = task['hasChild']
-      taskInstance.start = datetime.fromtimestamp(task['start']/1000)
-      taskInstance.end = datetime.fromtimestamp(task['end']/1000)
-      currentAssigneePKs = []
-      for assignee in task['assigs']:
-        resourcePK = int(assignee['resourceId'][3:])
-        rolePK = int(assignee['roleId'][3:])
-        resource = User.objects.get(pk=resourcePK)
-        role = Role.objects.get(pk=rolePK)
-        effort=assignee['effort']
-        #New assignees
-        if "tmp" in str(assignee['id']):
-          assigneeInstance = Assignee(
-            resource=resource,
-            role=role,
-            effort=effort
-          )
-        else:
-          #Update existing assignee
-          assigneePK = int(assignee['id'][3:])
-          assigneeInstance = Assignee.objects.get(pk=assigneePK)
-          assigneeInstance.resource=resource
-          assigneeInstance.role=role
-          assigneeInstance.effort=effort
-        assigneeInstance.save()
-        assignee['id'] = assigneeInstance.pk
-        currentAssigneePKs.append(assigneeInstance.pk)
-        taskInstance.assignee.add(assigneeInstance)
-      #Remove stale assignees
-      for assigneeInstance in taskInstance.assignee.all():
-        if assigneeInstance.pk not in currentAssigneePKs:
-          taskInstance.assignee.remove(assigneeInstance)
-      taskInstance.save()
-      currentTaskPKs.append(taskInstance.pk)
-  #Remove stale tasks
-  tasks = Task.objects.filter(
-    event=event
-  )
-  for taskInstance in tasks:
-    if taskInstance.pk not in currentTaskPKs:
-      taskInstance.delete()
-  
-  response_data = {}
-  response_data['ok'] = True
-  response_data['project'] = project
-  response_data['result'] = 'success'
-  response_data['message'] = ''
-  response_data['errorMessages'] = []
-  return JsonResponse(response_data)
+  if not request.user.has_perm('cal.add_task'):
+    response_data = {}
+    response_data['ok'] = False
+    response_data['project'] = project
+    response_data['result'] = 'success'
+    response_data['message'] = 'Unauthorized user'
+    response_data['errorMessages'] = []
+    return JsonResponse(response_data)
+  else:
+    event = Event.objects.get(slug=slug)
+    #Check to see if there are any new tasks
+    newTasks = project['tasks']
+    currentTaskPKs = []
+    for (idx,task) in enumerate(newTasks):
+      if "tmp" in str(task['id']):
+        taskInstance = Task(
+          name = task['name'],
+          order = idx,
+          code = task['code'],
+          level = task['level'],
+          status = task['status'],
+          duration = task['duration'],
+          startIsMilestone = task['startIsMilestone'],
+          endIsMilestone = task['endIsMilestone'],
+          depends = task['depends'],
+          description = task['description'],
+          progress = task['progress'],
+          event = event,
+          hasChild = task['hasChild'],
+          start = datetime.fromtimestamp(task['start']/1000),
+          end = datetime.fromtimestamp(task['end']/1000),
+        )
+        taskInstance.save()
+        task['id'] = taskInstance.pk
+        currentAssigneePKs = []
+        for assignee in task['assigs']:
+          resourcePK = int(assignee['resourceId'][3:])
+          rolePK = int(assignee['roleId'][3:])
+          resource = User.objects.get(pk=resourcePK)
+          role = Role.objects.get(pk=rolePK)
+          effort=assignee['effort']
+          #New assignees
+          if "tmp" in str(assignee['id']):
+            assigneeInstance = Assignee(
+              resource=resource,
+              role=role,
+              effort=effort
+            )
+          else:
+            #Update existing assignee
+            assigneePK = int(assignee['id'][3:])
+            assigneeInstance = Assignee.objects.get(pk=assigneePK)
+            assigneeInstance.resource=resource
+            assigneeInstance.role=role
+            assigneeInstance.effort=effort
+          assigneeInstance.save()
+          assignee['id'] = assigneeInstance.pk
+          currentAssigneePKs.append(assigneeInstance.pk)
+          taskInstance.assignee.add(assigneeInstance)
+        #Remove stale assignees
+        for assigneeInstance in taskInstance.assignee.all():
+          if assigneeInstance.pk not in currentAssigneePKs:
+            taskInstance.assignee.remove(assigneeInstance)
+        taskInstance.save()
+        currentTaskPKs.append(taskInstance.pk)
+      else:
+        #Update the pre-existing task
+        taskInstance = Task.objects.get(pk=task['id'])
+        taskInstance.name = task['name']
+        taskInstance.order = idx
+        taskInstance.code = task['code']
+        taskInstance.level = task['level']
+        taskInstance.status = task['status']
+        taskInstance.duration = task['duration']
+        taskInstance.startIsMilestone = task['startIsMilestone']
+        taskInstance.endIsMilestone = task['endIsMilestone']
+        taskInstance.depends = task['depends']
+        taskInstance.description = task['description']
+        taskInstance.progress = task['progress']
+        taskInstance.event = event
+        taskInstance.hasChild = task['hasChild']
+        taskInstance.start = datetime.fromtimestamp(task['start']/1000)
+        taskInstance.end = datetime.fromtimestamp(task['end']/1000)
+        currentAssigneePKs = []
+        for assignee in task['assigs']:
+          resourcePK = int(assignee['resourceId'][3:])
+          rolePK = int(assignee['roleId'][3:])
+          resource = User.objects.get(pk=resourcePK)
+          role = Role.objects.get(pk=rolePK)
+          effort=assignee['effort']
+          #New assignees
+          if "tmp" in str(assignee['id']):
+            assigneeInstance = Assignee(
+              resource=resource,
+              role=role,
+              effort=effort
+            )
+          else:
+            #Update existing assignee
+            assigneePK = int(assignee['id'][3:])
+            assigneeInstance = Assignee.objects.get(pk=assigneePK)
+            assigneeInstance.resource=resource
+            assigneeInstance.role=role
+            assigneeInstance.effort=effort
+          assigneeInstance.save()
+          assignee['id'] = assigneeInstance.pk
+          currentAssigneePKs.append(assigneeInstance.pk)
+          taskInstance.assignee.add(assigneeInstance)
+        #Remove stale assignees
+        for assigneeInstance in taskInstance.assignee.all():
+          if assigneeInstance.pk not in currentAssigneePKs:
+            taskInstance.assignee.remove(assigneeInstance)
+        taskInstance.save()
+        currentTaskPKs.append(taskInstance.pk)
+    #Remove stale tasks
+    tasks = Task.objects.filter(
+      event=event
+    )
+    for taskInstance in tasks:
+      if taskInstance.pk not in currentTaskPKs:
+        taskInstance.delete()
+    
+    response_data = {}
+    response_data['ok'] = True
+    response_data['project'] = project
+    response_data['result'] = 'success'
+    response_data['message'] = ''
+    response_data['errorMessages'] = []
+    return JsonResponse(response_data)

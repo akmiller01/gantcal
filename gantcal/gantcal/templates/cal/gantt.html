@@ -106,7 +106,7 @@ $(function() {
   loadGanttFromServer();
   
   //inject some buttons
-  {% if not isProcess %}
+  {% if not isProcess and perm.add_task %}
   $(".ganttButtonBar div").append("<button onclick='startEdit()' class='button first big' title='edit'>edit</button>")
           .append("<button onclick='endEdit();' class='button' title='discard' style='display:none;'>stop editing</button>");
   {% endif %}

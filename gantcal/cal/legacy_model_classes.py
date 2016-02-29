@@ -1,4 +1,10 @@
+from __future__ import unicode_literals
+
 from django.db import models
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from datetime import datetime
+from django.utils.text import slugify
 from django.db.models.fields import Field
 
 class MyBooleanField(models.BooleanField):
