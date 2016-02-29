@@ -24,6 +24,8 @@ class MyBooleanField(models.BooleanField):
     def get_db_prep_value(self, value, connection,prepared=False):
         value = super(MyBooleanField, self).get_db_prep_value(value, connection, prepared)
         return 'true' if value else 'false'
+    
+models.BooleanField = MyBooleanField
 
 class Theme(models.Model):
     title = models.CharField(max_length=255,unique=True)
