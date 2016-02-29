@@ -104,8 +104,6 @@ class BooleanField(Field):
         defaults.update(kwargs)
         return super(BooleanField, self).formfield(**defaults)
     
-models.BooleanField = BooleanField
-
 class Theme(models.Model):
     title = models.CharField(max_length=255,unique=True)
     slug = models.SlugField(max_length=255,unique=True,editable=False)
