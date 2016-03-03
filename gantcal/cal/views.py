@@ -19,9 +19,22 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.generic.edit import CreateView
 from itertools import chain
 import vobject
+from django.db.models import Q
 
 def ical_event(request, user_id=None):
+    user_str = request.GET.get('u')
+    print(user_str)
+    try:
+      priority_str = int(request.GET.get('p'))
+    except:
+      priority_str = None
+    user = User.objects.filter(username=user_str)
     events = Event.objects.order_by('start').all()
+    if user.exists():
+      #Filter events by those being attended, or those which the user has been assigned a task
+      events = events.filter(Q(attendee=user) | Q(task__assignee__resource=user)).distinct()
+    if priority_str is not None:
+      events = events.filter(priority=priority_str)
     cal = vobject.iCalendar()
     cal.add('method').value = 'PUBLISH'
     cal.add('calscale').value = 'GREGORIAN'
@@ -92,7 +105,12 @@ def ical_event(request, user_id=None):
     return response
   
 def ical_task(request, user_id=None):
+    user_str = request.GET.get('u')
+    user = User.objects.filter(username=user_str)
     tasks = Task.objects.order_by('start').all()
+    if user.exists():
+      #Filter tasks by those of a user is attending, or those assigned to users
+      tasks = tasks.filter(Q(event__attendee=user) | Q(assignee__resource=user)).distinct()
     cal = vobject.iCalendar()
     cal.add('method').value = 'PUBLISH'
     cal.add('calscale').value = 'GREGORIAN'
