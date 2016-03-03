@@ -5,7 +5,25 @@ from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from datetime import datetime
 from django.utils.text import slugify
-from cal.legacy_model_classes import *
+
+class Theme(models.Model):
+    title = models.CharField(max_length=255,unique=True)
+    slug = models.SlugField(max_length=255,unique=True,editable=False)
+    description = models.TextField(null=True,blank=True)
+    
+    class Meta:
+        ordering = ['title']
+    
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        super(Theme, self).save(*args, **kwargs)
+        if self.slug is None or self.slug == "":
+            self.slug = '%s-%i' % (
+                slugify(self.title), self.id
+            )
+        super(Theme, self).save(*args, **kwargs)
 
 class Process(models.Model):
     title = models.CharField(max_length=255,unique=True)
