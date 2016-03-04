@@ -81,7 +81,7 @@ class Attachment(models.Model):
         ordering = ['modified','title']
     
     def __str__(self):
-        return self.title
+        return self.title+" - "+str(self.upload)
 
 class Funder(models.Model):
     name = models.CharField(max_length=255)

@@ -91,12 +91,17 @@ class FunderAdmin(admin.ModelAdmin):
     #enable the save buttons on top of change form
     save_on_top = True
 
+class AttachmentInline(admin.TabularInline):
+    model = Attachment.events.through
+    max_num = 1
+    
 class EventInline(admin.TabularInline):
     model = Event.attachments.through
+    max_num = 1
 
 class AttachmentAdmin(admin.ModelAdmin):
-    inlines = [EventInline,]
     #fields display on change list
+    inlines = [EventInline,]
     list_display = ['title','upload','modifier','modified']
     list_filter =['modified','creator','created']
     #enable the save buttons on top of change form
@@ -201,12 +206,18 @@ class EventTimeFilter(admin.SimpleListFilter):
 
 class EventAdmin(admin.ModelAdmin):
     
+    def get_form(self, request, obj=None, **kwargs):
+        self.exclude = ("attachments", )
+        form = super(EventAdmin, self).get_form(request, obj, **kwargs)
+        return form
+    
     #fields display on change list
     list_display = ['event_summary_title','confirmed_date','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
     list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','process','theme','attendee','location']
     #fields to search in change list
-    filter_horizontal = ('attachments',)
+    inlines = [AttachmentInline,]
+    filter_horizontal = ('attendee','tag','theme','process','funders')
     search_fields = ['title','description']
     #enable the date drill down on change list
     date_hierarchy = 'start'
