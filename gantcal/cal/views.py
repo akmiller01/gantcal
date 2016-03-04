@@ -22,6 +22,7 @@ import vobject
 from django.db.models import Q
 
 def ical_event(request, user_id=None):
+    #Not including funder/attachments. This can be public facing
     user_str = request.GET.get('u')
     print(user_str)
     try:
@@ -58,6 +59,14 @@ def ical_event(request, user_id=None):
       description += event.focus_verbose()
       description += "\n"
       description += "\n"
+      description += "Colour: "
+      description += event.color_verbose()
+      description += "\n"
+      description += "\n"
+      description += "Event URL: "
+      description += event.event_URL
+      description += "\n"
+      description += "\n"
       description += "Description: "
       description += event.description
       description += "\n"
@@ -76,16 +85,16 @@ def ical_event(request, user_id=None):
       description += "\n"
       description += "Processes: "
       processes = ""
-      themeDict = {}
+      themes = ""
       for process in event.process.all():
         processes += process.title
         processes += "; "
-        for theme in process.theme.all():
-          themeDict[theme] = True
-      themes = "; ".join([theme.title for theme in themeDict])
       description += processes
       description += "\n"
       description += "\n"
+      for theme in event.theme.all():
+        themes += themes.title
+        themes += "; "
       description += "Themes: "
       description += themes
       description += "\n"

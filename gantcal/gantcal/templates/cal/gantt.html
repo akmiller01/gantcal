@@ -1,7 +1,7 @@
 {% extends 'cal/base.html' %}
 {% block title%}{{event.title}}{% endblock %}
 {% block head %}  
-  {% load staticfiles %}
+  {% load static from staticfiles %}
   <link rel=stylesheet href="{% static "cal/gantt/libs/dateField/jquery.dateField.css" %}" type="text/css">
 
   <link rel=stylesheet href="{% static "cal/gantt/gantt.css" %}" type="text/css">

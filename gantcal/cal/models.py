@@ -32,7 +32,7 @@ class Process(models.Model):
     start = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
     end = models.DateField(auto_now=False, auto_now_add=False)
     theme = models.ManyToManyField(Theme, related_name="processes", related_query_name="process",blank=True)
-    
+
     class Meta:
         ordering = ['start','title']
         verbose_name_plural = "processes"
@@ -69,10 +69,32 @@ class Tag(models.Model):
             )
         super(Tag, self).save(*args, **kwargs)
 
+class Attachment(models.Model):
+    title = models.CharField(max_length=255)
+    creator = models.ForeignKey(User, editable=False)
+    created = models.DateTimeField(auto_now=False, auto_now_add=True)
+    modifier = models.ForeignKey(User,editable=False,related_name="modified_attachment")
+    modified = models.DateTimeField(auto_now=True)
+    upload = models.FileField(upload_to='%Y/%m/%d/')
+    
+    class Meta:
+        ordering = ['modified','title']
+    
+    def __str__(self):
+        return self.title
+
+class Funder(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField(null=True,blank=True)
+    
+    def __str__(self):
+        return self.name
+
 class Event(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True,blank=True)
     objectives = models.TextField(null=True,blank=True)
+    event_URL = models.URLField(max_length=1027,null=True,blank=True)
     attendee = models.ManyToManyField(User,related_name="events",related_query_name="event",blank=True)
     location = models.CharField(max_length=255,null=True,blank=True)
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True,editable=False)
@@ -82,9 +104,11 @@ class Event(models.Model):
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
     tag = models.ManyToManyField(Tag, related_name="events", related_query_name="event",blank=True)
+    theme = models.ManyToManyField(Theme, related_name="events", related_query_name="event",blank=True)
     process = models.ManyToManyField(Process, related_name="events", related_query_name="event",blank=True)
     PRIORITY_CHOICES = zip( range(1,4), range(1,4) )
     priority = models.IntegerField(choices=PRIORITY_CHOICES,blank=True,null=True)
+    funders = models.ManyToManyField(Funder,blank=True)
     estimated_cost = models.IntegerField(blank=True,null=True)
     FOCUS_CHOICES = (
         ('AT','Attending'),
@@ -96,6 +120,16 @@ class Event(models.Model):
         ('RE','Remotely engage'),
     )
     focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='MO')
+    COLOR_CHOICES = (
+        ('#BA0C2F','Red'),
+        ('#FFFFFF','White'),
+        ('#EA7600','Orange'),
+        ('#93328E','Purple'),
+        ('#1B365D','Blue'),
+        ('#0095CB','Light-blue'),
+    )
+    attachments = models.ManyToManyField(Attachment,related_name="events",related_query_name="event",blank=True)
+    color = models.CharField(max_length=7,choices=COLOR_CHOICES,default="#1B365D")
     objectives_approved = models.BooleanField(default=False)
     attendees_approved = models.BooleanField(default=False)
     
@@ -116,6 +150,9 @@ class Event(models.Model):
     
     def focus_verbose(self):
         return dict(Event.FOCUS_CHOICES)[self.focus]
+    
+    def color_verbose(self):
+        return dict(Event.COLOR_CHOICES)[self.color]
     
     def save(self, *args, **kwargs):
         super(Event, self).save(*args, **kwargs)

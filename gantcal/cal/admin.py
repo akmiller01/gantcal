@@ -11,6 +11,8 @@ from cal.models import Task
 from cal.models import Tag
 from cal.models import Role
 from cal.models import Assignee
+from cal.models import Attachment
+from cal.models import Funder
 
 class ViewAdmin(admin.ModelAdmin):
 
@@ -57,7 +59,7 @@ class ProcessAdmin(admin.ModelAdmin):
      #fields display on change list
     list_display = ['title','start','end']
     #fields to filter the change list with
-    list_filter = ['theme','start']
+    list_filter = ['start']
     #fields to search in change list
     search_fields = ['title','description']
     #enable the date drill down on change list
@@ -82,6 +84,26 @@ class TagAdmin(admin.ModelAdmin):
     list_display = ['title']
     #enable the save buttons on top of change form
     save_on_top = True
+    
+class FunderAdmin(admin.ModelAdmin):
+    #fields display on change list
+    list_display = ['name']
+    #enable the save buttons on top of change form
+    save_on_top = True
+
+class AttachmentAdmin(admin.ModelAdmin):
+    #fields display on change list
+    list_display = ['title','upload','modifier','modified']
+    list_filter =['modified','creator','created']
+    #enable the save buttons on top of change form
+    save_on_top = True
+    def save_model(self, request, obj, form, change):
+        user = request.user
+        if not obj.pk:
+            obj.creator = user
+        obj.modifier = user
+        return super(AttachmentAdmin, self).save_model(request, obj, form, change)
+        
 
 def approve_objectives(modeladmin, request, queryset):
     if request.user.has_perm('cal.add_event'):
@@ -178,7 +200,7 @@ class EventAdmin(admin.ModelAdmin):
     #fields display on change list
     list_display = ['event_summary_title','confirmed_date','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
-    list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','process','process__theme','attendee','location']
+    list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','process','theme','attendee','location']
     #fields to search in change list
     search_fields = ['title','description']
     #enable the date drill down on change list
@@ -220,7 +242,6 @@ class EventAdmin(admin.ModelAdmin):
         return "; ".join([p.get_full_name() for p in obj.attendee.all()])
     
     def save_model(self, request, obj, form, change):
-        print(request.user.groups)
         if not request.user.has_perm('cal.add_event'):
             messages.set_level(request, messages.ERROR)
             messages.error(request, 'You do not have permission to edit events')
@@ -234,4 +255,6 @@ admin.site.register(Theme,ThemeAdmin)
 admin.site.register(Task,TaskAdmin)
 admin.site.register(Process,ProcessAdmin)
 admin.site.register(Tag,TagAdmin)
+admin.site.register(Attachment,AttachmentAdmin)
 admin.site.register(Event,EventAdmin)
+admin.site.register(Funder,FunderAdmin)
