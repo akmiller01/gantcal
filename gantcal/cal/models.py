@@ -92,8 +92,6 @@ class Funder(models.Model):
 
 class Event(models.Model):
     title = models.CharField(max_length=255)
-    PRIORITY_CHOICES = zip( range(1,4), range(1,4) )
-    priority = models.IntegerField(choices=PRIORITY_CHOICES,blank=True,null=True)
     description = models.TextField(null=True,blank=True)
     objectives = models.TextField(null=True,blank=True)
     event_URL = models.URLField(max_length=1027,null=True,blank=True)
@@ -110,6 +108,8 @@ class Event(models.Model):
     process = models.ManyToManyField(Process, related_name="events", related_query_name="event",blank=True)
     funders = models.ManyToManyField(Funder,blank=True)
     estimated_cost = models.IntegerField(blank=True,null=True)
+    PRIORITY_CHOICES = zip( range(1,4), range(1,4) )
+    priority = models.IntegerField(choices=PRIORITY_CHOICES,blank=True,null=True)
     FOCUS_CHOICES = (
         ('AT','Attending'),
         ('PR','Presenting'),
