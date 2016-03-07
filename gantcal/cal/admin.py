@@ -93,19 +93,17 @@ class FunderAdmin(admin.ModelAdmin):
 
 class AttachmentInline(admin.TabularInline):
     model = Attachment.events.through
-    max_num = 1
-    
-class EventInline(admin.TabularInline):
-    model = Event.attachments.through
-    max_num = 1
 
 class AttachmentAdmin(admin.ModelAdmin):
     #fields display on change list
-    inlines = [EventInline,]
-    list_display = ['title','upload','modifier','modified']
+    list_display = ['title','upload','modifier','modified','events']
     list_filter =['modified','creator','created']
     #enable the save buttons on top of change form
     save_on_top = True
+    
+    def events(self, obj):
+        return "; ".join([event.title for event in obj.events.all()])
+    
     def save_model(self, request, obj, form, change):
         user = request.user
         if not obj.pk:
