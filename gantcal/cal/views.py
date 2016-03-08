@@ -93,7 +93,7 @@ def ical_event(request, user_id=None):
       description += "\n"
       description += "\n"
       for theme in event.theme.all():
-        themes += themes.title
+        themes += theme.title
         themes += "; "
       description += "Themes: "
       description += themes
