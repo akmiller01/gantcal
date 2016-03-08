@@ -31,10 +31,13 @@ def ical_event(request, user_id=None):
       priority_str = None
     user = User.objects.filter(username=user_str)
     events = Event.objects.order_by('start').all()
-    if user.exists():
+    if user.exists() and priority_str is not None:
+      #Filter events by those being attended, or those which the user has been assigned a task
+      events = events.filter(Q(attendee=user) | Q(task__assignee__resource=user) | Q(priority=priority_str)).distinct()
+    elif user.exists() and priority_str is None:
       #Filter events by those being attended, or those which the user has been assigned a task
       events = events.filter(Q(attendee=user) | Q(task__assignee__resource=user)).distinct()
-    if priority_str is not None:
+    elif priority_str is not None:
       events = events.filter(priority=priority_str)
     cal = vobject.iCalendar()
     cal.add('method').value = 'PUBLISH'
