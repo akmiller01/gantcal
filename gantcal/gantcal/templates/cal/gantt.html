@@ -161,7 +161,6 @@ function loadGanttFromServer() {
         var assignee_id = "pk_"+fields.assignee[j].toString(),
         assignee = rawAssignees[assignee_id];
         assignment = new Assignment(assignee.id,assignee.resourceId,assignee.roleId,assignee.effort);
-          assignment = []
         assignees.push(assignment);
       };
       fields.assigs = assignees;
