@@ -75,7 +75,7 @@ class Attachment(models.Model):
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modifier = models.ForeignKey(User,editable=False,related_name="modified_attachment")
     modified = models.DateTimeField(auto_now=True)
-    upload = models.FileField(upload_to='%Y/%m/%d/')
+    upload = models.FileField(upload_to='%Y/%m/%d/', max_length=500)
     
     class Meta:
         ordering = ['modified','title']
