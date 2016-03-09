@@ -196,10 +196,10 @@ def dashboard(request):
   now = datetime.now()
   user = request.user
   userTasks = Task.objects.order_by('start').filter(
-    assignee__resource=user
+    assignee__resource=user, start__gte=now
   )
   userEvents = Event.objects.order_by('start').filter(
-    attendee=user
+    attendee=user, start__gte=now
   )
   tasks = Task.objects.order_by('start').filter(
     start__gte=now, start__lte=now+timedelta(14)
