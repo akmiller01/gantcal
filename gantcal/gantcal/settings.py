@@ -23,15 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if 'SECRET_KEY' in os.environ:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     DEBUG = False
+    ALLOWED_HOSTS = [".elasticbeanstalk.com",".devinit.org",".developmentplanner.org"]
 else:
     SECRET_KEY = 'r#(wk_y-mzd*k@o5pu=0d3^qmk&%&r-c&*1_iuar&w0-0*+cn!'
     DEBUG = True
-    
-if 'ALLOWED_HOSTS' in os.environ:
-    ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
-else:
     ALLOWED_HOSTS = []
-    
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = True
