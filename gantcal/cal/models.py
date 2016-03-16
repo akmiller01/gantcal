@@ -122,7 +122,6 @@ class Event(models.Model):
     focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='MO')
     COLOR_CHOICES = (
         ('#BA0C2F','Red'),
-        ('#FFFFFF','White'),
         ('#EA7600','Orange'),
         ('#93328E','Purple'),
         ('#1B365D','Blue'),
