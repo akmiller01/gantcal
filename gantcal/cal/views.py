@@ -261,6 +261,10 @@ def gantt(request,slug):
 
 @login_required
 def processGantt(request,slug):
+  perm = {}
+  perm['add_event'] = request.user.has_perm('cal.add_event')
+  perm['add_task'] = request.user.has_perm('cal.add_task')
+  perm['add_process'] = request.user.has_perm('cal.add_process')
   isProcess = True
   authUser = request.user
   process = get_object_or_404(Process,slug=slug)
@@ -274,7 +278,7 @@ def processGantt(request,slug):
   roleDict = [{"name":"Attendee","id":"pk_1"}]
   users = User.objects.all()
   resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
-  return render_to_response('cal/gantt.html',{'isProcess':isProcess,'event':process,'tasks':serializers.serialize('json',metaTasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+  return render_to_response('cal/gantt.html',{"perm":perm,'isProcess':isProcess,'event':process,'tasks':serializers.serialize('json',metaTasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
 
 
 def ganttAjax(request,slug):
