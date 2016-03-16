@@ -17,11 +17,13 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.conf import settings
 from cal import views
+from django.contrib.auth.views import login, logout, password_change
+from axes.decorators import watch_login
 
 urlpatterns = [
     url(r'^$', views.dashboard, name='dashboard'),
     url(r'^admin/', admin.site.urls),
-    url(r'^login', views.login_user, name='login'),
+    url(r'^login', watch_login(views.login_user), name='login'),
     url(r'^calendar/$', views.month, name='month'),
     url(r'^ical/events.ics$', views.ical_event, name='icalEvent'),
     url(r'^ical/tasks.ics$', views.ical_task, name='icalTask'),

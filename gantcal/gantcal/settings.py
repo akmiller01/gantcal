@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if 'SECRET_KEY' in os.environ:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     DEBUG = False
-    ALLOWED_HOSTS = [".elasticbeanstalk.com",".devinit.org",".developmentplanner.org"]
+    ALLOWED_HOSTS = [".elasticbeanstalk.com",".devinit.org",".developmentplanner.org",".developmentcalendar.org"]
 else:
     SECRET_KEY = 'r#(wk_y-mzd*k@o5pu=0d3^qmk&%&r-c&*1_iuar&w0-0*+cn!'
     DEBUG = True
@@ -31,6 +31,24 @@ else:
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = True
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 
 # Application definition
@@ -44,7 +62,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'djangobower',
     'cal',
-    'storages'
+    'storages',
+    'axes',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -56,6 +75,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.FailedLoginMiddleware'
 ]
 
 ROOT_URLCONF = 'gantcal.urls'
@@ -189,3 +209,7 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 MEDIAFILES_LOCATION = 'media'
 MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, MEDIAFILES_LOCATION)
 DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+
+#Axes settings
+AXES_LOGIN_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1

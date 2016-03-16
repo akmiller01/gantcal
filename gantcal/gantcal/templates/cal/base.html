@@ -46,7 +46,7 @@
             <a href="{% url 'admin:cal_event_changelist' %}">List</a> /
             {% block userlinks %}
                 <a href="{% url 'admin:login' %}">Administration</a> /
-                <a href="{% url 'cal.views.login_user' %}">Log out</a>
+                <a href="{% url 'login' %}">Log out</a>
             {% endblock %}
         </div>
         {% endif %}
