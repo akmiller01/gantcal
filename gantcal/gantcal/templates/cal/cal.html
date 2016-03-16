@@ -151,7 +151,7 @@
                         {
                             "title": "{{event.title|safe}}",
                             "start": "{{event.start|date:"Y-m-d"}}",
-                            "end": "{{event.end|date:"Y-m-d"}}",
+                            "end": "{{event.end|date:"Y-m-d"}}T24:00:00Z",
                             "color":"{{event.color}}",
                             "url": "{{event.get_event_url}}",
                             "type": "event",
@@ -163,7 +163,7 @@
                         {
                             "title": "{{task.event.title|safe}} task - {{task.name|safe}}",
                             "start": "{{task.start|date:"Y-m-d"}}",
-                            "end": "{{task.end|date:"Y-m-d"}}",
+                            "end": "{{task.end|date:"Y-m-d"}}T24:00:00Z",
                             "color": "forestgreen",
                             "url": "{{task.event.get_gantt_url}}",
                             "type": "task",
@@ -174,6 +174,7 @@
                 ];
                 $('#calendar').fullCalendar({
                     weekends: false,
+                    allDayDefault:true,
                     events: events,
                     //dayClick:dayClick,
                     eventRender:eventFilter,

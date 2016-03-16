@@ -48,7 +48,7 @@ def ical_event(request, user_id=None):
     for event in events:
       vevent = cal.add('vevent')
       vevent.add('dtstart').value = event.start
-      vevent.add('dtend').value = event.end
+      vevent.add('dtend').value = event.end+timedelta(hours=24)
       vevent.add('summary').value = event.title
       description = "Date confirmed: "
       description += str(event.date_confirmed)
@@ -132,7 +132,7 @@ def ical_task(request, user_id=None):
     for task in tasks:
       vevent = cal.add('vevent')
       vevent.add('dtstart').value = task.start
-      vevent.add('dtend').value = task.end
+      vevent.add('dtend').value = task.end+timedelta(hours=24)
       vevent.add('summary').value = task.event.title+" - "+task.name
       description = "Event priority: "
       description += str(task.event.priority)
