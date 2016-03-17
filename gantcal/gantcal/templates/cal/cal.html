@@ -149,7 +149,7 @@
                 events = [
                     {% for event in events %}
                         {
-                            "title": "{{event.title|safe}}",
+                            "title": he.decode("{{event.title}}"),
                             "start": "{{event.start|date:"Y-m-d"}}",
                             "end": "{{event.end|date:"Y-m-d"}}T24:00:00Z",
                             "color":"{{event.color}}",
@@ -161,7 +161,7 @@
                     {% endfor %}
                     {% for task in tasks %}
                         {
-                            "title": "{{task.event.title|safe}} task - {{task.name|safe}}",
+                            "title": he.decode("{{task.event.title}} task - {{task.name}}"),
                             "start": "{{task.start|date:"Y-m-d"}}",
                             "end": "{{task.end|date:"Y-m-d"}}T24:00:00Z",
                             "color": "forestgreen",

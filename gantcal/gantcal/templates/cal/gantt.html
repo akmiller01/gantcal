@@ -147,10 +147,10 @@ moment.fn.businessDiff = function (param) {
   };
 
 function loadGanttFromServer() {
-  rawTasks = {{tasks|safe}}
-  roles = {{roles|safe}}
-  rawAssignees = {{assignees|safe}}
-  resources = {{resources|safe}}
+  rawTasks = JSON.parse(he.decode("{{tasks}}"))
+  roles = JSON.parse(he.decode("{{roles}}"))
+  rawAssignees = JSON.parse(he.decode("{{assignees}}"))
+  resources = JSON.parse(he.decode("{{resources}}"))
   tasks = [];
   for(var i = 0; i < rawTasks.length; i++){
       var fields = rawTasks[i].fields;

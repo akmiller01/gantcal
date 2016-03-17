@@ -180,6 +180,7 @@ BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'components')
 BOWER_INSTALLED_APPS = ('fullcalendar#2.6.0',
                         'jquery#2.2.0',
                         'moment#2.11.2',
+                        'he#0.5.0',
                         )
 
 #Login required

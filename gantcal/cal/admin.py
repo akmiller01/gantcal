@@ -13,6 +13,7 @@ from cal.models import Role
 from cal.models import Assignee
 from cal.models import Attachment
 from cal.models import Funder
+import cgi
 
 class ViewAdmin(admin.ModelAdmin):
 
@@ -247,7 +248,7 @@ class EventAdmin(admin.ModelAdmin):
     short_attendees_approved.admin_order_field = 'attendees_approved'
     
     def event_summary_title(self, obj):
-        return '<a href="%s">%s</a>' % (obj.get_event_url(), obj.title)
+        return '<a href="%s">%s</a>' % (obj.get_event_url(), cgi.escape(obj.title))
     event_summary_title.allow_tags = True
     event_summary_title.short_description = 'Title'
     event_summary_title.admin_order_field = 'title'
