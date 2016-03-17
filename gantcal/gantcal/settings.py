@@ -24,10 +24,12 @@ if 'SECRET_KEY' in os.environ:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     DEBUG = False
     ALLOWED_HOSTS = [".elasticbeanstalk.com",".devinit.org",".developmentplanner.org",".developmentcalendar.org"]
+    HOME_URL = "http://eventplanner.devinit.org"
 else:
     SECRET_KEY = 'r#(wk_y-mzd*k@o5pu=0d3^qmk&%&r-c&*1_iuar&w0-0*+cn!'
     DEBUG = True
     ALLOWED_HOSTS = []
+    HOME_URL = "http://192.168.33.101:8000"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = True

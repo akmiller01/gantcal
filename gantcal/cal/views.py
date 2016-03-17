@@ -20,6 +20,7 @@ from django.views.generic.edit import CreateView
 from itertools import chain
 import vobject
 from django.db.models import Q
+from django.conf import settings
 
 def ical_event(request, user_id=None):
     #Not including funder/attachments. This can be public facing
@@ -68,6 +69,11 @@ def ical_event(request, user_id=None):
       description += "\n"
       description += "Event URL: "
       description += str(event.event_URL)
+      description += "\n"
+      description += "\n"
+      description += "Forward planner URL: "
+      description += settings.HOME_URL
+      description += str(event.get_absolute_url())
       description += "\n"
       description += "\n"
       description += "Description: "
@@ -140,6 +146,11 @@ def ical_task(request, user_id=None):
       description += "\n"
       description += "Event focus: "
       description += task.event.focus_verbose()
+      description += "\n"
+      description += "\n"
+      description += "Gantt URL: "
+      description += settings.HOME_URL
+      description += str(task.event.get_gantt_url())
       description += "\n"
       description += "\n"
       description += "Task description: "
