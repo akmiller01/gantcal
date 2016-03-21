@@ -97,7 +97,7 @@ class AttachmentInline(admin.TabularInline):
 
 class AttachmentAdmin(admin.ModelAdmin):
     #fields display on change list
-    list_display = ['title','upload','modifier','modified','events']
+    list_display = ['upload','modifier','modified','events']
     list_filter =['modified','creator','created']
     #enable the save buttons on top of change form
     save_on_top = True

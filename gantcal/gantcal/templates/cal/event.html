@@ -18,7 +18,7 @@
       <p><b><a href="{{event.get_gantt_url}}">View gantt chart</a>{% if perm.add_event %} / <a href="{% url 'admin:cal_event_change' event.id %}">Edit this event</a> / <a href="{% url 'admin:cal_event_add' %}">Add new event</a>{% endif %}</b></p>
       <p><b>Priority: </b>{{event.priority}}</p>
       <p><b>Focus: </b>{{event.focus_verbose}}</p>
-      <p><b>Colour: </b><span style="color:{{event.color}};">{{event.color_verbose}}</span></p>
+      <p><b>Type: </b><span style="color:{{event.type}};">{{event.type_verbose}}</span></p>
       <p><b>Start date: </b>{{event.start}}</p>
       <p><b>Date confirmed: </b>{{event.date_confirmed}}</p>
       <p><b>End date: </b>{{event.end}}</p>

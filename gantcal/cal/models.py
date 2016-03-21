@@ -73,7 +73,6 @@ class Tag(models.Model):
         super(Tag, self).save(*args, **kwargs)
 
 class Attachment(models.Model):
-    title = models.CharField(max_length=2000)
     creator = models.ForeignKey(User, editable=False)
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modifier = models.ForeignKey(User,editable=False,related_name="modified_attachment")
@@ -81,10 +80,10 @@ class Attachment(models.Model):
     upload = models.FileField(upload_to='%Y/%m/%d/', max_length=500)
     
     class Meta:
-        ordering = ['modified','title']
+        ordering = ['modified']
     
     def __str__(self):
-        return self.title+" - "+str(self.upload)
+        return str(self.upload)
 
 class Funder(models.Model):
     name = models.CharField(max_length=255)
@@ -124,14 +123,14 @@ class Event(models.Model):
     )
     focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='MO')
     COLOR_CHOICES = (
-        ('#BA0C2F','Red: Leadership team meetings'),
-        ('#EA7600','Orange: Tony and Judith meeting'),
-        ('#93328E','Purple: Global days'),
-        ('#1B365D','Blue: external event or meeting'),
-        ('#0095CB','Light-blue: Policy process milestones'),
+        ('#BA0C2F','Leadership team meetings'),
+        ('#EA7600','Tony and Judith meeting'),
+        ('#93328E','Global days'),
+        ('#1B365D','External event or meeting'),
+        ('#0095CB','Policy process milestones'),
     )
     attachments = models.ManyToManyField(Attachment,related_name="events",related_query_name="event",blank=True)
-    color = models.CharField(max_length=7,choices=COLOR_CHOICES,default="#1B365D")
+    type = models.CharField(max_length=7,choices=COLOR_CHOICES,default="#1B365D")
     objectives_approved = models.BooleanField(default=False)
     attendees_approved = models.BooleanField(default=False)
     
@@ -153,8 +152,8 @@ class Event(models.Model):
     def focus_verbose(self):
         return dict(Event.FOCUS_CHOICES)[self.focus]
     
-    def color_verbose(self):
-        return dict(Event.COLOR_CHOICES)[self.color]
+    def type_verbose(self):
+        return dict(Event.COLOR_CHOICES)[self.type]
     
     def save(self, *args, **kwargs):
         super(Event, self).save(*args, **kwargs)
