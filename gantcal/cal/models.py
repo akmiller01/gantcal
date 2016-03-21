@@ -95,7 +95,7 @@ class Funder(models.Model):
 
 class Event(models.Model):
     title = models.CharField(max_length=2000)
-    description = models.TextField(null=True,blank=True)
+    description = models.TextField(default="")
     objectives = models.TextField(null=True,blank=True)
     event_URL = models.URLField(max_length=2000,null=True,blank=True)
     attendee = models.ManyToManyField(User,related_name="events",related_query_name="event",blank=True)
