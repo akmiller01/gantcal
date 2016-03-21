@@ -30,7 +30,8 @@ urlpatterns = [
     url(r'^(?P<slug>[\w\-]+)/$', views.event,name='event'),
     url(r'^g/(?P<slug>[\w\-]+)/$', views.gantt,name='gantt'),
     url(r'^g/(?P<slug>[\w\-]+)/ganttAjax$', views.ganttAjax,name='ganttAjax'),
-    url(r'^p/(?P<slug>[\w\-]+)/$', views.processGantt,name='processGantt'),
+    url(r'^c/(?P<slug>[\w\-]+)/$', views.cross_cutting_gantt,name='cross_cutting_gantt'),
+    url(r'^t/(?P<slug>[\w\-]+)/$', views.theme_gantt,name='theme_gantt'),
     url(r'^g/([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     url(r'^p/([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
 ]

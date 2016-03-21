@@ -9,7 +9,8 @@ from cal.models import Event
 from cal.models import Task
 from cal.models import Assignee
 from cal.models import Role
-from cal.models import Process
+from cal.models import CrossCuttingArea
+from cal.models import Theme
 from django.contrib.auth.models import User
 from cal.utils import uni
 from django.contrib.auth.decorators import login_required
@@ -92,13 +93,13 @@ def ical_event(request, user_id=None):
       description += attendees
       description += "\n"
       description += "\n"
-      description += "Processes: "
-      processes = ""
+      description += "Cross-cutting areas: "
+      cross_cutting_areas = ""
       themes = ""
-      for process in event.process.all():
-        processes += process.title
-        processes += "; "
-      description += processes
+      for cross_cutting_area in event.cross_cutting_area.all():
+        cross_cutting_areas += cross_cutting_area.title
+        cross_cutting_areas += "; "
+      description += cross_cutting_areas
       description += "\n"
       description += "\n"
       for theme in event.theme.all():
@@ -218,10 +219,11 @@ def dashboard(request):
   events = Event.objects.order_by('start').filter(
     start__gte=now, start__lte=now+timedelta(14)
   )
-  processes = Process.objects.order_by('start').filter(
+  cross_cutting_areas = CrossCuttingArea.objects.order_by('start').filter(
     end__gte=now
   )
-  return render_to_response('cal/dashboard.html', {"perm":perm,"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks,"processes":processes})
+  themes = Theme.objects.all()
+  return render_to_response('cal/dashboard.html', {"perm":perm,"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks,"cross_cutting_areas":cross_cutting_areas,"themes":themes})
 
 @login_required
 def month(request):
@@ -256,7 +258,10 @@ def gantt(request,slug):
   perm = {}
   perm['add_event'] = request.user.has_perm('cal.add_event')
   perm['add_task'] = request.user.has_perm('cal.add_task')
-  isProcess = False
+  perm['add_cross_cutting_area'] = request.user.has_perm('cal.add_cross_cutting_area')
+  perm['add_theme'] = request.user.has_perm('cal.add_theme')
+  is_cross_cutting = False
+  is_theme = False
   authUser = request.user
   metaEvent = get_object_or_404(Event,slug=slug)
   tasks = Task.objects.filter(
@@ -268,18 +273,20 @@ def gantt(request,slug):
   roleDict = [{"name":uni(role.name),"id":"pk_"+str(role.id)} for role in roles]
   users = User.objects.all()
   resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
-  return render_to_response('cal/gantt.html',{"perm":perm,'isProcess':isProcess,'event':metaEvent,'tasks':serializers.serialize('json',tasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+  return render_to_response('cal/gantt.html',{"perm":perm,'is_cross_cutting':is_cross_cutting,'is_theme':is_theme,'event':metaEvent,'tasks':serializers.serialize('json',tasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
 
 @login_required
-def processGantt(request,slug):
+def cross_cutting_gantt(request,slug):
   perm = {}
   perm['add_event'] = request.user.has_perm('cal.add_event')
   perm['add_task'] = request.user.has_perm('cal.add_task')
-  perm['add_process'] = request.user.has_perm('cal.add_process')
-  isProcess = True
+  perm['add_cross_cutting_area'] = request.user.has_perm('cal.add_cross_cutting_area')
+  perm['add_theme'] = request.user.has_perm('cal.add_theme')
+  is_cross_cutting = True
+  is_theme = False
   authUser = request.user
-  process = get_object_or_404(Process,slug=slug)
-  metaTasks = process.events.order_by('start').all()
+  cross_cutting_area = get_object_or_404(CrossCuttingArea,slug=slug)
+  metaTasks = cross_cutting_area.events.order_by('start').all()
   # for event in process.events.all():
   #   tasks = event.tasks.order_by('order')
   #   metaTasks.append(tasks)
@@ -289,7 +296,26 @@ def processGantt(request,slug):
   roleDict = [{"name":"Attendee","id":"pk_1"}]
   users = User.objects.all()
   resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
-  return render_to_response('cal/gantt.html',{"perm":perm,'isProcess':isProcess,'event':process,'tasks':serializers.serialize('json',metaTasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+  return render_to_response('cal/gantt.html',{"perm":perm,'is_cross_cutting':is_cross_cutting,'is_theme':is_theme,'event':cross_cutting_area,'tasks':serializers.serialize('json',metaTasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
+
+@login_required
+def theme_gantt(request,slug):
+  perm = {}
+  perm['add_event'] = request.user.has_perm('cal.add_event')
+  perm['add_task'] = request.user.has_perm('cal.add_task')
+  perm['add_cross_cutting_area'] = request.user.has_perm('cal.add_cross_cutting_area')
+  perm['add_theme'] = request.user.has_perm('cal.add_theme')
+  is_cross_cutting = False
+  is_theme = True
+  authUser = request.user
+  theme = get_object_or_404(Theme,slug=slug)
+  metaTasks = theme.events.order_by('start').all()
+  assignees = User.objects.all()
+  assigneeDict = {"pk_"+str(assignee.id):{"id":"pk_"+str(assignee.id),"resourceId":"pk_"+str(assignee.id),"roleId":"pk_1","effort":0} for assignee in assignees}
+  roleDict = [{"name":"Attendee","id":"pk_1"}]
+  users = User.objects.all()
+  resources = [{"name":uni(user.first_name+" "+user.last_name),"id":"pk_"+str(user.id)} for user in users]
+  return render_to_response('cal/gantt.html',{"perm":perm,'is_cross_cutting':is_cross_cutting,'is_theme':is_theme,'event':theme,'tasks':serializers.serialize('json',metaTasks),'assignees':json.dumps(assigneeDict),'roles':json.dumps(roleDict),'resources':json.dumps(resources),"user":authUser})
 
 
 def ganttAjax(request,slug):

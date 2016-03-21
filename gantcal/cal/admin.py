@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Count
 from cal.models import Event
 from cal.models import Theme
-from cal.models import Process
+from cal.models import CrossCuttingArea
 from cal.models import Task
 from cal.models import Tag
 from cal.models import Role
@@ -56,7 +56,7 @@ class ThemeAdmin(admin.ModelAdmin):
     #enable the save buttons on top of change form
     save_on_top = True
 
-class ProcessAdmin(admin.ModelAdmin):
+class CrossCuttingAreaAdmin(admin.ModelAdmin):
      #fields display on change list
     list_display = ['title','start','end']
     #fields to filter the change list with
@@ -213,10 +213,10 @@ class EventAdmin(admin.ModelAdmin):
     #fields display on change list
     list_display = ['event_summary_title','confirmed_date','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
-    list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','process','theme','attendee','location']
+    list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','cross_cutting_area','theme','attendee','location']
     #fields to search in change list
     inlines = [AttachmentInline,]
-    filter_horizontal = ('attendee','tag','theme','process','funders')
+    filter_horizontal = ('attendee','tag','theme','cross_cutting_area','funders')
     search_fields = ['title','description']
     #enable the date drill down on change list
     date_hierarchy = 'start'
@@ -268,7 +268,7 @@ admin.site.register(Role,RoleAdmin)
 admin.site.register(Assignee,AssigneeAdmin)
 admin.site.register(Theme,ThemeAdmin)
 admin.site.register(Task,TaskAdmin)
-admin.site.register(Process,ProcessAdmin)
+admin.site.register(CrossCuttingArea,CrossCuttingAreaAdmin)
 admin.site.register(Tag,TagAdmin)
 admin.site.register(Attachment,AttachmentAdmin)
 admin.site.register(Event,EventAdmin)

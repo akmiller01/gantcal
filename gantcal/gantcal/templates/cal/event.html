@@ -27,7 +27,7 @@
       <p><b>Objectives: </b>{{event.objectives}}</p>
       <p><b>Event page: </b>{% if event.event_URL %}<a href="{{event.event_URL}}">Here</a>{% endif %}</p>
       <p><b>Attendees: </b>{% for attendee in event.attendee.all %}{{attendee.get_full_name}}, {% endfor %}</p>
-      <p><b>Processes: </b>{% for process in event.process.all %}{{process}}; {% endfor %}</p>
+      <p><b>Cross-cutting areas: </b>{% for cross_cutting_area in event.cross_cutting_area.all %}{{cross_cutting_area}}; {% endfor %}</p>
       <p><b>Themes: </b>{% for theme in event.theme.all %} {{theme}}; {% endfor %}</p>
       <p><b>Tags: </b>{% for tag in event.tag.all %}{{tag}}; {% endfor %}</p>
       <p><b>Funders: </b>{% for funder in event.funders.all %}{{funder}}; {% endfor %}</p>

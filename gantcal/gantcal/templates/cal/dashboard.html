@@ -158,21 +158,36 @@
                 </tr>
             {% endfor %}
         </table>
-        <b>Process update</b>
+        <b>Cross-cutting area update</b>
         <table>
             <th>Title</th>
             <th>Themes</th>
             <th>Events</th>
-            {% for process in processes%}
+            {% for cross_cutting_area in cross_cutting_areas%}
                 <tr>
                     <td>
-                        <a href="{{process.get_absolute_url}}">{{process.title}}</a>
+                        <a href="{{cross_cutting_area.get_absolute_url}}">{{cross_cutting_area.title}}</a>
                     </td>
                     <td>
-                        {% for theme in process.theme.all %}{{theme}}; {% endfor %}
+                        {% for theme in cross_cutting_area.theme.all %}{{theme}}; {% endfor %}
                     </td>
                     <td>
-                        {% with eventCount=process.events.count %}{{eventCount}} {% endwith %}
+                        {% with eventCount=cross_cutting_area.events.count %}{{eventCount}} {% endwith %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <b>Theme update</b>
+        <table>
+            <th>Title</th>
+            <th>Events</th>
+            {% for theme in themes%}
+                <tr>
+                    <td>
+                        <a href="{{theme.get_absolute_url}}">{{theme.title}}</a>
+                    </td>
+                    <td>
+                        {% with eventCount=theme.events.count %}{{eventCount}} {% endwith %}
                     </td>
                 </tr>
             {% endfor %}

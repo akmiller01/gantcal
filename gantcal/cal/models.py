@@ -17,6 +17,9 @@ class Theme(models.Model):
     def __str__(self):
         return self.title
     
+    def get_absolute_url(self):
+        return reverse("cal.views.theme_gantt",args=[self.slug])
+    
     def save(self, *args, **kwargs):
         super(Theme, self).save(*args, **kwargs)
         if self.slug is None or self.slug == "":
@@ -25,31 +28,31 @@ class Theme(models.Model):
             )
         super(Theme, self).save(*args, **kwargs)
 
-class Process(models.Model):
+class CrossCuttingArea(models.Model):
     title = models.CharField(max_length=255,unique=True)
     slug = models.SlugField(max_length=255,unique=True,editable=False)
     description = models.TextField(null=True,blank=True)
     start = models.DateField(auto_now=False, auto_now_add=False,blank=True,null=True)
     end = models.DateField(auto_now=False, auto_now_add=False)
-    theme = models.ManyToManyField(Theme, related_name="processes", related_query_name="process",blank=True)
+    theme = models.ManyToManyField(Theme, related_name="cross_cutting_areas", related_query_name="cross_cutting_area",blank=True)
 
     class Meta:
         ordering = ['start','title']
-        verbose_name_plural = "processes"
+        verbose_name_plural = "cross cutting areas"
     
     def __str__(self):
         return self.title
     
     def get_absolute_url(self):
-        return reverse("cal.views.processGantt",args=[self.slug])
+        return reverse("cal.views.cross_cutting_gantt",args=[self.slug])
     
     def save(self, *args, **kwargs):
-        super(Process, self).save(*args, **kwargs)
+        super(CrossCuttingArea, self).save(*args, **kwargs)
         if self.slug is None or self.slug == "":
             self.slug = '%s-%i' % (
                 slugify(self.title), self.id
             )
-        super(Process, self).save(*args, **kwargs)
+        super(CrossCuttingArea, self).save(*args, **kwargs)
     
 class Tag(models.Model):
     title = models.CharField(max_length=255,unique=True)
@@ -105,7 +108,7 @@ class Event(models.Model):
     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
     tag = models.ManyToManyField(Tag, related_name="events", related_query_name="event",blank=True)
     theme = models.ManyToManyField(Theme, related_name="events", related_query_name="event",blank=True)
-    process = models.ManyToManyField(Process, related_name="events", related_query_name="event",blank=True)
+    cross_cutting_area = models.ManyToManyField(CrossCuttingArea, related_name="events", related_query_name="event",blank=True)
     funders = models.ManyToManyField(Funder,blank=True)
     estimated_cost = models.IntegerField(blank=True,null=True)
     PRIORITY_CHOICES = zip( range(1,4), range(1,4) )
