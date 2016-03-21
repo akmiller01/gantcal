@@ -124,11 +124,11 @@ class Event(models.Model):
     )
     focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='MO')
     COLOR_CHOICES = (
-        ('#BA0C2F','Red'),
-        ('#EA7600','Orange'),
-        ('#93328E','Purple'),
-        ('#1B365D','Blue'),
-        ('#0095CB','Light-blue'),
+        ('#BA0C2F','Red: Leadership team meetings'),
+        ('#EA7600','Orange: Tony and Judith meeting'),
+        ('#93328E','Purple: Global key days'),
+        ('#1B365D','Blue: external event or meeting'),
+        ('#0095CB','Light-blue: Policy process milestones'),
     )
     attachments = models.ManyToManyField(Attachment,related_name="events",related_query_name="event",blank=True)
     color = models.CharField(max_length=7,choices=COLOR_CHOICES,default="#1B365D")
