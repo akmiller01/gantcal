@@ -126,7 +126,7 @@ class Event(models.Model):
     COLOR_CHOICES = (
         ('#BA0C2F','Red: Leadership team meetings'),
         ('#EA7600','Orange: Tony and Judith meeting'),
-        ('#93328E','Purple: Global key days'),
+        ('#93328E','Purple: Global days'),
         ('#1B365D','Blue: external event or meeting'),
         ('#0095CB','Light-blue: Policy process milestones'),
     )
