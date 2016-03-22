@@ -230,7 +230,6 @@ class Task(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        super(Task, self).save(*args, **kwargs)
         if self.name:
             self.name = self.name.replace('"',"'")
         if self.code:
