@@ -158,10 +158,14 @@ class Event(models.Model):
     def save(self, *args, **kwargs):
         super(Event, self).save(*args, **kwargs)
         date = self.start
-        self.title = self.title.replace('"',"'")
-        self.objectives = self.objectives.replace('"',"'")
-        self.description = self.description.replace('"',"'")
-        self.location = self.location.replace('"',"'")
+        if self.title:
+            self.title = self.title.replace('"',"'")
+        if self.objectives:
+            self.objectives = self.objectives.replace('"',"'")
+        if self.description:
+            self.description = self.description.replace('"',"'")
+        if self.location:
+            self.location = self.location.replace('"',"'")
         if self.slug is None or self.slug == "":
             self.slug = '%s-%i%i%i%i' % (
                 slugify(self.title), date.year, date.month, date.day, self.id
@@ -227,9 +231,13 @@ class Task(models.Model):
     
     def save(self, *args, **kwargs):
         super(Task, self).save(*args, **kwargs)
-        self.name = self.name.replace('"',"'")
-        self.code = self.code.replace('"',"'")
-        self.description = self.description.replace('"',"'")
-        self.depends = self.depends.replace('"',"'")
+        if self.name:
+            self.name = self.name.replace('"',"'")
+        if self.code:
+            self.code = self.code.replace('"',"'")
+        if self.description:
+            self.description = self.description.replace('"',"'")
+        if self.depends:
+            self.depends = self.depends.replace('"',"'")
         super(Task, self).save(*args, **kwargs)
     
