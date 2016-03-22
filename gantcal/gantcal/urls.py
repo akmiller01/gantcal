@@ -33,5 +33,6 @@ urlpatterns = [
     url(r'^c/(?P<slug>[\w\-]+)/$', views.cross_cutting_gantt,name='cross_cutting_gantt'),
     url(r'^t/(?P<slug>[\w\-]+)/$', views.theme_gantt,name='theme_gantt'),
     url(r'^g/([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
-    url(r'^p/([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    url(r'^c/([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    url(r'^t/([\w\-]+)/res/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
 ]
