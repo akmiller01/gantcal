@@ -106,7 +106,7 @@ $(function() {
   loadGanttFromServer();
   
   //inject some buttons
-  {% if not perm.add_task and not is_cross_cutting and not is_theme %}
+  {% if perm.add_task and not is_cross_cutting and not is_theme %}
   $(".ganttButtonBar div").append("<button onclick='startEdit()' class='button first big' title='edit'>edit</button>")
           .append("<button onclick='endEdit();' class='button' title='discard' style='display:none;'>stop editing</button>");
   {% endif %}
