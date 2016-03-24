@@ -14,8 +14,8 @@ class Theme(models.Model):
     class Meta:
         ordering = ['title']
     
-    def __str__(self):
-        return self.title
+    def __unicode__(self):
+        return u'%s' % self.title
     
     def get_absolute_url(self):
         return reverse("cal.views.theme_gantt",args=[self.slug])
@@ -40,8 +40,8 @@ class CrossCuttingArea(models.Model):
         ordering = ['start','title']
         verbose_name_plural = "cross cutting areas"
     
-    def __str__(self):
-        return self.title
+    def __unicode__(self):
+        return u'%s' % self.title
     
     def get_absolute_url(self):
         return reverse("cal.views.cross_cutting_gantt",args=[self.slug])
@@ -61,8 +61,8 @@ class Tag(models.Model):
     class Meta:
         ordering = ['title']
     
-    def __str__(self):
-        return self.title
+    def __unicode__(self):
+        return u'%s' % self.title
     
     def save(self, *args, **kwargs):
         super(Tag, self).save(*args, **kwargs)
@@ -82,15 +82,15 @@ class Attachment(models.Model):
     class Meta:
         ordering = ['modified']
     
-    def __str__(self):
-        return str(self.upload)
+    def __unicode__(self):
+        return u'%s' % str(self.upload)
 
 class Funder(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(null=True,blank=True)
     
-    def __str__(self):
-        return self.name
+    def __unicode__(self):
+        return u'%s' % self.name
 
 class Event(models.Model):
     title = models.CharField(max_length=2000)
@@ -137,8 +137,8 @@ class Event(models.Model):
     class Meta:
         ordering = ['start','title']
     
-    def __str__(self):
-        return self.title
+    def __unicode__(self):
+        return u'%s' % self.title
 
     def get_absolute_url(self):
         return reverse("cal.views.event",args=[self.slug])
@@ -187,16 +187,16 @@ class Event(models.Model):
 class Role(models.Model):
     name = models.CharField(max_length=255,unique=True)
     
-    def __str__(self):
-        return self.name
+    def __unicode__(self):
+        return u'%s' % self.name
 
 class Assignee(models.Model):
     resource = models.ForeignKey(User)
     role = models.ForeignKey(Role,blank=True,null=True)
     effort = models.BigIntegerField(default=0)
     
-    def __str__(self):
-        return self.resource.get_full_name()+" as "+self.role.name
+    def __unicode__(self):
+        return u'%s' % self.resource.get_full_name()+" as "+self.role.name
 
 class Task(models.Model):
     name = models.CharField(max_length=255,blank=True,null=True)
@@ -226,8 +226,8 @@ class Task(models.Model):
     class Meta:
         ordering = ['start','name']
     
-    def __str__(self):
-        return self.name
+    def __unicode__(self):
+        return u'%s' % self.name
     
     def save(self, *args, **kwargs):
         if self.name:
