@@ -1,0 +1,5 @@
+{{message|safe}}
+
+
+------
+Sent via http://eventplanner.devinit.org
