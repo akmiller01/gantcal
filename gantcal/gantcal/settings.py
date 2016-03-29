@@ -216,19 +216,3 @@ DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
 #Axes settings
 AXES_LOGIN_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = 1
-
-# CELERY STUFF
-BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Europe/London'
-
-#Email settings
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = "587"
-EMAIL_HOST_USER = "devinitautomailer"
-EMAIL_HOST_PASSWORD = ""
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = "devinitautomailer@gmail.com"
