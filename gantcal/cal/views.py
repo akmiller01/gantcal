@@ -207,17 +207,17 @@ def dashboard(request):
   perm['add_task'] = request.user.has_perm('cal.add_task')
   now = datetime.now()
   user = request.user
-  userTasks = Task.objects.order_by('start').filter(
-    assignee__resource=user, end__gte=now
+  userTasks = Task.objects.order_by('start').filter(Q(event__attendee=user) | Q(assignee__resource=user)).distinct().filter(
+    end__gte=now
   )
-  userEvents = Event.objects.order_by('start').filter(
-    attendee=user, end__gte=now
+  userEvents = Event.objects.order_by('start').filter(Q(attendee=user) | Q(task__assignee__resource=user)).distinct().filter(
+    end__gte=now
   )
   tasks = Task.objects.order_by('start').filter(
-    start__gte=now, start__lte=now+timedelta(14)
+    start__gte=now, start__lte=now+timedelta(31)
   )
   events = Event.objects.order_by('start').filter(
-    start__gte=now, start__lte=now+timedelta(14)
+    start__gte=now, start__lte=now+timedelta(31)
   )
   ongoingTasks = Task.objects.order_by('start').filter(
     start__lte=now, end__gte=now
