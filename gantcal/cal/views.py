@@ -214,10 +214,10 @@ def dashboard(request):
     end__gte=now
   )
   tasks = Task.objects.order_by('start').filter(
-    start__gte=now, start__lte=now+timedelta(31)
+    start__gt=now, start__lte=now+timedelta(14)
   )
   events = Event.objects.order_by('start').filter(
-    start__gte=now, start__lte=now+timedelta(31)
+    start__gt=now, start__lte=now+timedelta(14)
   )
   ongoingTasks = Task.objects.order_by('start').filter(
     start__lte=now, end__gte=now
