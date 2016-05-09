@@ -170,18 +170,19 @@ class Event(models.Model):
             self.slug = '%s-%i%i%i%i' % (
                 slugify(self.title), date.year, date.month, date.day, self.id
             )
-        if len(self.tasks.all())==0:
-            self.tasks.create(
-                name = self.title,
-                description = self.description,
-                code = "MEET",
-                level = 1,
-                order = 999,
-                status = "STATUS_SUSPENDED",
-                start = self.start,
-                end = self.end,
-                endIsMilestone = True
-            )
+        # Stop automatic creation of tasks
+        # if len(self.tasks.all())==0:
+        #     self.tasks.create(
+        #         name = self.title,
+        #         description = self.description,
+        #         code = "MEET",
+        #         level = 1,
+        #         order = 999,
+        #         status = "STATUS_SUSPENDED",
+        #         start = self.start,
+        #         end = self.end,
+        #         endIsMilestone = True
+        #     )
         super(Event, self).save(*args, **kwargs)
         
 class Role(models.Model):
