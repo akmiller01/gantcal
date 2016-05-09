@@ -84,7 +84,7 @@
                 </tr>
             {% endfor %}
         </table>
-        <b>Upcoming tasks</b>
+        <b>Ongoing and upcoming tasks</b>
         <table>
             <th>Name</th>
             <th>Status</th>
@@ -96,6 +96,36 @@
             {% if perm.add_task %}
             <th></th>
             {% endif %}
+            {% for task in ongoingTasks%}
+                <tr>
+                    <td>
+                        {{task.name}}
+                    </td>
+                    <td>
+                        {{task.status}}
+                    </td>
+                    <td>
+                        {{task.start}}
+                    </td>
+                    <td>
+                        {{task.end}}
+                    </td>
+                    <td>
+                        {{task.progress}}%
+                    </td>
+                    <td>
+                        {% for assignee in task.assignee.all %}{{assignee.resource.get_full_name}}, {% endfor %}
+                    </td>
+                    <td>
+                        <a href="{{task.event.get_event_url}}">{{task.event}}</a>
+                    </td>
+                    {% if perm.add_task %}
+                    <td>
+                        <span class="teamworkIcon" style="font-size:12px;" ><a href="{{task.event.get_gantt_url}}">e</a></span>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
             {% for task in tasks%}
                 <tr>
                     <td>
@@ -127,7 +157,7 @@
                 </tr>
             {% endfor %}
         </table>
-        <b>Upcoming events</b>
+        <b>Ongoing and upcoming events</b>
         <table>
             <th>Title</th>
             <th>Start</th>
@@ -136,6 +166,27 @@
             {% if perm.add_event %}
             <th></th>
             {% endif %}
+            {% for event in ongoingEvents%}
+                <tr>
+                    <td>
+                        <a href="{{event.get_event_url}}">{{event.title}}</a>
+                    </td>
+                    <td>
+                        {{event.start}}
+                    </td>
+                    <td>
+                        {{event.end}}
+                    </td>
+                    <td>
+                        {% for attendee in event.attendee.all %}{{attendee.get_full_name}}, {% endfor %}
+                    </td>
+                    {% if perm.add_event %}
+                    <td>
+                        <span class="teamworkIcon" style="font-size:12px;" ><a href="{% url 'admin:cal_event_change' event.id %}">e</a></span>
+                    </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
             {% for event in events%}
                 <tr>
                     <td>

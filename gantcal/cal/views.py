@@ -208,10 +208,10 @@ def dashboard(request):
   now = datetime.now()
   user = request.user
   userTasks = Task.objects.order_by('start').filter(
-    assignee__resource=user, start__gte=now
+    assignee__resource=user, end__gte=now
   )
   userEvents = Event.objects.order_by('start').filter(
-    attendee=user, start__gte=now
+    attendee=user, end__gte=now
   )
   tasks = Task.objects.order_by('start').filter(
     start__gte=now, start__lte=now+timedelta(14)
@@ -219,11 +219,17 @@ def dashboard(request):
   events = Event.objects.order_by('start').filter(
     start__gte=now, start__lte=now+timedelta(14)
   )
+  ongoingTasks = Task.objects.order_by('start').filter(
+    start__lte=now, end__gte=now
+  )
+  ongoingEvents = Event.objects.order_by('start').filter(
+    start__lte=now, end__gte=now
+  )
   cross_cutting_areas = CrossCuttingArea.objects.order_by('start').filter(
     end__gte=now
   )
   themes = Theme.objects.all()
-  return render_to_response('cal/dashboard.html', {"perm":perm,"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks,"cross_cutting_areas":cross_cutting_areas,"themes":themes})
+  return render_to_response('cal/dashboard.html', {"perm":perm,"user":user,"userTasks":userTasks,"userEvents":userEvents,"events":events,"tasks":tasks,"ongoingEvents":ongoingEvents,"ongoingTasks":ongoingTasks,"cross_cutting_areas":cross_cutting_areas,"themes":themes})
 
 @login_required
 def month(request):
