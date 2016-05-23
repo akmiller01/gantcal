@@ -237,9 +237,9 @@ class EventAdmin(admin.ModelAdmin):
     
     def confirmed_date_end(self, obj):
         return '<span style="color:%s">%s</span>' % ("black" if obj.date_confirmed else "red", obj.end)
-    confirmed_date.allow_tags = True
-    confirmed_date.short_description = 'End'
-    confirmed_date.admin_order_field = 'end'
+    confirmed_date_end.allow_tags = True
+    confirmed_date_end.short_description = 'End'
+    confirmed_date_end.admin_order_field = 'end'
     
     def short_objectives_approved(self,obj):
         return obj.objectives_approved
@@ -261,6 +261,7 @@ class EventAdmin(admin.ModelAdmin):
     
     def attendees(self, obj):
         return "; ".join([p.get_full_name() for p in obj.attendee.all()])
+    attendees.admin_order_field = 'attendee'
     
     def save_model(self, request, obj, form, change):
         if not request.user.has_perm('cal.add_event'):

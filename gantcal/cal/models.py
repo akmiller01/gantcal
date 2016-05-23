@@ -96,6 +96,7 @@ class Event(models.Model):
     title = models.CharField(max_length=2000)
     description = models.TextField(default="")
     objectives = models.TextField(null=True,blank=True)
+    notes = models.TextField(null=True,blank=True)
     event_URL = models.URLField(max_length=2000,null=True,blank=True)
     attendee = models.ManyToManyField(User,related_name="events",related_query_name="event",blank=True)
     location = models.CharField(max_length=255,null=True,blank=True)
@@ -114,11 +115,11 @@ class Event(models.Model):
     priority = models.IntegerField(choices=PRIORITY_CHOICES,blank=True,null=True)
     FOCUS_CHOICES = (
         ('AT','Attending'),
-        ('PR','Presenting'),
-        ('SE','Organising side event'),
-        ('LR','Launching report'),
+        # ('PR','Presenting'),
+        # ('SE','Organising side event'),
+        # ('LR','Launching report'),
         ('MO','Monitoring'),
-        ('MF','Monitoring and follow-up'),
+        # ('MF','Monitoring and follow-up'),
         ('RE','Remotely engage'),
     )
     focus = models.CharField(max_length=2,choices=FOCUS_CHOICES,default='MO')
@@ -183,6 +184,9 @@ class Event(models.Model):
         #         end = self.end,
         #         endIsMilestone = True
         #     )
+        #Automatic attending labeling
+        if len(self.attendee.all())>0:
+            self.focus = 'AT'
         super(Event, self).save(*args, **kwargs)
         
 class Role(models.Model):
