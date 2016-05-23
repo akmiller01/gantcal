@@ -211,7 +211,7 @@ class EventAdmin(admin.ModelAdmin):
         return form
     
     #fields display on change list
-    list_display = ['event_summary_title','confirmed_date','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
+    list_display = ['event_summary_title','confirmed_date','end','location','priority','focus','objectives','short_objectives_approved','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
     list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','cross_cutting_area','theme','attendee','location']
     #fields to search in change list
