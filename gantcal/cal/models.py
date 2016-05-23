@@ -185,8 +185,8 @@ class Event(models.Model):
         #         endIsMilestone = True
         #     )
         #Automatic attending labeling
-        if len(self.attendee.all())>0:
-            self.focus = 'AT'
+        # if len(self.attendee.all())>0:
+        #     self.focus = 'AT'
         super(Event, self).save(*args, **kwargs)
         
 class Role(models.Model):
