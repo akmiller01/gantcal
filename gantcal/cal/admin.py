@@ -260,7 +260,10 @@ class EventAdmin(admin.ModelAdmin):
     event_summary_title.admin_order_field = 'title'
     
     def event_lead(self,obj):
-        return obj.lead.get_full_name()
+        if obj.lead:
+            return obj.lead.get_full_name()
+        else:
+            return None
     event_lead.admin_order_field = 'lead'
     
     def attendees(self, obj):
