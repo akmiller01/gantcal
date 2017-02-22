@@ -99,6 +99,7 @@ class Event(models.Model):
     notes = models.TextField(null=True,blank=True)
     event_URL = models.URLField(max_length=2000,null=True,blank=True)
     attendee = models.ManyToManyField(User,related_name="events",related_query_name="event",blank=True)
+    lead = models.ForeignKey(User)
     location = models.CharField(max_length=255,null=True,blank=True)
     slug = models.SlugField(unique=True,max_length=255, null=True, blank=True,editable=False)
     start = models.DateField(auto_now=False, auto_now_add=False)

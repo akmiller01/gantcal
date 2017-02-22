@@ -89,6 +89,10 @@ def ical_event(request, user_id=None):
       description += event.objectives
       description += "\n"
       description += "\n"
+      description += "Lead: "
+      description += event.lead.get_full_name()
+      description += "\n"
+      description += "\n"
       description += "Attendees: "
       attendees = ""
       for attendee in event.attendee.all():
