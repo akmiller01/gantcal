@@ -211,7 +211,7 @@ class EventAdmin(admin.ModelAdmin):
         return form
     
     #fields display on change list
-    list_display = ['event_summary_title','confirmed_date','confirmed_date_end','location','priority','focus','objectives','short_objectives_approved','lead','attendees','short_attendees_approved','edit']
+    list_display = ['event_summary_title','confirmed_date','confirmed_date_end','location','priority','focus','objectives','short_objectives_approved','event_lead','attendees','short_attendees_approved','edit']
     #fields to filter the change list with
     list_filter = [EventTimeFilter,'modified','priority','focus','start','tag','cross_cutting_area','theme','attendee','location']
     #fields to search in change list
@@ -258,6 +258,10 @@ class EventAdmin(admin.ModelAdmin):
     event_summary_title.allow_tags = True
     event_summary_title.short_description = 'Title'
     event_summary_title.admin_order_field = 'title'
+    
+    def event_lead(self,obj):
+        return obj.lead.get_full_name()
+    event_lead.admin_order_field = 'lead'
     
     def attendees(self, obj):
         return "; ".join([p.get_full_name() for p in obj.attendee.all()])

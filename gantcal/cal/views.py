@@ -82,7 +82,7 @@ def ical_event(request, user_id=None):
       description += "\n"
       description += "\n"
       description += "Notes: "
-      description += event.notes
+      description += str(event.notes)
       description += "\n"
       description += "\n"
       description += "Objectives: "
@@ -90,7 +90,10 @@ def ical_event(request, user_id=None):
       description += "\n"
       description += "\n"
       description += "Lead: "
-      description += event.lead.get_full_name()
+      if event.lead:
+        description += event.lead.get_full_name()
+      else:
+        description += "\n"
       description += "\n"
       description += "\n"
       description += "Attendees: "
